@@ -5,9 +5,9 @@ import { ArrowRight, Play, ChevronRight } from 'lucide-react';
 const Hero = () => {
   // Data foto galeri
   const photos = [
-    { id: 1, src: "https://images.unsplash.com/photo-1577891742292-4545a69ee73b?auto=format&fit=crop&q=80&w=800", alt: "Santri Belajar" },
-    { id: 2, src: "https://images.unsplash.com/photo-1523050853063-bd80e27433fb?auto=format&fit=crop&q=80&w=800", alt: "Perpustakaan" },
-    { id: 3, src: "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=800", alt: "Gedung Pesantren" },
+    { id: 1, src: "foto1.png", alt: "Santri Belajar" },
+    { id: 2, src: "foto2.png", alt: "Perpustakaan" },
+    { id: 3, src: "foto3.png", alt: "Gedung Pesantren" },
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -123,7 +123,7 @@ const Hero = () => {
         </div>
 
         {/* Lingkaran hiasan di belakang slider */}
-        <div className="w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] border-2 border-yellow-500/10 rounded-full absolute -z-10 animate-pulse" />
+        <div className="w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] border-2 border-yellow-500/40 rounded-full absolute -z-10 animate-pulse" />
       </div>
 
     </section>
