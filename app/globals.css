@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* 1. Memicu dark mode saat ada class .dark (dari tombol kita) */
+@custom-variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* 2. Mengatur font bawaan Next.js Geist */
+@theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 3. Warna Dasar Web (Mode Terang) */
+:root {
+  --background: #ffffff; /* Putih bersih */
+  --foreground: #064e3b; /* Hijau emerald gelap untuk teks dasar */
 }
 
+/* 4. Warna Dasar Web Saat Tombol Mode Gelap Diklik */
+.dark {
+  --background: #111827; /* Abu-abu sangat gelap (bukan hitam pekat) */
+  --foreground: #f3f4f6; /* Putih tulang agar teks nyaman dibaca */
+}
+
+/* 5. Terapkan ke seluruh halaman dengan transisi mulus */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease; 
 }
