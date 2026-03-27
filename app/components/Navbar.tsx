@@ -1,11 +1,13 @@
 "use client"; 
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Search, Moon, Sun } from 'lucide-react'; 
+// 1. Perhatikan impor ini, sudah ada Menu dan X untuk HP
+import { ChevronDown, Search, Moon, Sun, Menu, X } from 'lucide-react'; 
 import { useTheme } from 'next-themes';
 
 const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 2. State ini wajib ada untuk buka/tutup menu HP
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -14,9 +16,10 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 flex flex-col w-full shadow-md bg-white dark:bg-gray-900 transition-colors duration-300">
+    // 3. Tambahkan overflow-x-hidden di sini sebagai pertahanan lapis kedua
+    <header className="sticky top-0 z-50 flex flex-col w-full overflow-x-hidden shadow-md bg-white dark:bg-gray-900 transition-colors duration-300">
       
-      {/* --- INJEKSI CSS UNTUK ANIMASI & EFEK FADE --- */}
+      {/* --- INJEKSI CSS --- */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes marquee {
           0% { transform: translateX(100vw); }
@@ -37,7 +40,6 @@ const Navbar = () => {
       `}} />
 
       {/* --- 1. MAIN NAVBAR --- */}
-      {/* Hapus border bawah di sini agar menyatu sempurna dengan garis emas */}
       <nav className="flex items-center justify-between px-6 md:px-12 py-4 relative z-10 transition-colors duration-300">
         
         {/* Logo Sekaligus Tombol Login Rahasia */}
@@ -51,11 +53,11 @@ const Navbar = () => {
           </div>
         </a>
 
-        {/* Menu Links */}
+        {/* Menu Links (SEMBUNYI DI HP) */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-emerald-900 dark:text-gray-200 transition-colors">
           <a href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Beranda</a>
           
-          {/* Dropdown Profil */}
+          {/* Dropdown Profil Desktop */}
           <div 
             className="relative group cursor-pointer"
             onMouseEnter={() => setIsProfileOpen(true)}
@@ -81,8 +83,9 @@ const Navbar = () => {
           <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Hubungi Kami</a>
         </div>
 
-        {/* Fitur Pencarian & Dark Mode */}
-        <div className="flex items-center gap-4">
+        {/* Fitur Pencarian, Dark Mode, & TOMBOL MENU HP */}
+        <div className="flex items-center gap-2 md:gap-4">
+          
           <div className="hidden md:flex relative group">
             <input 
               type="text" 
@@ -105,21 +108,51 @@ const Navbar = () => {
               <Moon size={18} />
             )}
           </button>
+
+          {/* 4. INI DIA TOMBOL HAMBURGER KHUSUS HP-NYA */}
+          <button 
+            className="md:hidden p-2 text-emerald-900 dark:text-gray-200"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
         </div>
       </nav>
+
+      {/* 5. INI MENU DROPDOWN KHUSUS HP YANG AKAN MUNCUL JIKA DI-KLIK */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden flex flex-col px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors w-full">
+          <a href="/" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-200 dark:border-gray-700">Beranda</a>
+          
+          <div className="py-3 border-b border-gray-200 dark:border-gray-700 flex flex-col">
+            <span className="text-emerald-900 dark:text-gray-200 font-medium mb-2">Profil</span>
+            <div className="flex flex-col pl-4 border-l-2 border-emerald-300 dark:border-gray-600 gap-3 mt-1">
+              <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Tentang Kami</a>
+              <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Guru Kami</a>
+              <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Fasilitas</a>
+              <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Kurikulum</a>
+            </div>
+          </div>
+          
+          <a href="/ppdb" className="py-3 text-emerald-800 dark:text-emerald-400 font-semibold border-b border-gray-200 dark:border-gray-700">Penerimaan Santri Baru</a>
+          <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-200 dark:border-gray-700">Berita</a>
+          <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium">Hubungi Kami</a>
+        </div>
+      )}
 
       {/* --- GARIS EMAS PEMISAH (GOLD LINE) --- */}
       <div className="h-[2px] w-full bg-gradient-to-r from-yellow-600 via-yellow-300 to-yellow-600 shadow-[0_0_8px_rgba(250,204,21,0.5)] z-20"></div>
 
       {/* --- 2. RUNNING TEXT --- */}
-      <div className="bg-emerald-950 dark:bg-gray-900 text-yellow-400 py-3 overflow-hidden flex items-center w-full shadow-inner transition-colors duration-300">
-        <div className="w-full fade-edges">
+      <div className="bg-emerald-950 dark:bg-gray-900 text-yellow-400 py-3 overflow-hidden flex items-center w-full shadow-inner transition-colors duration-300 relative">
+        <div className="w-full fade-edges relative overflow-hidden">
           <div className="animate-marquee text-[13px] font-bold tracking-[0.2em] cursor-default">
-            <span className="mx-8">✨ SELAMAT DATANG DI WEBSITE RESMI PONDOK PESANTREN CENDEKIA ✨</span>
+            <span className="mx-8 whitespace-nowrap">✨ SELAMAT DATANG DI WEBSITE RESMI PONDOK PESANTREN CENDEKIA ✨</span>
             <span className="mx-8 text-white dark:text-gray-500">•</span>
-            <span className="mx-8 text-emerald-100 dark:text-gray-300">Membangun Generasi Qur'ani, Beradab, dan Berwawasan Global</span>
+            <span className="mx-8 text-emerald-100 dark:text-gray-300 whitespace-nowrap">Membangun Generasi Qur'ani, Beradab, dan Berwawasan Global</span>
             <span className="mx-8 text-white dark:text-gray-500">•</span>
-            <span className="mx-8 text-emerald-100 dark:text-gray-300">Pendaftaran Santri Baru Tahun Ajaran 2026/2027 Telah Dibuka</span>
+            <span className="mx-8 text-emerald-100 dark:text-gray-300 whitespace-nowrap">Pendaftaran Santri Baru Tahun Ajaran 2026/2027 Telah Dibuka</span>
           </div>
         </div>
       </div>
