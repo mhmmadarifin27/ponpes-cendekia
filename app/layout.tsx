@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// 1. Import ThemeProvider yang sudah kita buat tadi
+// Pastikan path ThemeProvider ini benar sesuai letak folder kamu
 import { ThemeProvider } from "./components/ThemeProvider"; 
 
 const geistSans = Geist({
@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // 2. Ubah judul tab browser biar pro
   title: "Ponpes Cendekia", 
   description: "Website Resmi Pondok Pesantren Cendekia",
 };
