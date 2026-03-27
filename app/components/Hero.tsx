@@ -1,39 +1,57 @@
 "use client";
-import React from 'react';
-import { ArrowRight, Play } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Play, ChevronRight } from 'lucide-react';
 
 const Hero = () => {
+  // Data foto galeri
+  const photos = [
+    { id: 1, src: "https://images.unsplash.com/photo-1577891742292-4545a69ee73b?auto=format&fit=crop&q=80&w=800", alt: "Santri Belajar" },
+    { id: 2, src: "https://images.unsplash.com/photo-1523050853063-bd80e27433fb?auto=format&fit=crop&q=80&w=800", alt: "Perpustakaan" },
+    { id: 3, src: "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=800", alt: "Gedung Pesantren" },
+  ];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Fungsi untuk ke foto berikutnya
+  const nextSlide = () => {
+    setActiveIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
+  };
+
+  // Auto play setiap 5 detik
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000);
+    return () => clearInterval(interval);
+  }, [activeIndex]);
+
   return (
-    // Kita pakai flex-col agar di HP kontennya berurutan dari atas ke bawah
-    <section className="relative min-h-screen lg:h-[700px] w-full flex flex-col lg:flex-row items-center px-6 md:px-12 py-24 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500">
+    <section className="relative min-h-screen lg:h-[750px] w-full flex flex-col lg:flex-row items-center px-6 md:px-12 py-24 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500">
       
       {/* Background Image & Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
           src="https://images.unsplash.com/photo-1590076175582-40940b43f021?auto=format&fit=crop&q=80&w=1600" 
           alt="Masjid Background" 
-          className="w-full h-full object-cover opacity-30 lg:opacity-40"
+          className="w-full h-full object-cover opacity-20 lg:opacity-30"
         />
-        {/* Gradient overlay dipertebal di bawah untuk transisi yang mulus di HP */}
-        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950 via-emerald-900/80 dark:from-slate-950 dark:via-slate-900/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950 via-emerald-900/90 dark:from-slate-950 dark:via-slate-900/95 to-transparent" />
       </div>
 
-      {/* --- KONTEN TEKS --- */}
+      {/* --- KONTEN TEKS (Kiri) --- */}
       <div className="relative z-10 w-full lg:w-3/5 text-white animate-in fade-in slide-in-from-left-8 duration-1000">
         <span className="inline-block px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6 border border-yellow-500/30 shadow-sm">
           Pondok Pesantren Cendekia
         </span>
         
-        <h2 className="text-4xl md:text-5xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+        <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
           Mencetak Generasi <br /> 
           <span className="text-yellow-500 drop-shadow-sm">Qur'ani & Beradab</span>
         </h2>
         
-        <p className="text-base md:text-lg text-emerald-50/80 dark:text-slate-300 mb-10 leading-relaxed max-w-xl">
+        <p className="text-base md:text-lg text-emerald-50/70 dark:text-slate-400 mb-10 leading-relaxed max-w-xl font-medium">
           Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 mb-12 lg:mb-0">
+        <div className="flex flex-col sm:flex-row gap-4 mb-16 lg:mb-0">
           <button className="bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/20 w-full sm:w-auto">
             Daftar Sekarang <ArrowRight size={20} />
           </button>
@@ -47,31 +65,67 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* --- AKSEN GAMBAR (Sekarang muncul di HP) --- */}
-      <div className="relative z-10 w-full lg:w-2/5 flex justify-center lg:justify-end items-center mt-10 lg:mt-0 animate-in fade-in slide-in-from-bottom-8 lg:slide-in-from-right-8 duration-1000 delay-300">
+      {/* --- AKSEN STACKED SLIDER (Kanan) --- */}
+      <div className="relative z-10 w-full lg:w-2/5 flex flex-col items-center justify-center mt-10 lg:mt-0 h-[400px] lg:h-[500px]">
         
-        {/* Lingkaran emas hiasan - Ukuran disesuaikan untuk HP */}
-        <div className="w-[280px] h-[280px] lg:w-[450px] lg:h-[450px] border-2 border-yellow-500/20 rounded-full absolute animate-pulse" />
-        
-        {/* Kotak Foto Utama */}
-        <div className="relative w-[260px] h-[340px] lg:w-[380px] lg:h-[480px] bg-white/5 backdrop-blur-md border border-white/20 rounded-3xl lg:rotate-3 flex items-center justify-center p-3 shadow-2xl hover:rotate-0 transition-all duration-700 group">
-           <div className="w-full h-full bg-emerald-800/40 dark:bg-slate-800/60 rounded-2xl flex flex-col items-center justify-center border border-white/10 overflow-hidden relative">
-              
-              {/* Overlay Efek Kaca saat di-hover */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <div className="text-center p-6">
-                <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/40">
-                  <span className="text-yellow-500 font-bold">Az</span>
-                </div>
-                <p className="text-[10px] lg:text-xs text-white/60 font-medium tracking-widest uppercase mb-1">Featured Gallery</p>
-                <p className="text-xs lg:text-sm text-white/40 italic">Klik untuk melihat galeri santri</p>
-              </div>
+        {/* Container Utama Slider */}
+        <div className="relative w-[280px] h-[360px] lg:w-[350px] lg:h-[450px] perspective-1000">
+          {photos.map((photo, index) => {
+            // Logika tumpukan kartu
+            const isTop = index === activeIndex;
+            const isNext = index === (activeIndex + 1) % photos.length;
+            const isBack = index === (activeIndex + 2) % photos.length;
 
-           </div>
+            let styleClass = "opacity-0 scale-90 translate-x-12 z-0";
+            if (isTop) styleClass = "opacity-100 scale-100 translate-x-0 z-30 rotate-0 shadow-2xl";
+            if (isNext) styleClass = "opacity-60 scale-95 translate-x-8 z-20 rotate-3 translate-y-4";
+            if (isBack) styleClass = "opacity-30 scale-90 translate-x-16 z-10 rotate-6 translate-y-8";
+
+            return (
+              <div
+                key={photo.id}
+                onClick={nextSlide}
+                className={`absolute inset-0 transition-all duration-700 ease-in-out cursor-pointer overflow-hidden rounded-[2rem] border-2 border-white/10 ${styleClass}`}
+              >
+                <img 
+                  src={photo.src} 
+                  alt={photo.alt}
+                  className="w-full h-full object-cover"
+                />
+                {/* Overlay teks tipis pada kartu teratas */}
+                {isTop && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-transparent to-transparent flex flex-col justify-end p-6">
+                    <p className="text-white font-bold text-sm lg:text-base">{photo.alt}</p>
+                    <p className="text-yellow-400 text-[10px] uppercase tracking-widest">Galeri Cendekia</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
+
+        {/* Tombol Next Manual & Indikator */}
+        <div className="flex items-center gap-6 mt-12 animate-in fade-in duration-1000">
+           <div className="flex gap-2">
+              {photos.map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`h-1.5 transition-all duration-300 rounded-full ${i === activeIndex ? 'w-8 bg-yellow-500' : 'w-2 bg-white/20'}`} 
+                />
+              ))}
+           </div>
+           <button 
+            onClick={nextSlide}
+            className="w-12 h-12 bg-white/10 hover:bg-yellow-500 hover:text-emerald-950 transition-all rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md group"
+           >
+             <ChevronRight className="group-hover:translate-x-0.5 transition-transform" />
+           </button>
+        </div>
+
+        {/* Lingkaran hiasan di belakang slider */}
+        <div className="w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] border-2 border-yellow-500/10 rounded-full absolute -z-10 animate-pulse" />
       </div>
-      
+
     </section>
   );
 };
