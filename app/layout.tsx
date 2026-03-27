@@ -27,12 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="id" // Ubah ke "id" karena web kita bahasa Indonesia
+      lang="id" 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      suppressHydrationWarning // 3. WAJIB ADA untuk next-themes agar tidak eror
+      suppressHydrationWarning 
     >
-      <body className="min-h-full flex flex-col">
-        {/* 4. Bungkus aplikasi kita dengan ThemeProvider */}
+      {/* KUNCI UTAMA DI SINI: Tambahkan overflow-x-hidden dan w-full */}
+      <body className="min-h-full flex flex-col overflow-x-hidden w-full">
         <ThemeProvider>
           {children}
         </ThemeProvider>
