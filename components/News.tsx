@@ -1,44 +1,139 @@
-// components/News.tsx
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
+"use client";
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { ArrowRight, Loader2, Newspaper } from 'lucide-react';
+import Link from 'next/link';
 
-const News = () => {
+const Warta = () => {
+  const [warta, setWarta] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWarta = async () => {
+      setLoading(true);
+      // Ambil 5 berita terbaru (1 untuk Featured, 4 untuk List)
+      const { data, error } = await supabase
+        .from('warta')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5); 
+      
+      if (!error && data) setWarta(data);
+      setLoading(false);
+    };
+    fetchWarta();
+  }, []);
+
+  // Format: "15 Oktober 2023" (Untuk Featured)
+  const formatDateFull = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+  };
+
+  // Format: "12 OKT" (Untuk List Samping)
+  const formatDateShort = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
+    return new Date(dateString).toLocaleDateString('id-ID', options).toUpperCase();
+  };
+
   return (
-    <section className="py-20 px-12 bg-white border-t border-gray-100">
+    <section id="warta" className="py-24 md:py-32 px-6 md:px-12 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-12">
-            <h2 className="text-4xl font-extrabold text-emerald-900">Warta Pesantren</h2>
-            <button className="text-emerald-900 font-bold flex items-center gap-2">Lihat Semua Berita <ArrowRight size={18}/></button>
+        
+        {/* HEADER SECTION (Sesuai Desain) */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+          <div>
+            <p className="text-yellow-500 dark:text-yellow-600 font-bold uppercase tracking-[0.2em] text-xs mb-3">
+              INFORMASI TERKINI
+            </p>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-emerald-950 dark:text-white tracking-tight">
+              Warta Pesantren
+            </h2>
+          </div>
+          <Link 
+            href="/warta" 
+            className="group flex items-center gap-2 text-emerald-800 dark:text-emerald-400 font-bold text-sm md:text-base hover:text-emerald-600 transition-colors"
+          >
+            Lihat Semua Berita 
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Berita Utama */}
-          <div className="group cursor-pointer">
-            <div className="rounded-3xl overflow-hidden mb-6 h-[400px]">
-                <img src="https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+        {/* --- KONTEN BERITA --- */}
+        {loading ? (
+          <div className="py-32 flex flex-col justify-center items-center gap-4 text-gray-400 dark:text-gray-500">
+            <Loader2 className="animate-spin text-yellow-500" size={40} />
+            <p className="font-medium text-sm">Memuat informasi terkini...</p>
+          </div>
+        ) : warta.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+            
+            {/* 1. FEATURED ARTICLE (KIRI - Porsi Besar) */}
+            <div className="lg:col-span-7 flex flex-col group cursor-pointer">
+              <Link href={`/warta/${warta[0].id}`}>
+                <div className="relative rounded-3xl overflow-hidden bg-gray-200 dark:bg-gray-800 mb-6 border border-gray-100 dark:border-gray-800 shadow-sm">
+                  <img 
+                    src={warta[0].gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} 
+                    alt={warta[0].judul} 
+                    className="w-full h-[300px] md:h-[450px] object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* Badge "Kegiatan" */}
+                  <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-emerald-900 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-md">
+                    Berita Utama
+                  </div>
+                </div>
+
+                <p className="text-yellow-600 dark:text-yellow-500 font-bold text-sm mb-3">
+                  {formatDateFull(warta[0].created_at)}
+                </p>
+                <h3 className="text-2xl md:text-4xl font-black text-emerald-950 dark:text-white leading-snug mb-4 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                  {warta[0].judul}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2 md:line-clamp-3">
+                  {warta[0].konten}
+                </p>
+              </Link>
             </div>
-            <p className="text-yellow-600 font-bold text-xs mb-2">15 Oktober 2023</p>
-            <h3 className="text-2xl font-bold text-emerald-900 mb-4 group-hover:text-emerald-700">Wisuda Tahfidz Angkatan Ke-X: 50 Santri Selesaikan Hafalan 30 Juz</h3>
-            <p className="text-gray-500 line-clamp-2 text-sm">Pondok Pesantren Al-Azhar kembali meluluskan generasi penghafal Al-Quran dalam prosesi wisuda khidmat...</p>
-          </div>
 
-          {/* List Berita Samping */}
-          <div className="space-y-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
-                <div className="w-32 h-24 bg-emerald-100 rounded-xl overflow-hidden flex-shrink-0">
-                    <div className="w-full h-full flex items-center justify-center text-emerald-800 font-bold text-3xl">2</div>
-                </div>
-                <div>
-                    <p className="text-[10px] font-bold text-yellow-600 uppercase mb-1">Akademik • 12 Okt</p>
-                    <h4 className="font-bold text-emerald-900 group-hover:text-emerald-700 leading-snug">Lomba Kaligrafi Nasional: Santri Al-Azhar Raih Juara 1</h4>
-                </div>
-              </div>
-            ))}
+            {/* 2. LIST ARTICLES (KANAN - Porsi Kecil Berjejer) */}
+            <div className="lg:col-span-5 flex flex-col gap-6 md:gap-8">
+              {warta.slice(1, 5).map((item) => (
+                <Link href={`/warta/${item.id}`} key={item.id} className="flex gap-5 md:gap-6 group cursor-pointer items-start">
+                  
+                  {/* Thumbnail */}
+                  <div className="shrink-0 rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-800">
+                    <img 
+                      src={item.gambar_url || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80"} 
+                      alt={item.judul} 
+                      className="w-28 h-20 md:w-36 md:h-28 object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                  
+                  {/* Konten Text */}
+                  <div className="flex flex-col justify-center py-1">
+                    <p className="text-yellow-600 dark:text-yellow-500 font-bold text-[10px] md:text-xs uppercase tracking-[0.15em] mb-2">
+                      BERITA • {formatDateShort(item.created_at)}
+                    </p>
+                    <h4 className="text-sm md:text-lg font-bold text-emerald-950 dark:text-white leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors line-clamp-3">
+                      {item.judul}
+                    </h4>
+                  </div>
+                  
+                </Link>
+              ))}
+            </div>
+
           </div>
-        </div>
+        ) : (
+          <div className="py-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center text-gray-400 flex flex-col items-center">
+            <Newspaper size={40} className="mb-4 opacity-50" />
+            <p>Belum ada berita yang dipublikasikan.</p>
+          </div>
+        )}
+
       </div>
     </section>
   );
 };
-export default News;
+
+export default Warta;
