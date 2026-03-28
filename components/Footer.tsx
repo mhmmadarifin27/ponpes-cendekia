@@ -9,7 +9,6 @@ import {
 
 const Footer = () => {
   return (
-    // PERBAIKAN: mt-32 diganti jadi pt-32, dan ditambah bg-gray-50 dark:bg-gray-900 agar ruang kosongnya ikut gelap!
     <footer className="relative bg-gray-50 dark:bg-gray-900 pt-32 transition-colors duration-500">
       
       {/* --- 1. SECTION MAPS (MENUMPUK NATURAL) --- */}
@@ -49,23 +48,21 @@ const Footer = () => {
       </div>
 
       {/* --- 2. BODY FOOTER --- */}
-      {/* PERBAIKAN RESPONSIVE: Di HP (mobile), pt dibuat secukupnya, dan tinggi dipastikan proporsional */}
       <div className="relative pt-56 md:pt-64 pb-12 bg-emerald-950 dark:bg-gray-950 text-white overflow-hidden transition-colors duration-500">
         
-        {/* Background Gambar Ilustrasi (Fixed object-position) */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* PERBAIKAN: Background Gambar Ilustrasi */}
+        {/* Tinggi gambar di HP dibatasi maksimal 300px agar tidak nge-zoom, menempel di bawah */}
+        <div className="absolute bottom-0 left-0 right-0 h-[300px] md:h-full z-0 pointer-events-none">
           <img
             src="/bgfooter3.png" 
             alt="Background Ponpes"
-            // object-bottom memastikan gambar selalu ditarik dari bawah ke atas agar pondasi/ilustrasi bawahnya tetap kelihatan utuh
-            className="w-full h-full object-cover object-bottom opacity-80 dark:opacity-80"
+            className="w-full h-full object-cover object-bottom opacity-40 dark:opacity-20"
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-emerald-950/20 dark:from-gray-950 dark:via-gray-950/80 dark:to-gray-950/20" />
+          {/* Gradient untuk menghilangkan garis potongan atas gambar di HP */}
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-emerald-950/50 to-emerald-950 dark:via-gray-950/50 dark:to-gray-950" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-          {/* Grid Layout disesuaikan agar di HP tidak menumpuk aneh */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 mb-12 md:mb-16">
             
             {/* Kolom 1: Identitas & SOSMED */}
