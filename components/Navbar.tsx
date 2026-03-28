@@ -66,9 +66,9 @@ const Navbar = () => {
             
             {isProfileOpen && (
               <div className="absolute top-full -left-4 w-64 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl rounded-xl py-3 z-50 animate-in fade-in slide-in-from-top-2 transition-colors">
-                <a href="#" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Tentang Kami</a>
-                <a href="#" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Guru Kami</a>
-                <a href="#" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Fasilitas</a>
+                <a href="/tentang" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Tentang Kami</a>
+                <a href="guru" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Guru Kami</a>
+                <a href="/fasilitas" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Fasilitas</a>
                 <a href="#" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Kurikulum</a>
                 <a href="#" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Program & Dokumentasi</a>
               </div>
@@ -76,7 +76,7 @@ const Navbar = () => {
           </div>
 
           <a href="/ppdb" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-emerald-800 dark:text-emerald-300 font-semibold underline underline-offset-4">Penerimaan Santri Baru</a>
-          <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Berita</a>
+          <a href="/warta" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Berita</a>
           <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Hubungi Kami</a>
         </div>
 
@@ -121,15 +121,15 @@ const Navbar = () => {
             <div className="py-3 border-b border-gray-100 dark:border-gray-700 flex flex-col">
               <span className="text-emerald-900 dark:text-gray-200 font-medium mb-2">Profil</span>
               <div className="flex flex-col pl-4 border-l-2 border-emerald-300 dark:border-gray-600 gap-3 mt-1">
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Tentang Kami</a>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Guru Kami</a>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Fasilitas</a>
+                <a href="/tentang" className="text-sm text-gray-600 dark:text-gray-400">Tentang Kami</a>
+                <a href="guru" className="text-sm text-gray-600 dark:text-gray-400">Guru Kami</a>
+                <a href="/fasilitas" className="text-sm text-gray-600 dark:text-gray-400">Fasilitas</a>
                 <a href="#" className="text-sm text-gray-600 dark:text-gray-400">Kurikulum</a>
               </div>
             </div>
             
             <a href="/ppdb" className="py-3 text-emerald-800 dark:text-emerald-400 font-semibold border-b border-gray-100 dark:border-gray-700">Penerimaan Santri Baru</a>
-            <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Berita</a>
+            <a href="/warta" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Berita</a>
             <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium">Hubungi Kami</a>
           </div>
         )}

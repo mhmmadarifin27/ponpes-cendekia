@@ -49,51 +49,55 @@ const Footer = () => {
       </div>
 
       {/* --- 2. BODY FOOTER --- */}
+      {/* PERBAIKAN RESPONSIVE: Di HP (mobile), pt dibuat secukupnya, dan tinggi dipastikan proporsional */}
       <div className="relative pt-56 md:pt-64 pb-12 bg-emerald-950 dark:bg-gray-950 text-white overflow-hidden transition-colors duration-500">
         
-        {/* Background Gambar Ilustrasi */}
-        <div className="absolute inset-0 z-0">
+        {/* Background Gambar Ilustrasi (Fixed object-position) */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <img
-            src="/bgfooter2.png" 
+            src="/bgfooter3.png" 
             alt="Background Ponpes"
-            className="w-full h-full object-cover opacity-80 dark:opacity-80"
+            // object-bottom memastikan gambar selalu ditarik dari bawah ke atas agar pondasi/ilustrasi bawahnya tetap kelihatan utuh
+            className="w-full h-full object-cover object-bottom opacity-80 dark:opacity-80"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/60 to-transparent dark:from-gray-950 dark:via-gray-950/60" />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-emerald-950/20 dark:from-gray-950 dark:via-gray-950/80 dark:to-gray-950/20" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-16">
+          {/* Grid Layout disesuaikan agar di HP tidak menumpuk aneh */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 mb-12 md:mb-16">
             
             {/* Kolom 1: Identitas & SOSMED */}
             <div className="md:col-span-5 relative">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-emerald-900 dark:text-white font-bold text-2xl shadow-xl">
+              <div className="flex items-center gap-4 mb-5 md:mb-6">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-emerald-900 dark:text-white font-bold text-xl md:text-2xl shadow-xl">
                   Az
                 </div>
                 <div>
-                   <h2 className="text-2xl font-bold leading-none text-white">Ponpes Cendekia</h2>
-                   <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.2em] mt-1">Membangun Generasi Qur'ani</p>
+                   <h2 className="text-xl md:text-2xl font-bold leading-none text-white">Ponpes Cendekia</h2>
+                   <p className="text-[9px] md:text-[10px] text-yellow-500 font-bold uppercase tracking-[0.2em] mt-1">Membangun Generasi Qur'ani</p>
                 </div>
               </div>
-              <p className="text-emerald-100/70 dark:text-gray-400 leading-relaxed text-sm max-w-sm mb-10">
+              <p className="text-emerald-100/70 dark:text-gray-400 leading-relaxed text-sm max-w-sm mb-8 md:mb-10">
                 Lembaga pendidikan Islam yang berdedikasi melahirkan generasi pemimpin masa depan yang bertaqwa, beradab, dan berwawasan global.
               </p>
               
-              {/* SOSMED */}
-              <div className="flex gap-4"> 
-                <a href="#" className="w-12 h-12 rounded-xl border border-white/20 dark:border-gray-700 flex items-center justify-center bg-white/5 dark:bg-gray-800 hover:bg-yellow-500 hover:text-emerald-950 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              {/* SOSMED (As-is) */}
+              <div className="flex gap-3 md:gap-4"> 
+                <a href="#" className="w-10 h-10 md:w-12 md:h-12 rounded-xl border border-white/20 dark:border-gray-700 flex items-center justify-center bg-white/5 dark:bg-gray-800 hover:bg-yellow-500 hover:text-emerald-950 transition-all duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
                 </a>
-                <a href="#" className="w-12 h-12 rounded-xl border border-white/20 dark:border-gray-700 flex items-center justify-center bg-white/5 dark:bg-gray-800 hover:bg-yellow-500 hover:text-emerald-950 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+                <a href="#" className="w-10 h-10 md:w-12 md:h-12 rounded-xl border border-white/20 dark:border-gray-700 flex items-center justify-center bg-white/5 dark:bg-gray-800 hover:bg-yellow-500 hover:text-emerald-950 transition-all duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
                 </a>
               </div>
             </div>
 
             {/* Kolom 2: Tautan */}
-            <div className="md:col-span-3 mt-8 md:mt-0">
-              <h4 className="text-yellow-500 font-bold mb-6 uppercase text-xs tracking-widest border-b border-white/10 dark:border-gray-800 pb-3 inline-block">Tautan Cepat</h4>
-              <ul className="space-y-4 text-emerald-100/80 dark:text-gray-400 text-sm font-medium">
+            <div className="md:col-span-3 mt-4 md:mt-0">
+              <h4 className="text-yellow-500 font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest border-b border-white/10 dark:border-gray-800 pb-3 inline-block">Tautan Cepat</h4>
+              <ul className="space-y-3 md:space-y-4 text-emerald-100/80 dark:text-gray-400 text-sm font-medium">
                 <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Tentang Pondok</a></li>
                 <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Pendaftaran Santri</a></li>
                 <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Fasilitas & Lab</a></li>
@@ -102,21 +106,21 @@ const Footer = () => {
             </div>
 
             {/* Kolom 3: Kontak */}
-            <div className="md:col-span-4 mt-8 md:mt-0">
-              <h4 className="text-yellow-500 font-bold mb-6 uppercase text-xs tracking-widest border-b border-white/10 dark:border-gray-800 pb-3 inline-block">Hubungi Kami</h4>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4 p-4 bg-white/5 dark:bg-gray-800/50 rounded-2xl border border-white/10 dark:border-gray-700 hover:border-yellow-500/50 transition-colors">
-                  <Phone size={20} className="text-yellow-500 shrink-0 mt-0.5"/>
+            <div className="md:col-span-4 mt-4 md:mt-0">
+              <h4 className="text-yellow-500 font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest border-b border-white/10 dark:border-gray-800 pb-3 inline-block">Hubungi Kami</h4>
+              <div className="space-y-3 md:space-y-4">
+                <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 dark:bg-gray-800/50 rounded-2xl border border-white/10 dark:border-gray-700 hover:border-yellow-500/50 transition-colors">
+                  <Phone size={18} className="text-yellow-500 shrink-0 mt-0.5 md:w-5 md:h-5"/>
                   <div>
-                    <p className="text-[10px] text-emerald-200/50 dark:text-gray-500 uppercase font-bold mb-1">Telepon</p>
-                    <p className="text-sm font-semibold text-white">+62 812 3456 7890</p>
+                    <p className="text-[9px] md:text-[10px] text-emerald-200/50 dark:text-gray-500 uppercase font-bold mb-0.5 md:mb-1">Telepon</p>
+                    <p className="text-xs md:text-sm font-semibold text-white">+62 812 3456 7890</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 bg-white/5 dark:bg-gray-800/50 rounded-2xl border border-white/10 dark:border-gray-700 hover:border-yellow-500/50 transition-colors">
-                  <Mail size={20} className="text-yellow-500 shrink-0 mt-0.5"/>
+                <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 dark:bg-gray-800/50 rounded-2xl border border-white/10 dark:border-gray-700 hover:border-yellow-500/50 transition-colors">
+                  <Mail size={18} className="text-yellow-500 shrink-0 mt-0.5 md:w-5 md:h-5"/>
                   <div>
-                    <p className="text-[10px] text-emerald-200/50 dark:text-gray-500 uppercase font-bold mb-1">Email</p>
-                    <p className="text-sm font-semibold text-white">info@cendekia.ac.id</p>
+                    <p className="text-[9px] md:text-[10px] text-emerald-200/50 dark:text-gray-500 uppercase font-bold mb-0.5 md:mb-1">Email</p>
+                    <p className="text-xs md:text-sm font-semibold text-white">info@cendekia.ac.id</p>
                   </div>
                 </div>
               </div>
@@ -124,7 +128,7 @@ const Footer = () => {
 
           </div>
 
-          <div className="pt-8 border-t border-white/10 dark:border-gray-800 text-center text-[10px] md:text-xs text-emerald-100/50 dark:text-gray-500 tracking-widest uppercase font-medium">
+          <div className="pt-6 md:pt-8 border-t border-white/10 dark:border-gray-800 text-center text-[9px] md:text-xs text-emerald-100/50 dark:text-gray-500 tracking-widest uppercase font-medium">
             © {new Date().getFullYear()} Pondok Pesantren Cendekia. All Rights Reserved.
           </div>
         </div>
