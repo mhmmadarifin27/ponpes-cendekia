@@ -56,7 +56,7 @@ const Footer = () => {
           <img
             src="/bgfooter3.png" 
             alt="Background Ponpes"
-            className="w-full h-full object-cover object-bottom opacity-40 dark:opacity-20"
+            className="w-full h-full object-cover object-bottom opacity-60 dark:opacity-60"
           />
           {/* Gradient untuk menghilangkan garis potongan atas gambar di HP */}
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-emerald-950/50 to-emerald-950 dark:via-gray-950/50 dark:to-gray-950" />
