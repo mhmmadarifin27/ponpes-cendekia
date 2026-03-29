@@ -26,14 +26,15 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen lg:h-[750px] w-full flex flex-col lg:flex-row items-center px-6 md:px-12 py-24 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500">
       
-      {/* Background Image & Overlay */}
+      {/* --- PERBAIKAN: Background Image & Overlay --- */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1590076175582-40940b43f021?auto=format&fit=crop&q=80&w=1600" 
+          src="bghero.png" 
           alt="Masjid Background" 
-          className="w-full h-full object-cover opacity-20 lg:opacity-30"
+          className="w-full h-full object-cover opacity-100 dark:opacity-100"
         />
-        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950 via-emerald-900/90 dark:from-slate-950 dark:via-slate-900/95 to-transparent" />
+        {/* Gradient disesuaikan ketebalannya agar gambar barumu tetap terekspos dengan indah */}
+        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/70 to-transparent" />
       </div>
 
       {/* --- KONTEN TEKS (Kiri) --- */}
@@ -116,7 +117,7 @@ const Hero = () => {
            </div>
            <button 
             onClick={nextSlide}
-            className="w-12 h-12 bg-white/10 hover:bg-yellow-500 hover:text-emerald-950 transition-all rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md group"
+            className="w-12 h-12 text-white bg-white/10 hover:bg-yellow-500 hover:text-emerald-950 transition-all rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md group"
            >
              <ChevronRight className="group-hover:translate-x-0.5 transition-transform" />
            </button>
