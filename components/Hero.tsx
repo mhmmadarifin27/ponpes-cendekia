@@ -34,7 +34,7 @@ const Hero = () => {
           className="w-full h-full object-cover opacity-100 dark:opacity-100"
         />
         {/* Gradient disesuaikan ketebalannya agar gambar barumu tetap terekspos dengan indah */}
-        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/90 to-transparent" />
       </div>
 
       {/* --- KONTEN TEKS (Kiri) --- */}
