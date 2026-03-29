@@ -31,7 +31,7 @@ const Hero = () => {
         <img 
           src="bghero.png" 
           alt="Masjid Background" 
-          className="w-full h-full object-cover opacity-100 dark:opacity-100"
+          className="w-full h-full object-cover opacity-100 dark:opacity-50"
         />
         {/* Gradient disesuaikan ketebalannya agar gambar barumu tetap terekspos dengan indah */}
         <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/90 to-transparent" />
