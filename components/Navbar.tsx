@@ -124,7 +124,7 @@ const Navbar = () => {
                 <a href="/tentang" className="text-sm text-gray-600 dark:text-gray-400">Tentang Kami</a>
                 <a href="guru" className="text-sm text-gray-600 dark:text-gray-400">Guru Kami</a>
                 <a href="/fasilitas" className="text-sm text-gray-600 dark:text-gray-400">Fasilitas</a>
-                <a href="/kurikulum" className="text-sm text-gray-600 dark:text-gray-400">Kurikulum</a>
+                <a href="/Kurikulum" className="text-sm text-gray-600 dark:text-gray-400">Kurikulum</a>
                 <a href="/program" className="text-sm text-gray-600 dark:text-gray-400">Program & Dokumentasi</a>
               </div>
             </div>
