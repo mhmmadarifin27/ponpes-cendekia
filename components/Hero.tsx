@@ -31,11 +31,10 @@ const Hero = () => {
         <img 
           src="bghero.png" 
           alt="Masjid Background" 
-         // Di dark mode, opacity diturunkan dan diberi efek grayscale agar warna hijau masjid meredup jadi elegan
-          className="w-full h-full object-cover opacity-100 dark:opacity-90 dark:grayscale-[50%] transition-opacity duration-500"
+         className="w-full h-full object-cover opacity-100 dark:opacity-80 dark:grayscale-[50%] transition-opacity duration-500"
         />
-        {/* Gradasi bawah di HP (mobile) akan berakhir di warna solid, sehingga ujung masjid yang terpotong tertutup rapi */}
-        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/80 via-emerald-900/50 to-emerald-900 dark:from-slate-950 dark:via-slate-950/80 dark:to-slate-950 lg:to-transparent lg:dark:to-transparent" />
+        {/* Gradient disesuaikan ketebalannya agar gambar barumu tetap terekspos dengan indah */}
+        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/90 to-transparent" />
       </div>
 
       {/* --- KONTEN TEKS (Kiri) --- */}
