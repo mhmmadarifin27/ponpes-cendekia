@@ -9,6 +9,7 @@ const AllFacilities = () => {
   const [facilities, setFacilities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // --- MENGAMBIL DATA DARI SUPABASE ---
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
@@ -23,14 +24,34 @@ const AllFacilities = () => {
     fetchAll();
   }, []);
 
+  // --- EFEK ANIMASI SCROLL ---
+  useEffect(() => {
+    // Observer baru dijalankan setelah loading selesai agar kartu terdeteksi
+    if (!loading) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            entry.target.classList.remove('opacity-0', 'translate-y-24');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      const hiddenElements = document.querySelectorAll('.scroll-anim');
+      hiddenElements.forEach((el) => observer.observe(el));
+
+      return () => observer.disconnect();
+    }
+  }, [loading]); // Bergantung pada status loading
+
   return (
-    // PERBAIKAN: Mengganti dark:bg-black menjadi dark:bg-gray-900
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500">
       <Navbar />
       
       {/* HEADER HALAMAN */}
-      <section className="pt-32 pb-16 px-6 bg-emerald-50 dark:bg-gray-800/50 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="pt-32 pb-16 px-6 bg-emerald-50 dark:bg-gray-800/50 transition-colors duration-500 overflow-hidden">
+        {/* Tambahan animasi scroll di header */}
+        <div className="max-w-7xl mx-auto text-center scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full mb-6">
             <Building2 size={16} className="text-yellow-600 dark:text-yellow-500" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-yellow-700 dark:text-yellow-500">
@@ -47,7 +68,7 @@ const AllFacilities = () => {
       </section>
 
       {/* GRID SEMUA FASILITAS */}
-      <main className="py-20 px-6 md:px-12 max-w-7xl mx-auto">
+      <main className="py-20 px-6 md:px-12 max-w-7xl mx-auto overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 dark:text-gray-500">
             <Loader2 className="animate-spin text-yellow-500" size={40} />
@@ -55,11 +76,12 @@ const AllFacilities = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {facilities.map((f) => (
+            {facilities.map((f, idx) => (
               <div 
                 key={f.id} 
-                // PERBAIKAN: Background kartu dark:bg-gray-800 agar kontras dengan body dark:bg-gray-900
-                className="group bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
+                // Animasi scroll dengan delay bergantian (staggered)
+                className="group bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 scroll-anim opacity-0 translate-y-24 ease-out"
+                style={{ transitionDelay: `${(idx % 3) * 150}ms` }}
               >
                 <div className="h-64 overflow-hidden relative bg-gray-200 dark:bg-gray-700">
                   <img 
@@ -89,7 +111,7 @@ const AllFacilities = () => {
 
         {/* JIKA DATA KOSONG */}
         {!loading && facilities.length === 0 && (
-          <div className="text-center py-20 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem]">
+          <div className="text-center py-20 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
             <p className="text-gray-400 dark:text-gray-600">Belum ada data fasilitas yang tersedia.</p>
           </div>
         )}
