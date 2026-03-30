@@ -427,7 +427,7 @@ const AdminDashboard = () => {
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Berita (Warta)</h3>
                 </div>
-                <button onClick={() => setIsModalWartaOpen(true)} className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
+                <button onClick={() => setIsModalWartaOpen(true)} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
                   <Plus size={18} /> Tambah Warta
                 </button>
               </div>
@@ -471,8 +471,9 @@ const AdminDashboard = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Galeri Dokumentasi</h3>
-                </div>
-                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
+                
+              </div>
+                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Upload Foto Baru
                 </button>
               </div>
@@ -578,7 +579,7 @@ const AdminDashboard = () => {
                 <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700 outline-none focus:border-blue-500"></textarea>
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Publikasi Berita'}
                 </button>
               </div>
@@ -610,7 +611,7 @@ const AdminDashboard = () => {
                 <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-yellow-500" />
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg flex justify-center items-center gap-2">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Upload Foto'}
                 </button>
               </div>
