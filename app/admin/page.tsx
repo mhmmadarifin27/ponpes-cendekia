@@ -6,13 +6,16 @@ import {
   LayoutGrid, Users, FileText, Building2, Settings, LogOut, 
   Search, Bell, Moon, Sun, TrendingUp, MoreHorizontal, 
   UserPlus, Mail, GraduationCap, Wifi, BookOpen, Coffee,
-  Camera, Plus, Trash2, Edit, Loader2, X, UploadCloud
+  Camera, Plus, Trash2, Edit, Loader2, X, UploadCloud, Menu
 } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // --- STATE MENU MOBILE ---
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // --- STATE FASILITAS ---
   const [facilities, setFacilities] = useState<any[]>([]);
@@ -53,26 +56,29 @@ const AdminDashboard = () => {
     window.location.href = '/login';
   };
 
-// Ganti fungsi uploadImage lama dengan ini
-const uploadImage = async (file: File, folderName: string) => {
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Math.random()}.${fileExt}`;
-  
-  // Karena bucket kamu namanya 'images' dan di dalamnya ada folder
-  // Maka path-nya adalah: folder_name/file_name
-  const filePath = `${folderName}/${fileName}`;
+  // Fungsi untuk ganti tab + otomatis tutup menu di HP
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    setIsMobileSidebarOpen(false);
+  };
 
-  const { error: uploadError } = await supabase.storage
-    .from('images') // SESUAIKAN: Nama bucket kamu di screenshot adalah 'images'
-    .upload(filePath, file);
+  const uploadImage = async (file: File, folderName: string) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    
+    const filePath = `${folderName}/${fileName}`;
 
-  if (uploadError) {
-    throw uploadError;
-  }
+    const { error: uploadError } = await supabase.storage
+      .from('images') 
+      .upload(filePath, file);
 
-  const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-  return data.publicUrl;
-};
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from('images').getPublicUrl(filePath);
+    return data.publicUrl;
+  };
 
   // ==========================================
   // --- FUNGSI CRUD FASILITAS ---
@@ -90,7 +96,6 @@ const uploadImage = async (file: File, folderName: string) => {
     
     try {
       let imageUrl = formDataFasilitas.gambar_url;
-      // Jika ada file yang dipilih, upload dulu
       if (fileFasilitas) {
         imageUrl = await uploadImage(fileFasilitas, 'fasilitas_images');
       }
@@ -173,7 +178,6 @@ const uploadImage = async (file: File, folderName: string) => {
     
     try {
       let imageUrl = formDataDokumentasi.gambar_url;
-      // WAJIB UPLOAD FOTO UNTUK DOKUMENTASI
       if (fileDokumentasi) {
         imageUrl = await uploadImage(fileDokumentasi, 'dokumentasi_images');
       } else if (!imageUrl) {
@@ -205,39 +209,58 @@ const uploadImage = async (file: File, folderName: string) => {
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-gray-900 transition-colors duration-500 font-sans text-gray-800 dark:text-gray-100">
       
+      {/* --- BACKDROP MOBILE SIDEBAR --- */}
+      {/* Muncul gelap di belakang menu saat HP */}
+      {isMobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden animate-in fade-in"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
+
       {/* --- SIDEBAR KIRI --- */}
-      <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-colors duration-500 sticky top-0 h-screen z-40 hidden md:flex">
+      {/* Ditambahkan efek slide-in animasi khusus layar kecil */}
+      <aside className={`
+        fixed md:sticky top-0 left-0 h-screen z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 ease-in-out
+        ${isMobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'}
+      `}>
         
-        {/* Logo */}
-        <div className="h-20 flex items-center gap-3 px-8 border-b border-gray-100 dark:border-gray-700">
-          <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white">
-            <GraduationCap size={20} />
+        {/* Logo & Close Button (Mobile) */}
+        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white">
+              <GraduationCap size={20} />
+            </div>
+            <div>
+              <h1 className="font-bold text-sm leading-tight text-gray-900 dark:text-white tracking-wide">PP Admin</h1>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold tracking-widest">MANAGEMENT</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-bold text-sm leading-tight text-gray-900 dark:text-white tracking-wide">PP Admin</h1>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold tracking-widest">MANAGEMENT</p>
-          </div>
+          {/* Tombol Silang (Hanya di HP) */}
+          <button onClick={() => setIsMobileSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-white">
+            <X size={20} />
+          </button>
         </div>
 
         {/* Menu Navigasi Utama */}
-        <nav className="flex-1 py-6 flex flex-col gap-1 px-4">
-          <button onClick={() => setActiveTab('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'overview' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+        <nav className="flex-1 py-6 flex flex-col gap-1 px-4 overflow-y-auto">
+          <button onClick={() => handleTabClick('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'overview' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <LayoutGrid size={18} /> Overview
           </button>
           
-          <button onClick={() => setActiveTab('ppdb')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'ppdb' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('ppdb')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'ppdb' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <Users size={18} /> Kelola PPDB
           </button>
 
-          <button onClick={() => setActiveTab('berita')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'berita' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('berita')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'berita' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <FileText size={18} /> Manajemen Berita
           </button>
 
-          <button onClick={() => setActiveTab('fasilitas')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'fasilitas' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('fasilitas')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'fasilitas' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <Building2 size={18} /> Kelola Fasilitas
           </button>
 
-          <button onClick={() => setActiveTab('dokumentasi')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'dokumentasi' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('dokumentasi')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'dokumentasi' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <Camera size={18} /> Dokumentasi
           </button>
         </nav>
@@ -257,43 +280,47 @@ const uploadImage = async (file: File, folderName: string) => {
       <main className="flex-1 flex flex-col min-w-0 relative">
         
         {/* HEADER ATAS */}
-        <header className="h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-8 z-10 transition-colors duration-500 sticky top-0">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white capitalize">
-            {activeTab === 'overview' ? 'Dashboard Overview' : activeTab.replace('-', ' ')}
-          </h2>
+        <header className="h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 md:px-8 z-10 transition-colors duration-500 sticky top-0">
+          
+          <div className="flex items-center gap-4">
+            {/* Tombol Garis Tiga (Hamburger) Khusus HP */}
+            <button onClick={() => setIsMobileSidebarOpen(true)} className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+              <Menu size={24} />
+            </button>
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white capitalize">
+              {activeTab === 'overview' ? 'Dashboard Overview' : activeTab.replace('-', ' ')}
+            </h2>
+          </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <div className="hidden lg:flex items-center relative">
               <Search className="absolute left-3 text-gray-400" size={16} />
               <input type="text" placeholder="Search data..." className="pl-10 pr-4 py-2 w-64 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white transition-all"/>
             </div>
-            <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2 md:gap-3 text-gray-500 dark:text-gray-400">
               <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
                 {!mounted ? <Moon size={20} className="opacity-50" /> : theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors relative">
-                <Bell size={20} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
-              </button>
+              
             </div>
-            <div className="flex items-center gap-3 pl-6 border-l border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3 md:pl-6 sm:border-l border-gray-200 dark:border-gray-700">
               <div className="text-right hidden md:block">
                 <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">Admin Utama</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Super Admin</p>
               </div>
-              <img src="https://ui-avatars.com/api/?name=Admin+Utama&background=047857&color=fff" alt="Profile" className="w-9 h-9 rounded-full" />
+              <img src="https://ui-avatars.com/api/?name=Admin+Utama&background=047857&color=fff" alt="Profile" className="w-8 h-8 md:w-9 md:h-9 rounded-full" />
             </div>
           </div>
         </header>
 
         {/* ISI KONTEN */}
-        <div className="p-8 overflow-y-auto pb-24">
+        <div className="p-4 md:p-8 overflow-y-auto pb-24">
           
           {/* TAB: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <div className="p-2.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg"><UserPlus size={20} /></div>
                     <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400"><TrendingUp size={12}/> +12%</span>
@@ -302,7 +329,7 @@ const uploadImage = async (file: File, folderName: string) => {
                   <h3 className="text-3xl font-black text-gray-900 dark:text-white">128</h3>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg"><FileText size={20} /></div>
                   </div>
@@ -310,7 +337,7 @@ const uploadImage = async (file: File, folderName: string) => {
                   <h3 className="text-3xl font-black text-gray-900 dark:text-white">45</h3>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <div className="p-2.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-500 rounded-lg"><Building2 size={20} /></div>
                   </div>
@@ -351,11 +378,11 @@ const uploadImage = async (file: File, folderName: string) => {
           {/* TAB: FASILITAS */}
           {activeTab === 'fasilitas' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Fasilitas</h3>
                 </div>
-                <button onClick={() => setIsModalFasilitasOpen(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm">
+                <button onClick={() => setIsModalFasilitasOpen(true)} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Tambah Fasilitas
                 </button>
               </div>
@@ -365,7 +392,7 @@ const uploadImage = async (file: File, folderName: string) => {
                   <div className="flex justify-center items-center py-20 text-gray-400"><Loader2 className="animate-spin mr-2" /></div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse whitespace-nowrap">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           <th className="p-4 font-semibold w-24">Foto</th>
@@ -376,12 +403,12 @@ const uploadImage = async (file: File, folderName: string) => {
                       </thead>
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         {facilities.map((f) => (
-                            <tr key={f.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <tr key={f.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                               <td className="p-4"><img src={f.gambar_url || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white">{f.nama}</td>
-                              <td className="p-4"><span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold">{f.kategori}</span></td>
+                              <td className="p-4"><span className="px-3 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-full text-xs font-bold">{f.kategori}</span></td>
                               <td className="p-4 text-center">
-                                <button onClick={() => handleDeleteFasilitas(f.id)} className="text-red-500 hover:text-red-700"><Trash2 size={18} /></button>
+                                <button onClick={() => handleDeleteFasilitas(f.id)} className="text-red-500 hover:text-red-700 transition-colors hover:scale-110"><Trash2 size={18} /></button>
                               </td>
                             </tr>
                         ))}
@@ -396,11 +423,11 @@ const uploadImage = async (file: File, folderName: string) => {
           {/* TAB: WARTA (BERITA) */}
           {activeTab === 'berita' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Berita (Warta)</h3>
                 </div>
-                <button onClick={() => setIsModalWartaOpen(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm">
+                <button onClick={() => setIsModalWartaOpen(true)} className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Tambah Warta
                 </button>
               </div>
@@ -410,23 +437,23 @@ const uploadImage = async (file: File, folderName: string) => {
                   <div className="flex justify-center items-center py-20 text-gray-400"><Loader2 className="animate-spin mr-2" /></div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse whitespace-nowrap">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           <th className="p-4 font-semibold w-24">Gambar</th>
-                          <th className="p-4 font-semibold">Judul Berita</th>
+                          <th className="p-4 font-semibold min-w-[200px]">Judul Berita</th>
                           <th className="p-4 font-semibold">Penulis</th>
                           <th className="p-4 font-semibold text-center w-24">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         {warta.map((w) => (
-                            <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                               <td className="p-4"><img src={w.gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md" /></td>
-                              <td className="p-4 font-semibold text-gray-900 dark:text-white line-clamp-2 mt-3 border-none">{w.judul}</td>
+                              <td className="p-4 font-semibold text-gray-900 dark:text-white border-none whitespace-normal"><p className="line-clamp-2">{w.judul}</p></td>
                               <td className="p-4 text-gray-500 dark:text-gray-400">{w.penulis}</td>
                               <td className="p-4 text-center">
-                                <button onClick={() => handleDeleteWarta(w.id)} className="text-red-500 hover:text-red-700"><Trash2 size={18} /></button>
+                                <button onClick={() => handleDeleteWarta(w.id)} className="text-red-500 hover:text-red-700 transition-colors hover:scale-110"><Trash2 size={18} /></button>
                               </td>
                             </tr>
                         ))}
@@ -441,11 +468,11 @@ const uploadImage = async (file: File, folderName: string) => {
           {/* TAB: DOKUMENTASI */}
           {activeTab === 'dokumentasi' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Galeri Dokumentasi</h3>
                 </div>
-                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm">
+                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Upload Foto Baru
                 </button>
               </div>
@@ -453,13 +480,13 @@ const uploadImage = async (file: File, folderName: string) => {
               {isLoadingDokumentasi ? (
                   <div className="flex justify-center items-center py-20 text-gray-400"><Loader2 className="animate-spin mr-2" /></div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {dokumentasi.map((d) => (
-                    <div key={d.id} className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                      <img src={d.gambar_url} alt="Dokumentasi" className="w-full h-40 object-cover" />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                    <div key={d.id} className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:-translate-y-1 transition-transform duration-300">
+                      <img src={d.gambar_url} alt="Dokumentasi" className="w-full h-48 sm:h-40 object-cover" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
                         <h4 className="text-white text-xs font-bold truncate">{d.judul}</h4>
-                        <button onClick={() => handleDeleteDokumentasi(d.id)} className="absolute top-2 right-2 bg-red-500 p-1.5 rounded-lg text-white hover:bg-red-600"><Trash2 size={14}/></button>
+                        <button onClick={() => handleDeleteDokumentasi(d.id)} className="absolute top-2 right-2 bg-red-500 p-1.5 rounded-lg text-white hover:bg-red-600 hover:scale-110 transition-transform"><Trash2 size={14}/></button>
                       </div>
                     </div>
                   ))}
@@ -483,37 +510,36 @@ const uploadImage = async (file: File, folderName: string) => {
       {/* MODAL TAMBAH FASILITAS */}
       {/* ========================================================= */}
       {isModalFasilitasOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-gray-800 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tambah Fasilitas Baru</h3>
-              <button onClick={() => setIsModalFasilitasOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+              <button onClick={() => setIsModalFasilitasOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
             </div>
-            <form onSubmit={handleSaveFasilitas} className="p-6 space-y-4">
+            <form onSubmit={handleSaveFasilitas} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Nama Fasilitas *</label>
-                <input required type="text" value={formDataFasilitas.nama} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, nama: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm" />
+                <input required type="text" value={formDataFasilitas.nama} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, nama: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Kategori</label>
-                <select value={formDataFasilitas.kategori} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, kategori: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm">
+                <select value={formDataFasilitas.kategori} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, kategori: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500">
                   <option value="">Pilih Kategori</option>
                   <option value="Ibadah">Ibadah</option>
                   <option value="Akademik">Akademik</option>
                   <option value="Asrama">Asrama</option>
                 </select>
               </div>
-              {/* UPLOAD FILE */}
               <div>
                 <label className="block text-sm font-medium mb-1">Upload Foto Fasilitas</label>
                 <input type="file" accept="image/*" onChange={(e) => setFileFasilitas(e.target.files ? e.target.files[0] : null)} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-sm" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Deskripsi Singkat</label>
-                <textarea rows={3} value={formDataFasilitas.deskripsi} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, deskripsi: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-sm resize-none"></textarea>
+                <textarea rows={3} value={formDataFasilitas.deskripsi} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, deskripsi: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-sm resize-none outline-none focus:border-emerald-500"></textarea>
               </div>
               <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex items-center gap-2">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Simpan Fasilitas'}
                 </button>
               </div>
@@ -526,21 +552,21 @@ const uploadImage = async (file: File, folderName: string) => {
       {/* MODAL TAMBAH WARTA */}
       {/* ========================================================= */}
       {isModalWartaOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-gray-800 w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Publikasi Warta / Berita</h3>
-              <button onClick={() => setIsModalWartaOpen(false)} className="text-gray-400"><X size={20} /></button>
+              <button onClick={() => setIsModalWartaOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
             </div>
-            <form onSubmit={handleSaveWarta} className="p-6 space-y-4">
+            <form onSubmit={handleSaveWarta} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Judul Berita *</label>
-                <input required type="text" value={formDataWarta.judul} onChange={(e) => setFormDataWarta({...formDataWarta, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm" />
+                <input required type="text" value={formDataWarta.judul} onChange={(e) => setFormDataWarta({...formDataWarta, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-500" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Penulis</label>
-                  <input type="text" value={formDataWarta.penulis} onChange={(e) => setFormDataWarta({...formDataWarta, penulis: e.target.value})} placeholder="Admin" className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700" />
+                  <input type="text" value={formDataWarta.penulis} onChange={(e) => setFormDataWarta({...formDataWarta, penulis: e.target.value})} placeholder="Admin" className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Upload Gambar Cover</label>
@@ -549,10 +575,10 @@ const uploadImage = async (file: File, folderName: string) => {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Isi Berita</label>
-                <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700"></textarea>
+                <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700 outline-none focus:border-blue-500"></textarea>
               </div>
-              <div className="pt-4 flex justify-end">
-                <button type="submit" disabled={isSaving} className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-2">
+              <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Publikasi Berita'}
                 </button>
               </div>
@@ -565,26 +591,26 @@ const uploadImage = async (file: File, folderName: string) => {
       {/* MODAL UPLOAD DOKUMENTASI */}
       {/* ========================================================= */}
       {isModalDokumentasiOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-gray-800 w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Upload Foto Galeri</h3>
-              <button onClick={() => setIsModalDokumentasiOpen(false)} className="text-gray-400"><X size={20} /></button>
+              <button onClick={() => setIsModalDokumentasiOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
             </div>
-            <form onSubmit={handleSaveDokumentasi} className="p-6 space-y-4">
+            <form onSubmit={handleSaveDokumentasi} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Upload Foto *</label>
                 <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
                   <UploadCloud size={32} className="text-gray-400 mb-2" />
-                  <input required type="file" accept="image/*" onChange={(e) => setFileDokumentasi(e.target.files ? e.target.files[0] : null)} className="text-sm" />
+                  <input required type="file" accept="image/*" onChange={(e) => setFileDokumentasi(e.target.files ? e.target.files[0] : null)} className="text-sm w-full" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Judul / Keterangan Foto *</label>
-                <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm" />
+                <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-yellow-500" />
               </div>
-              <div className="pt-4 flex justify-end">
-                <button type="submit" disabled={isSaving} className="px-5 py-2.5 text-sm font-bold text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg flex items-center gap-2">
+              <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Upload Foto'}
                 </button>
               </div>
