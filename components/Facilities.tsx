@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Building2, Loader2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -7,6 +7,9 @@ import Link from 'next/link';
 const Facilities = () => {
   const [facilities, setFacilities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Ref untuk container slider di HP
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchFacilities = async () => {
@@ -24,6 +27,44 @@ const Facilities = () => {
     fetchFacilities();
   }, []);
 
+  // --- EFEK ANIMASI SCROLL MUNCUL ---
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-24');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    const hiddenElements = document.querySelectorAll('.scroll-anim-fasilitas');
+    hiddenElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [loading]); // Trigger ulang setelah loading selesai
+
+  // --- EFEK AUTO-SCROLL KHUSUS HP ---
+  useEffect(() => {
+    // Berjalan setiap 3 detik
+    const autoScrollInterval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        
+        // Cek jika slider sudah mentok di kanan (ditambah toleransi 10px)
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          // Balik ke awal
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Geser ke kanan sejauh 80% dari lebar layar
+          scrollRef.current.scrollBy({ left: clientWidth * 0.8, behavior: 'smooth' });
+        }
+      }
+    }, 3000); // 3000 ms = 3 detik
+
+    return () => clearInterval(autoScrollInterval);
+  }, [loading]);
+
   // Konfigurasi Grid Mutlak (Sesuai Referensi Gambar Figma)
   const getFigmaBentoClass = (index: number) => {
     if (index === 0) return "md:col-span-2 md:row-span-2"; // Kiri: Kotak Besar
@@ -31,8 +72,7 @@ const Facilities = () => {
   };
 
   return (
-    // PERBAIKAN: Mengganti dark:bg-black menjadi dark:bg-gray-900 agar lebih soft
-    <section id="fasilitas" className="py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-gray-900 transition-colors duration-500 overflow-hidden relative">
+    <section id="fasilitas" className="py-24 md:py-32 px-0 sm:px-6 md:px-12 bg-white dark:bg-gray-900 transition-colors duration-500 overflow-hidden relative">
       
       {/* Background Decor */}
       <div className="absolute top-0 right-[-10%] w-[30%] h-[30%] bg-emerald-800/10 dark:bg-emerald-900/20 rounded-full blur-[120px] z-0" />
@@ -41,7 +81,7 @@ const Facilities = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* HEADER SECTION */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 border-b border-gray-100 dark:border-gray-800 pb-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 border-b border-gray-100 dark:border-gray-800 pb-10 px-6 sm:px-0 scroll-anim-fasilitas opacity-0 translate-y-24 transition-all duration-1000 ease-out">
           <div className="max-w-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl border border-emerald-100 dark:border-emerald-800">
@@ -60,19 +100,26 @@ const Facilities = () => {
           </p>
         </div>
 
-        {/* --- GRID UTAMA (SANGAT MIRIP FIGMA) --- */}
+        {/* --- GRID UTAMA (BENTO GRID PC & AUTO-SCROLL HP) --- */}
         {loading ? (
           <div className="py-20 flex justify-center items-center gap-3 text-gray-400">
             <Loader2 className="animate-spin" /> Menyiapkan Galeri...
           </div>
         ) : facilities.length > 0 ? (
-          // Pembagian 4 Kolom, 2 Baris
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[250px]">
-            {/* PERBAIKAN: Memastikan (mengunci) hanya 5 item yang dilooping */}
+          
+          /* CONTAINER SLIDER/GRID */
+          /* Di HP: flex overflow-x-auto, Di PC: grid md:grid-cols-4 */
+          <div 
+            ref={scrollRef}
+            className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 md:auto-rows-[250px] overflow-x-auto md:overflow-visible snap-x snap-mandatory hide-scrollbar px-6 sm:px-0 pb-8 md:pb-0"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {facilities.slice(0, 5).map((f, index) => (
               <div 
                 key={f.id} 
-                className={`group relative rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 ${getFigmaBentoClass(index)}`}
+                // Animasi scroll-in dengan delay bergantian
+                className={`scroll-anim-fasilitas opacity-0 translate-y-24 transition-all duration-1000 ease-out group relative rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 w-[85vw] md:w-auto h-[350px] md:h-full snap-center ${getFigmaBentoClass(index)}`}
+                style={{ transitionDelay: `${index * 150}ms` }}
               >
                 {/* GAMBAR */}
                 <img 
@@ -81,7 +128,7 @@ const Facilities = () => {
                   alt={f.nama} 
                 />
 
-                {/* OVERLAY HITAM (Supaya teks terbaca saat di-hover) */}
+                {/* OVERLAY HITAM */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* KONTEN MUNCUL SAAT HOVER */}
@@ -96,7 +143,7 @@ const Facilities = () => {
                     </p>
                   )}
                   
-                  {/* TOMBOL CEK SELENGKAPNYA */}
+                  {/* TOMBOL CEK SELENGKAPNYA (MENGARAH KE /FASILITAS) */}
                   <Link 
                     href="/fasilitas" 
                     className="mt-2 inline-flex items-center gap-2 bg-yellow-500 text-emerald-950 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-yellow-400 transition-colors shadow-lg"
@@ -108,14 +155,14 @@ const Facilities = () => {
             ))}
           </div>
         ) : (
-          <div className="p-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center text-gray-400">
+          <div className="mx-6 sm:mx-0 p-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center text-gray-400">
              Belum ada data fasilitas.
           </div>
         )}
 
         {/* TOMBOL LIHAT SEMUA */}
-        <div className="mt-16 text-center">
-            <Link href="/fasilitas" className="inline-flex items-center gap-3 bg-gray-100 dark:bg-gray-800 text-emerald-900 dark:text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-900 hover:text-white dark:hover:bg-yellow-500 dark:hover:text-emerald-950 transition-all duration-300">
+        <div className="mt-8 md:mt-16 text-center scroll-anim-fasilitas opacity-0 translate-y-24 transition-all duration-1000 delay-[600ms] ease-out px-6">
+            <Link href="/fasilitas" className="inline-flex items-center justify-center w-full md:w-auto gap-3 bg-gray-100 dark:bg-gray-800 text-emerald-900 dark:text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-900 hover:text-white dark:hover:bg-yellow-500 dark:hover:text-emerald-950 transition-all duration-300 active:scale-95 shadow-sm">
                 Jelajahi Semua Fasilitas
                 <ArrowRight size={20} />
             </Link>

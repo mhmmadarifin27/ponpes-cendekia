@@ -69,13 +69,13 @@ const Navbar = () => {
                 <a href="/tentang" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Tentang Kami</a>
                 <a href="guru" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Guru Kami</a>
                 <a href="/fasilitas" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Fasilitas</a>
-                <a href="kurikulum" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Kurikulum</a>
+                <a href="Kurikulum" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Kurikulum</a>
                 <a href="program" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm font-medium transition-colors">Program & Dokumentasi</a>
               </div>
             )}
           </div>
 
-          <a href="/ppdb" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-emerald-800 dark:text-emerald-300 font-semibold underline underline-offset-4">Penerimaan Santri Baru</a>
+          <a href="/penerimaan" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-emerald-800 dark:text-emerald-300 font-semibold underline underline-offset-4">Penerimaan Santri Baru</a>
           <a href="/warta" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Berita</a>
           <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Hubungi Kami</a>
         </div>
@@ -129,7 +129,7 @@ const Navbar = () => {
               </div>
             </div>
             
-            <a href="/ppdb" className="py-3 text-emerald-800 dark:text-emerald-400 font-semibold border-b border-gray-100 dark:border-gray-700">Penerimaan Santri Baru</a>
+            <a href="/penerimaan" className="py-3 text-emerald-800 dark:text-emerald-400 font-semibold border-b border-gray-100 dark:border-gray-700">Penerimaan Santri Baru</a>
             <a href="/warta" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Berita</a>
             <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium">Hubungi Kami</a>
           </div>

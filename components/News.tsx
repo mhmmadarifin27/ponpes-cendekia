@@ -8,6 +8,7 @@ const Warta = () => {
   const [warta, setWarta] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // --- AMBIL DATA DARI SUPABASE ---
   useEffect(() => {
     const fetchWarta = async () => {
       setLoading(true);
@@ -24,6 +25,23 @@ const Warta = () => {
     fetchWarta();
   }, []);
 
+  // --- EFEK ANIMASI SCROLL ---
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-24');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    const hiddenElements = document.querySelectorAll('.scroll-anim-warta');
+    hiddenElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [loading]); // Bergantung pada loading agar dipicu setelah data beritanya ada
+
   // Format: "15 Oktober 2023" (Untuk Featured)
   const formatDateFull = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -37,11 +55,12 @@ const Warta = () => {
   };
 
   return (
-    <section id="warta" className="py-24 md:py-32 px-6 md:px-12 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+    <section id="warta" className="py-24 md:py-32 px-6 md:px-12 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         
         {/* HEADER SECTION (Sesuai Desain) */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+        {/* Ditambahkan animasi melayang dari bawah */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 scroll-anim-warta opacity-0 translate-y-24 transition-all duration-1000 ease-out">
           <div>
             <p className="text-yellow-500 dark:text-yellow-600 font-bold uppercase tracking-[0.2em] text-xs mb-3">
               INFORMASI TERKINI
@@ -69,7 +88,8 @@ const Warta = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
             
             {/* 1. FEATURED ARTICLE (KIRI - Porsi Besar) */}
-            <div className="lg:col-span-7 flex flex-col group cursor-pointer">
+            {/* Ditambahkan animasi dengan delay 200ms */}
+            <div className="lg:col-span-7 flex flex-col group cursor-pointer scroll-anim-warta opacity-0 translate-y-24 transition-all duration-1000 delay-200 ease-out">
               <Link href={`/warta/${warta[0].id}`}>
                 <div className="relative rounded-3xl overflow-hidden bg-gray-200 dark:bg-gray-800 mb-6 border border-gray-100 dark:border-gray-800 shadow-sm">
                   <img 
@@ -97,8 +117,14 @@ const Warta = () => {
 
             {/* 2. LIST ARTICLES (KANAN - Porsi Kecil Berjejer) */}
             <div className="lg:col-span-5 flex flex-col gap-6 md:gap-8">
-              {warta.slice(1, 5).map((item) => (
-                <Link href={`/warta/${item.id}`} key={item.id} className="flex gap-5 md:gap-6 group cursor-pointer items-start">
+              {warta.slice(1, 5).map((item, index) => (
+                <Link 
+                  href={`/warta/${item.id}`} 
+                  key={item.id} 
+                  // Animasi beruntun berdasarkan index agar munculnya satu per satu dari atas ke bawah
+                  className="flex gap-5 md:gap-6 group cursor-pointer items-start scroll-anim-warta opacity-0 translate-y-24 transition-all duration-1000 ease-out"
+                  style={{ transitionDelay: `${(index * 150) + 300}ms` }}
+                >
                   
                   {/* Thumbnail */}
                   <div className="shrink-0 rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-800">
@@ -125,7 +151,7 @@ const Warta = () => {
 
           </div>
         ) : (
-          <div className="py-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center text-gray-400 flex flex-col items-center">
+          <div className="py-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center text-gray-400 flex flex-col items-center scroll-anim-warta opacity-0 translate-y-24 transition-all duration-1000 ease-out">
             <Newspaper size={40} className="mb-4 opacity-50" />
             <p>Belum ada berita yang dipublikasikan.</p>
           </div>
