@@ -24,26 +24,27 @@ const Hero = () => {
   }, [activeIndex]);
 
   return (
-    <section className="relative min-h-screen lg:h-[750px] w-full flex flex-col lg:flex-row items-center px-6 md:px-12 py-24 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500">
+    // PERBAIKAN: Menggunakan flex-col-reverse untuk membalik posisi di HP, dan penyesuaian padding (pt-32) agar aman dari navbar
+    <section className="relative min-h-screen lg:h-[750px] w-full flex flex-col-reverse lg:flex-row items-center px-6 md:px-12 pt-32 pb-16 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500 gap-12 lg:gap-0">
       
-      {/* --- PERBAIKAN: Background Image & Overlay --- */}
+      {/* --- Background Image & Overlay --- */}
       <div className="absolute inset-0 z-0">
         <img 
           src="bghero.png" 
           alt="Masjid Background" 
-         className="w-full h-full object-cover opacity-100 dark:opacity-80 dark:grayscale-[50%] transition-opacity duration-500"
+          className="w-full h-full object-cover opacity-100 dark:opacity-80 dark:grayscale-[50%] transition-opacity duration-500"
         />
         {/* Gradient disesuaikan ketebalannya agar gambar barumu tetap terekspos dengan indah */}
         <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/90 to-transparent" />
       </div>
 
-      {/* --- KONTEN TEKS (Kiri) --- */}
+      {/* --- KONTEN TEKS (Di HP jadi di bawah, di Laptop di kiri) --- */}
       <div className="relative z-10 w-full lg:w-3/5 text-white animate-in fade-in slide-in-from-left-8 duration-1000">
         <span className="inline-block px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6 border border-yellow-500/30 shadow-sm">
           Pondok Pesantren Cendekia
         </span>
         
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+        <h2 className="text-4xl md:text-5xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
           Mencetak Generasi <br /> 
           <span className="text-yellow-500 drop-shadow-sm">Qur'ani & Beradab</span>
         </h2>
@@ -52,7 +53,7 @@ const Hero = () => {
           Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 lg:mb-0">
+        <div className="flex flex-col sm:flex-row gap-4 mb-4 lg:mb-0">
           <button className="bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/20 w-full sm:w-auto">
             Daftar Sekarang <ArrowRight size={20} />
           </button>
@@ -66,8 +67,8 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* --- AKSEN STACKED SLIDER (Kanan) --- */}
-      <div className="relative z-10 w-full lg:w-2/5 flex flex-col items-center justify-center mt-10 lg:mt-0 h-[400px] lg:h-[500px]">
+      {/* --- AKSEN STACKED SLIDER (Di HP jadi di atas, di Laptop di kanan) --- */}
+      <div className="relative z-10 w-full lg:w-2/5 flex flex-col items-center justify-center h-[380px] lg:h-[500px]">
         
         {/* Container Utama Slider */}
         <div className="relative w-[280px] h-[360px] lg:w-[350px] lg:h-[450px] perspective-1000">
@@ -105,8 +106,8 @@ const Hero = () => {
           })}
         </div>
 
-        {/* Tombol Next Manual & Indikator */}
-        <div className="flex items-center gap-6 mt-12 animate-in fade-in duration-1000">
+        {/* Tombol Next Manual & Indikator (Disembunyikan margin top-nya agar lebih rapat di HP) */}
+        <div className="flex items-center gap-6 mt-8 lg:mt-12 animate-in fade-in duration-1000">
            <div className="flex gap-2">
               {photos.map((_, i) => (
                 <div 
