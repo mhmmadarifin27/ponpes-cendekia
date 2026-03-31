@@ -53,14 +53,14 @@ const Navbar = () => {
 
         {/* Menu Links (Desktop) */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-emerald-900 dark:text-gray-200 transition-colors">
-          <a href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Beranda</a>
+          <a href="/" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Beranda</a>
           
           <div 
             className="relative group cursor-pointer"
             onMouseEnter={() => setIsProfileOpen(true)}
             onMouseLeave={() => setIsProfileOpen(false)}
           >
-            <div className="flex items-center gap-1 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors py-2">
+            <div className="flex items-center gap-1 hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors py-2">
               Profil <ChevronDown size={16} className={`transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
             </div>
             
@@ -75,9 +75,9 @@ const Navbar = () => {
             )}
           </div>
 
-          <a href="/penerimaan" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-emerald-800 dark:text-emerald-300 font-semibold underline underline-offset-4">Penerimaan Santri Baru</a>
-          <a href="/warta" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Berita</a>
-          <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Hubungi Kami</a>
+          <a href="/penerimaan" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Penerimaan Santri Baru</a>
+          <a href="/warta" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Berita</a>
+          <a href="#" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Hubungi Kami</a>
         </div>
 
         {/* Fitur Kanan */}

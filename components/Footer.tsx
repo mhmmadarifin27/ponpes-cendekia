@@ -95,10 +95,10 @@ const Footer = () => {
             <div className="md:col-span-3 mt-4 md:mt-0">
               <h4 className="text-yellow-500 font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest border-b border-white/10 dark:border-gray-800 pb-3 inline-block">Tautan Cepat</h4>
               <ul className="space-y-3 md:space-y-4 text-emerald-100/80 dark:text-gray-400 text-sm font-medium">
-                <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Tentang Pondok</a></li>
-                <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Pendaftaran Santri</a></li>
-                <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Fasilitas & Lab</a></li>
-                <li><a href="#" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Kurikulum</a></li>
+                <li><a href="tentang" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Tentang kami</a></li>
+                <li><a href="penerimaan" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Penerimaan Santri baru</a></li>
+                <li><a href="fasilitas" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Fasilitas & Lab</a></li>
+                <li><a href="Kurikulum" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Kurikulum</a></li>
               </ul>
             </div>
 
@@ -110,7 +110,7 @@ const Footer = () => {
                   <Phone size={18} className="text-yellow-500 shrink-0 mt-0.5 md:w-5 md:h-5"/>
                   <div>
                     <p className="text-[9px] md:text-[10px] text-emerald-200/50 dark:text-gray-500 uppercase font-bold mb-0.5 md:mb-1">Telepon</p>
-                    <p className="text-xs md:text-sm font-semibold text-white">+62 812 3456 7890</p>
+                    <p className="text-xs md:text-sm font-semibold text-white">+6285267962898</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 dark:bg-gray-800/50 rounded-2xl border border-white/10 dark:border-gray-700 hover:border-yellow-500/50 transition-colors">

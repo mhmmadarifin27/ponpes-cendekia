@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from 'react';
 import { Quote } from 'lucide-react';
+import Link from 'next/link';
 
 const Welcome = () => {
 
@@ -85,10 +86,14 @@ const Welcome = () => {
             
             {/* Tombol */}
             {/* Animasi Tombol di akhir (delay-600) */}
-            <button className="group mt-8 text-emerald-800 dark:text-yellow-400 font-bold flex items-center gap-2 hover:gap-4 transition-all duration-300 scroll-anim-welcome opacity-0 translate-y-24 transition-all duration-1000 delay-[600ms] ease-out">
-              Baca Selengkapnya 
-              <span className="text-xl group-hover:translate-x-2 transition-transform">→</span>
-            </button>
+           <Link 
+  href="/tentang" 
+  className="group mt-8 text-emerald-800 dark:text-yellow-400 font-bold flex items-center gap-2 hover:gap-4 transition-all duration-300 scroll-anim-welcome opacity-0 translate-y-24 transition-all duration-1000 delay-[600ms] ease-out"
+>
+  Baca Selengkapnya 
+  <span className="text-xl group-hover:translate-x-2 transition-transform">→</span>
+</Link>
+
           </div>
         </div>
 

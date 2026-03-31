@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Play, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 const Hero = () => {
   // Data foto galeri
@@ -121,17 +122,29 @@ const Hero = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 mb-16 lg:mb-0 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[500ms] fill-mode-both">
-          <button className="bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/20 w-full sm:w-auto">
-            Daftar Sekarang <ArrowRight size={20} />
-          </button>
-          
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition-all w-full sm:w-auto">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <Play size={16} fill="white" />
-            </div>
-            Video Profil
-          </button>
-        </div>
+  
+  {/* TOMBOL 1: DAFTAR SEKARANG (Mengarah ke halaman /penerimaan) */}
+  <Link 
+    href="/penerimaan" 
+    className="bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/20 w-full sm:w-auto"
+  >
+    Daftar Sekarang <ArrowRight size={20} />
+  </Link>
+  
+  {/* TOMBOL 2: VIDEO PROFIL (Mengarah ke YouTube/Google Drive) */}
+  <a 
+    href="https://youtube.com/link-video-ponpes-kamu-disini" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition-all w-full sm:w-auto"
+  >
+    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+      <Play size={16} fill="white" />
+    </div>
+    Video Profil
+  </a>
+
+</div>
       </div>
 
       {/* --- AKSEN STACKED SLIDER (KHUSUS DESKTOP - Kanan) --- */}
