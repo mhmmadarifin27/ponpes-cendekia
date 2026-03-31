@@ -63,7 +63,7 @@ const Hero = () => {
       </div>
 
       {/* Tombol Next Manual & Indikator */}
-      <div className="flex items-center gap-6 mt-12 animate-in fade-in duration-1000">
+      <div className="flex items-center gap-6 mt-12">
           <div className="flex gap-2">
             {photos.map((_, i) => (
               <div 
@@ -89,9 +89,9 @@ const Hero = () => {
     <section className="relative min-h-screen lg:h-[750px] w-full flex flex-col lg:flex-row items-center px-6 md:px-12 py-24 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500">
       
       {/* --- BACKGROUND IMAGE & OVERLAY --- */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 animate-in fade-in duration-1000">
         <img 
-          src="bghero.png" 
+          src="bgfooter4.png" 
           alt="Masjid Background" 
          className="w-full h-full object-cover opacity-100 dark:opacity-80 dark:grayscale-[50%] transition-opacity duration-500"
         />
@@ -99,27 +99,28 @@ const Hero = () => {
       </div>
 
       {/* --- KONTEN TEKS & SLIDER MOBILE (Kiri) --- */}
-      <div className="relative z-10 w-full lg:w-3/5 text-white animate-in fade-in slide-in-from-left-8 duration-1000">
-        <span className="inline-block px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6 border border-yellow-500/30 shadow-sm">
+      <div className="relative z-10 w-full lg:w-3/5 text-white">
+        
+        <span className="inline-block px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6 border border-yellow-500/30 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
           Pondok Pesantren Cendekia
         </span>
         
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+        <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
           Mencetak Generasi <br /> 
           <span className="text-yellow-500 drop-shadow-sm">Qur'ani & Beradab</span>
         </h2>
 
         {/* --- AKSEN STACKED SLIDER (KHUSUS MOBILE - MUNCUL DI TENGAH) --- */}
-        {/* lg:hidden akan menyembunyikan ini saat di layar Laptop/PC */}
-        <div className="flex lg:hidden relative w-full flex-col items-center justify-center my-10 h-[400px]">
+        {/* Slider mobile muncul dengan animasi beruntun (delay 300) */}
+        <div className="flex lg:hidden relative w-full flex-col items-center justify-center my-10 h-[400px] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-both">
           {sliderContent}
         </div>
         
-        <p className="text-base md:text-lg text-emerald-50/70 dark:text-slate-400 mb-10 leading-relaxed max-w-xl font-medium">
+        <p className="text-base md:text-lg text-emerald-50/70 dark:text-slate-400 mb-10 leading-relaxed max-w-xl font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
           Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 lg:mb-0">
+        <div className="flex flex-col sm:flex-row gap-4 mb-16 lg:mb-0 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[500ms] fill-mode-both">
           <button className="bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/20 w-full sm:w-auto">
             Daftar Sekarang <ArrowRight size={20} />
           </button>
@@ -134,8 +135,8 @@ const Hero = () => {
       </div>
 
       {/* --- AKSEN STACKED SLIDER (KHUSUS DESKTOP - Kanan) --- */}
-      {/* hidden lg:flex akan menyembunyikan ini saat di layar HP */}
-      <div className="hidden lg:flex relative z-10 w-full lg:w-2/5 flex-col items-center justify-center mt-10 lg:mt-0 h-[500px]">
+      {/* Slider PC muncul menyamping dari kanan (slide-in-from-right-12) dengan delay 500 */}
+      <div className="hidden lg:flex relative z-10 w-full lg:w-2/5 flex-col items-center justify-center mt-10 lg:mt-0 h-[500px] animate-in fade-in slide-in-from-right-12 duration-1000 delay-[500ms] fill-mode-both">
         {sliderContent}
       </div>
 
