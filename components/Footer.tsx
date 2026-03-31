@@ -95,6 +95,7 @@ const Footer = () => {
             <div className="md:col-span-3 mt-4 md:mt-0">
               <h4 className="text-yellow-500 font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest border-b border-white/10 dark:border-gray-800 pb-3 inline-block">Tautan Cepat</h4>
               <ul className="space-y-3 md:space-y-4 text-emerald-100/80 dark:text-gray-400 text-sm font-medium">
+              <li><a href="/" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Beranda</a></li>
                 <li><a href="tentang" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Tentang kami</a></li>
                 <li><a href="penerimaan" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Penerimaan Santri baru</a></li>
                 <li><a href="fasilitas" className="hover:text-yellow-400 transition-colors flex items-center gap-2"><span>›</span> Fasilitas & Lab</a></li>
