@@ -129,7 +129,7 @@ const Navbar = () => {
               </div>
             </div>
             
-            <a href="/penerimaan" className="py-3 text-emerald-800 dark:text-emerald-400 font-semibold border-b border-gray-100 dark:border-gray-700">Penerimaan Santri Baru</a>
+            <a href="/penerimaan" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Penerimaan Santri Baru</a>
             <a href="/warta" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Berita</a>
             <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium">Hubungi Kami</a>
           </div>

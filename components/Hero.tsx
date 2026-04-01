@@ -117,7 +117,7 @@ const Hero = () => {
           {sliderContent}
         </div>
         
-        <p className="text-base md:text-lg text-emerald-50/70 dark:text-slate-400 mb-10 leading-relaxed max-w-xl font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
+        <p className="text-base md:text-lg text-emerald-10/90 dark:text-slate-100 mb-10 leading-relaxed max-w-xl font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
           Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning.
         </p>
         

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 // Pastikan path ThemeProvider ini benar sesuai letak folder kamu
 import { ThemeProvider } from "../components/ThemeProvider"; 
+import { Analytics } from "@vercel/analytics/react"; // <-- 1. Import Vercel Analytics
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col overflow-x-hidden w-full">
         <ThemeProvider>
           {children}
+          {/* 2. Taruh komponen Analytics di bawah children */}
+          <Analytics /> 
         </ThemeProvider>
       </body>
     </html>

@@ -3,10 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { supabase } from '@/lib/supabase';
 import { 
-  LayoutGrid, Users, FileText, Building2, Settings, LogOut, 
-  Search, Bell, Moon, Sun, TrendingUp, MoreHorizontal, 
-  UserPlus, Mail, GraduationCap, Wifi, BookOpen, Coffee,
-  Camera, Plus, Trash2, Edit, Loader2, X, UploadCloud, Menu
+  LayoutGrid, FileText, Building2, Settings, LogOut, 
+  Search, Bell, Moon, Sun, Camera, Plus, Trash2, Loader2, X, UploadCloud, Menu,
+  BarChart3, Image as ImageIcon, Zap
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -14,24 +13,23 @@ const AdminDashboard = () => {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   
-  // --- STATE MENU MOBILE ---
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // --- STATE FASILITAS ---
+  const [stats, setStats] = useState({ warta: 0, fasilitas: 0, dokumentasi: 0 });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
   const [facilities, setFacilities] = useState<any[]>([]);
   const [isLoadingFasilitas, setIsLoadingFasilitas] = useState(false);
   const [isModalFasilitasOpen, setIsModalFasilitasOpen] = useState(false);
   const [formDataFasilitas, setFormDataFasilitas] = useState({ nama: '', kategori: '', deskripsi: '', gambar_url: '' });
   const [fileFasilitas, setFileFasilitas] = useState<File | null>(null);
 
-  // --- STATE WARTA ---
   const [warta, setWarta] = useState<any[]>([]);
   const [isLoadingWarta, setIsLoadingWarta] = useState(false);
   const [isModalWartaOpen, setIsModalWartaOpen] = useState(false);
   const [formDataWarta, setFormDataWarta] = useState({ judul: '', konten: '', penulis: '', gambar_url: '' });
   const [fileWarta, setFileWarta] = useState<File | null>(null);
 
-  // --- STATE DOKUMENTASI ---
   const [dokumentasi, setDokumentasi] = useState<any[]>([]);
   const [isLoadingDokumentasi, setIsLoadingDokumentasi] = useState(false);
   const [isModalDokumentasiOpen, setIsModalDokumentasiOpen] = useState(false);
@@ -44,8 +42,8 @@ const AdminDashboard = () => {
     setMounted(true);
   }, []);
 
-  // Fetch data berdasarkan tab yang aktif
   useEffect(() => {
+    if (activeTab === 'overview') fetchStats();
     if (activeTab === 'fasilitas') fetchFacilities();
     if (activeTab === 'berita') fetchWarta();
     if (activeTab === 'dokumentasi') fetchDokumentasi();
@@ -56,7 +54,6 @@ const AdminDashboard = () => {
     window.location.href = '/login';
   };
 
-  // Fungsi untuk ganti tab + otomatis tutup menu di HP
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
     setIsMobileSidebarOpen(false);
@@ -65,24 +62,27 @@ const AdminDashboard = () => {
   const uploadImage = async (file: File, folderName: string) => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
-    
     const filePath = `${folderName}/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('images') 
-      .upload(filePath, file);
-
-    if (uploadError) {
-      throw uploadError;
-    }
-
+    const { error: uploadError } = await supabase.storage.from('images').upload(filePath, file);
+    if (uploadError) throw uploadError;
     const { data } = supabase.storage.from('images').getPublicUrl(filePath);
     return data.publicUrl;
   };
 
-  // ==========================================
-  // --- FUNGSI CRUD FASILITAS ---
-  // ==========================================
+  const fetchStats = async () => {
+    setIsLoadingStats(true);
+    const { count: wCount } = await supabase.from('warta').select('*', { count: 'exact', head: true });
+    const { count: fCount } = await supabase.from('fasilitas').select('*', { count: 'exact', head: true });
+    const { count: dCount } = await supabase.from('dokumentasi').select('*', { count: 'exact', head: true });
+    
+    setStats({
+      warta: wCount || 0,
+      fasilitas: fCount || 0,
+      dokumentasi: dCount || 0
+    });
+    setIsLoadingStats(false);
+  };
+
   const fetchFacilities = async () => {
     setIsLoadingFasilitas(true);
     const { data } = await supabase.from('fasilitas').select('*').order('created_at', { ascending: false });
@@ -93,16 +93,11 @@ const AdminDashboard = () => {
   const handleSaveFasilitas = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
     try {
       let imageUrl = formDataFasilitas.gambar_url;
-      if (fileFasilitas) {
-        imageUrl = await uploadImage(fileFasilitas, 'fasilitas_images');
-      }
-
+      if (fileFasilitas) imageUrl = await uploadImage(fileFasilitas, 'fasilitas_images');
       const { error } = await supabase.from('fasilitas').insert([{ ...formDataFasilitas, gambar_url: imageUrl }]);
       if (error) throw error;
-
       setIsModalFasilitasOpen(false);
       setFormDataFasilitas({ nama: '', kategori: '', deskripsi: '', gambar_url: '' });
       setFileFasilitas(null);
@@ -121,9 +116,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // ==========================================
-  // --- FUNGSI CRUD WARTA ---
-  // ==========================================
   const fetchWarta = async () => {
     setIsLoadingWarta(true);
     const { data } = await supabase.from('warta').select('*').order('created_at', { ascending: false });
@@ -134,16 +126,11 @@ const AdminDashboard = () => {
   const handleSaveWarta = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
     try {
       let imageUrl = formDataWarta.gambar_url;
-      if (fileWarta) {
-        imageUrl = await uploadImage(fileWarta, 'warta_images');
-      }
-
+      if (fileWarta) imageUrl = await uploadImage(fileWarta, 'warta_images');
       const { error } = await supabase.from('warta').insert([{ ...formDataWarta, gambar_url: imageUrl }]);
       if (error) throw error;
-
       setIsModalWartaOpen(false);
       setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
       setFileWarta(null);
@@ -162,9 +149,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // ==========================================
-  // --- FUNGSI CRUD DOKUMENTASI ---
-  // ==========================================
   const fetchDokumentasi = async () => {
     setIsLoadingDokumentasi(true);
     const { data } = await supabase.from('dokumentasi').select('*').order('created_at', { ascending: false });
@@ -175,7 +159,6 @@ const AdminDashboard = () => {
   const handleSaveDokumentasi = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
     try {
       let imageUrl = formDataDokumentasi.gambar_url;
       if (fileDokumentasi) {
@@ -183,10 +166,8 @@ const AdminDashboard = () => {
       } else if (!imageUrl) {
         throw new Error("Pilih file foto untuk dokumentasi!");
       }
-
       const { error } = await supabase.from('dokumentasi').insert([{ ...formDataDokumentasi, gambar_url: imageUrl }]);
       if (error) throw error;
-
       setIsModalDokumentasiOpen(false);
       setFormDataDokumentasi({ judul: '', deskripsi: '', gambar_url: '' });
       setFileDokumentasi(null);
@@ -205,51 +186,38 @@ const AdminDashboard = () => {
     }
   };
 
-
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-gray-900 transition-colors duration-500 font-sans text-gray-800 dark:text-gray-100">
       
-      {/* --- BACKDROP MOBILE SIDEBAR --- */}
-      {/* Muncul gelap di belakang menu saat HP */}
       {isMobileSidebarOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden animate-in fade-in"
+          className="fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm md:hidden animate-in fade-in"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
 
-      {/* --- SIDEBAR KIRI --- */}
-      {/* Ditambahkan efek slide-in animasi khusus layar kecil */}
       <aside className={`
         fixed md:sticky top-0 left-0 h-screen z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 ease-in-out
         ${isMobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'}
       `}>
-        
-        {/* Logo & Close Button (Mobile) */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 dark:border-gray-700">
+        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 dark:border-gray-700 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white">
-              <GraduationCap size={20} />
+            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white shadow-md">
+              <span className="font-black text-sm">Az</span>
             </div>
             <div>
-              <h1 className="font-bold text-sm leading-tight text-gray-900 dark:text-white tracking-wide">PP Admin</h1>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold tracking-widest">MANAGEMENT</p>
+              <h1 className="font-bold text-sm leading-tight text-gray-900 dark:text-white tracking-wide">Cendekia</h1>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold tracking-widest">DASHBOARD</p>
             </div>
           </div>
-          {/* Tombol Silang (Hanya di HP) */}
           <button onClick={() => setIsMobileSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-white">
             <X size={20} />
           </button>
         </div>
 
-        {/* Menu Navigasi Utama */}
         <nav className="flex-1 py-6 flex flex-col gap-1 px-4 overflow-y-auto">
           <button onClick={() => handleTabClick('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'overview' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <LayoutGrid size={18} /> Overview
-          </button>
-          
-          <button onClick={() => handleTabClick('ppdb')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'ppdb' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
-            <Users size={18} /> Kelola PPDB
           </button>
 
           <button onClick={() => handleTabClick('berita')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'berita' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
@@ -261,29 +229,21 @@ const AdminDashboard = () => {
           </button>
 
           <button onClick={() => handleTabClick('dokumentasi')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'dokumentasi' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
-            <Camera size={18} /> Dokumentasi
+            <Camera size={18} /> Galeri & Dokumentasi
           </button>
         </nav>
 
-        {/* Menu Bawah (Settings & Logout) */}
-        <div className="p-4 flex flex-col gap-1 border-t border-gray-100 dark:border-gray-700">
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50 transition-all">
-            <Settings size={18} /> Settings
-          </button>
+        <div className="p-4 flex flex-col gap-1 border-t border-gray-100 dark:border-gray-700 shrink-0">
           <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
             <LogOut size={18} /> Logout
           </button>
         </div>
       </aside>
 
-      {/* --- AREA KONTEN UTAMA --- */}
       <main className="flex-1 flex flex-col min-w-0 relative">
         
-        {/* HEADER ATAS */}
-        <header className="h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 md:px-8 z-10 transition-colors duration-500 sticky top-0">
-          
+        <header className="h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 md:px-8 z-40 transition-colors duration-500 sticky top-0 shrink-0 shadow-sm">
           <div className="flex items-center gap-4">
-            {/* Tombol Garis Tiga (Hamburger) Khusus HP */}
             <button onClick={() => setIsMobileSidebarOpen(true)} className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
               <Menu size={24} />
             </button>
@@ -295,83 +255,170 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-4 md:gap-6">
             <div className="hidden lg:flex items-center relative">
               <Search className="absolute left-3 text-gray-400" size={16} />
-              <input type="text" placeholder="Search data..." className="pl-10 pr-4 py-2 w-64 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white transition-all"/>
+              <input type="text" placeholder="Cari data..." className="pl-10 pr-4 py-2 w-64 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white transition-all"/>
             </div>
             <div className="flex items-center gap-2 md:gap-3 text-gray-500 dark:text-gray-400">
               <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
                 {!mounted ? <Moon size={20} className="opacity-50" /> : theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
-              
             </div>
             <div className="flex items-center gap-3 md:pl-6 sm:border-l border-gray-200 dark:border-gray-700">
               <div className="text-right hidden md:block">
                 <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">Admin Utama</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Super Admin</p>
               </div>
-              <img src="https://ui-avatars.com/api/?name=Admin+Utama&background=047857&color=fff" alt="Profile" className="w-8 h-8 md:w-9 md:h-9 rounded-full" />
+              <img src="https://ui-avatars.com/api/?name=Admin+Utama&background=047857&color=fff" alt="Profile" className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-gray-200 dark:border-gray-700" />
             </div>
           </div>
         </header>
 
-        {/* ISI KONTEN */}
         <div className="p-4 md:p-8 overflow-y-auto pb-24">
           
-          {/* TAB: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-2.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg"><UserPlus size={20} /></div>
-                    <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400"><TrendingUp size={12}/> +12%</span>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">New Applicants</p>
-                  <h3 className="text-3xl font-black text-gray-900 dark:text-white">128</h3>
-                </div>
+              
+              {isLoadingStats ? (
+                <div className="flex justify-center items-center py-32 text-gray-400"><Loader2 className="animate-spin mr-2" /> Mengambil data statistik...</div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                      <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full blur-2xl group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors" />
+                      <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl"><FileText size={22} /></div>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Total Berita Dipublikasi</p>
+                      <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.warta}</h3>
+                    </div>
 
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg"><FileText size={20} /></div>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Total News</p>
-                  <h3 className="text-3xl font-black text-gray-900 dark:text-white">45</h3>
-                </div>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                      <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-full blur-2xl group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/40 transition-colors" />
+                      <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl"><Building2 size={22} /></div>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Fasilitas Terdaftar</p>
+                      <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.fasilitas}</h3>
+                    </div>
 
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-2.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-500 rounded-lg"><Building2 size={20} /></div>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                      <div className="absolute -right-6 -top-6 w-24 h-24 bg-yellow-50 dark:bg-yellow-900/20 rounded-full blur-2xl group-hover:bg-yellow-100 dark:group-hover:bg-yellow-900/40 transition-colors" />
+                      <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-500 rounded-xl"><ImageIcon size={22} /></div>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Foto Dokumentasi</p>
+                      <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.dokumentasi}</h3>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Facilities</p>
-                  <h3 className="text-3xl font-black text-gray-900 dark:text-white">24</h3>
-                </div>
-              </div>
 
-              {/* Tabel Dummy Overview */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Applicants</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                    {/* GRAFIK 1: Distribusi Konten */}
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden p-6 md:p-8 relative h-[400px] flex flex-col">
+                      <div className="flex items-center justify-between mb-8 shrink-0">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <BarChart3 className="text-emerald-600 dark:text-emerald-400" size={20} />
+                            Distribusi Konten Database
+                          </h3>
+                        </div>
+                      </div>
+
+                      {(() => {
+                        const total = stats.warta + stats.fasilitas + stats.dokumentasi || 1; 
+                        const wPct = Math.max(10, Math.round((stats.warta / total) * 100));
+                        const fPct = Math.max(10, Math.round((stats.fasilitas / total) * 100));
+                        const dPct = Math.max(10, Math.round((stats.dokumentasi / total) * 100));
+
+                        return (
+                          <div className="relative flex-grow flex">
+                            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 dark:opacity-10 border-t border-gray-300 dark:border-gray-600">
+                              <div className="h-full border-b border-gray-300 dark:border-gray-600 border-dashed"></div>
+                              <div className="h-full border-b border-gray-300 dark:border-gray-600 border-dashed"></div>
+                              <div className="h-full border-b border-gray-300 dark:border-gray-600 border-dashed"></div>
+                            </div>
+
+                            <div className="flex items-end justify-around w-full px-4 sm:px-12 relative z-10 pt-6 pb-2">
+                              <div className="flex flex-col items-center justify-end group w-1/3 h-full">
+                                <div className="w-full h-full flex items-end justify-center">
+                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(59,130,246,0.3)]" style={{ height: `${wPct}%` }}>
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">{stats.warta}</span>
+                                  </div>
+                                </div>
+                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">Berita</span>
+                              </div>
+
+                              <div className="flex flex-col items-center justify-end group w-1/3 h-full">
+                                <div className="w-full h-full flex items-end justify-center">
+                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ height: `${fPct}%` }}>
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">{stats.fasilitas}</span>
+                                  </div>
+                                </div>
+                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">Fasilitas</span>
+                              </div>
+
+                              <div className="flex flex-col items-center justify-end group w-1/3 h-full">
+                                <div className="w-full h-full flex items-end justify-center">
+                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-yellow-500 to-yellow-300 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(234,179,8,0.3)]" style={{ height: `${dPct}%` }}>
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">{stats.dokumentasi}</span>
+                                  </div>
+                                </div>
+                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">Galeri</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+
+                    {/* AKSES CEPAT (Pengganti Grafik Dummy) */}
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden p-6 md:p-8 flex flex-col h-[400px]">
+                      <div className="flex items-center justify-between mb-6 shrink-0">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <Zap className="text-yellow-500" size={20} />
+                            Akses Cepat
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Jalan pintas untuk mengelola konten website.</p>
+                        </div>
+                      </div>
+
+                      <div className="flex-grow flex flex-col justify-center gap-4">
+                        <button 
+                          onClick={() => { setActiveTab('berita'); setTimeout(() => setIsModalWartaOpen(true), 100); }} 
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-800 transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg group-hover:scale-110 transition-transform"><FileText size={18} /></div>
+                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tulis Berita Baru</p><p className="text-xs text-gray-500 dark:text-gray-400">Publikasikan informasi terkini</p></div>
+                          </div>
+                          <Plus size={18} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
+                        </button>
+
+                        <button 
+                          onClick={() => { setActiveTab('dokumentasi'); setTimeout(() => setIsModalDokumentasiOpen(true), 100); }} 
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:border-yellow-200 dark:hover:border-yellow-800 transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-500 rounded-lg group-hover:scale-110 transition-transform"><Camera size={18} /></div>
+                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Upload Galeri</p><p className="text-xs text-gray-500 dark:text-gray-400">Tambahkan foto dokumentasi</p></div>
+                          </div>
+                          <Plus size={18} className="text-gray-400 group-hover:text-yellow-600 transition-colors" />
+                        </button>
+
+                        <button 
+                          onClick={() => { setActiveTab('fasilitas'); setTimeout(() => setIsModalFasilitasOpen(true), 100); }} 
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-lg group-hover:scale-110 transition-transform"><Building2 size={18} /></div>
+                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tambah Fasilitas</p><p className="text-xs text-gray-500 dark:text-gray-400">Perbarui sarana prasarana</p></div>
+                          </div>
+                          <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-semibold">Name</th>
-                        <th className="p-4 font-semibold">Program</th>
-                        <th className="p-4 font-semibold text-center">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
-                      <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td className="p-4 font-semibold text-gray-900 dark:text-white">Ahmad Fauzi</td>
-                        <td className="p-4 text-gray-500 dark:text-gray-400">Tahfidz Qur'an</td>
-                        <td className="p-4 text-center"><span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pending</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           )}
 
@@ -404,7 +451,7 @@ const AdminDashboard = () => {
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         {facilities.map((f) => (
                             <tr key={f.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                              <td className="p-4"><img src={f.gambar_url || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md" /></td>
+                              <td className="p-4"><img src={f.gambar_url || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md border border-gray-200 dark:border-gray-700" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white">{f.nama}</td>
                               <td className="p-4"><span className="px-3 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-full text-xs font-bold">{f.kategori}</span></td>
                               <td className="p-4 text-center">
@@ -427,7 +474,7 @@ const AdminDashboard = () => {
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Berita (Warta)</h3>
                 </div>
-                <button onClick={() => setIsModalWartaOpen(true)} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
+                <button onClick={() => setIsModalWartaOpen(true)} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2 transition-transform active:scale-95 shadow-sm">
                   <Plus size={18} /> Tambah Warta
                 </button>
               </div>
@@ -449,7 +496,7 @@ const AdminDashboard = () => {
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         {warta.map((w) => (
                             <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                              <td className="p-4"><img src={w.gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md" /></td>
+                              <td className="p-4"><img src={w.gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md border border-gray-200 dark:border-gray-700" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white border-none whitespace-normal"><p className="line-clamp-2">{w.judul}</p></td>
                               <td className="p-4 text-gray-500 dark:text-gray-400">{w.penulis}</td>
                               <td className="p-4 text-center">
@@ -471,9 +518,8 @@ const AdminDashboard = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Galeri Dokumentasi</h3>
-                
               </div>
-                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
+                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Upload Foto Baru
                 </button>
               </div>
@@ -493,14 +539,6 @@ const AdminDashboard = () => {
                   ))}
                 </div>
               )}
-            </div>
-          )}
-
-          {/* TAB: PPDB PLACEHOLDER */}
-          {activeTab === 'ppdb' && (
-            <div className="max-w-7xl mx-auto animate-in fade-in text-center py-20">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Manajemen PPDB</h3>
-              <p className="text-gray-500">Fitur sedang dikoordinasikan dengan pengelola.</p>
             </div>
           )}
 
@@ -579,7 +617,7 @@ const AdminDashboard = () => {
                 <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700 outline-none focus:border-blue-500"></textarea>
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Publikasi Berita'}
                 </button>
               </div>
@@ -601,9 +639,9 @@ const AdminDashboard = () => {
             <form onSubmit={handleSaveDokumentasi} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Upload Foto *</label>
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <UploadCloud size={32} className="text-gray-400 mb-2" />
-                  <input required type="file" accept="image/*" onChange={(e) => setFileDokumentasi(e.target.files ? e.target.files[0] : null)} className="text-sm w-full" />
+                  <input required type="file" accept="image/*" onChange={(e) => setFileDokumentasi(e.target.files ? e.target.files[0] : null)} className="text-sm w-full text-center" />
                 </div>
               </div>
               <div>
@@ -611,7 +649,7 @@ const AdminDashboard = () => {
                 <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-yellow-500" />
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg flex justify-center items-center gap-2">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Upload Foto'}
                 </button>
               </div>

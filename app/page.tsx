@@ -1,6 +1,6 @@
 import Navbar from '../components/Navbar'; 
 import Hero from '../components/Hero';
-import Welcome from '../components/Welcome';
+import AboutTeaser from '../components/AboutTeaser';
 import Features from '../components/Features';
 import Facilities from '../components/Facilities';
 import CTA from '@/components/CTA';
@@ -12,7 +12,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50">
       <Navbar />
       <Hero />
-      <Welcome />
+      <AboutTeaser />
       <Features />
       <Facilities />
       <CTA />
