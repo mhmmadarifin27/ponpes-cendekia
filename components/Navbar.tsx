@@ -77,7 +77,7 @@ const Navbar = () => {
 
           <a href="/penerimaan" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Penerimaan Santri Baru</a>
           <a href="/warta" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Berita</a>
-          <a href="#" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Hubungi Kami</a>
+          <a href="/hubungi" className="hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">Hubungi Kami</a>
         </div>
 
         {/* Fitur Kanan */}
@@ -131,7 +131,7 @@ const Navbar = () => {
             
             <a href="/penerimaan" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Penerimaan Santri Baru</a>
             <a href="/warta" className="py-3 text-emerald-900 dark:text-gray-200 font-medium border-b border-gray-100 dark:border-gray-700">Berita</a>
-            <a href="#" className="py-3 text-emerald-900 dark:text-gray-200 font-medium">Hubungi Kami</a>
+            <a href="/hubungi" className="py-3 text-emerald-900 dark:text-gray-200 font-medium">Hubungi Kami</a>
           </div>
         )}
       </nav>
