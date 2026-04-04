@@ -1,158 +1,104 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { ArrowRight, Play, ChevronRight } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { ArrowRight, Play } from 'lucide-react';
 import Link from 'next/link';
 
 const Hero = () => {
-  // Data foto galeri
-  const photos = [
-    { id: 1, src: "foto1.png", alt: "Santri Belajar" },
-    { id: 2, src: "foto2.png", alt: "Perpustakaan" },
-    { id: 3, src: "foto3.png", alt: "Gedung Pesantren" },
-  ];
-
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Fungsi untuk ke foto berikutnya
-  const nextSlide = () => {
-    setActiveIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
-  };
-
-  // Auto play setiap 5 detik
+  // --- EFEK ANIMASI SCROLL UNTUK KONTEN ---
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
-    return () => clearInterval(interval);
-  }, [activeIndex]);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-16');
+        }
+      });
+    }, { threshold: 0.15 });
 
-  // --- KOMPONEN SLIDER (DIEKSTRAK AGAR BISA DIPANGGIL 2 KALI) ---
-  const sliderContent = (
-    <>
-      {/* Container Utama Slider */}
-      <div className="relative w-[280px] h-[360px] lg:w-[350px] lg:h-[450px] perspective-1000">
-        {photos.map((photo, index) => {
-          // Logika tumpukan kartu
-          const isTop = index === activeIndex;
-          const isNext = index === (activeIndex + 1) % photos.length;
-          const isBack = index === (activeIndex + 2) % photos.length;
+    const animatedItems = document.querySelectorAll('.animate-on-scroll-hero');
+    animatedItems.forEach((el) => observer.observe(el));
 
-          let styleClass = "opacity-0 scale-90 translate-x-12 z-0";
-          if (isTop) styleClass = "opacity-100 scale-100 translate-x-0 z-30 rotate-0 shadow-2xl";
-          if (isNext) styleClass = "opacity-60 scale-95 translate-x-8 z-20 rotate-3 translate-y-4";
-          if (isBack) styleClass = "opacity-30 scale-90 translate-x-16 z-10 rotate-6 translate-y-8";
-
-          return (
-            <div
-              key={photo.id}
-              onClick={nextSlide}
-              className={`absolute inset-0 transition-all duration-700 ease-in-out cursor-pointer overflow-hidden rounded-[2rem] border-2 border-white/10 ${styleClass}`}
-            >
-              <img 
-                src={photo.src} 
-                alt={photo.alt}
-                className="w-full h-full object-cover"
-              />
-              {/* Overlay teks tipis pada kartu teratas */}
-              {isTop && (
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-transparent to-transparent flex flex-col justify-end p-6">
-                  <p className="text-white font-bold text-sm lg:text-base">{photo.alt}</p>
-                  <p className="text-yellow-400 text-[10px] uppercase tracking-widest">Galeri Cendekia</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Tombol Next Manual & Indikator */}
-      <div className="flex items-center gap-6 mt-12">
-          <div className="flex gap-2">
-            {photos.map((_, i) => (
-              <div 
-                key={i} 
-                className={`h-1.5 transition-all duration-300 rounded-full ${i === activeIndex ? 'w-8 bg-yellow-500' : 'w-2 bg-white/20'}`} 
-              />
-            ))}
-          </div>
-          <button 
-          onClick={nextSlide}
-          className="w-12 h-12 text-white bg-white/10 hover:bg-yellow-500 hover:text-emerald-950 transition-all rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md group"
-          >
-            <ChevronRight className="group-hover:translate-x-0.5 transition-transform" />
-          </button>
-      </div>
-
-      {/* Lingkaran hiasan di belakang slider */}
-      <div className="w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] border-2 border-yellow-500/40 rounded-full absolute -z-10 animate-pulse" />
-    </>
-  );
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="relative min-h-screen lg:h-[750px] w-full flex flex-col lg:flex-row items-center px-6 md:px-12 py-24 lg:py-0 overflow-hidden bg-emerald-900 dark:bg-slate-950 transition-colors duration-500">
+    <section className="relative min-h-[90vh] lg:min-h-screen w-full flex flex-col justify-center bg-white dark:bg-gray-900 transition-colors duration-500 overflow-hidden text-center pb-20 md:pb-28">
       
-      {/* --- BACKGROUND IMAGE & OVERLAY --- */}
-      <div className="absolute inset-0 z-0 animate-in fade-in duration-1000">
+      {/* ========================================================= */}
+      {/* BACKGROUND HIJAU CEKUNG + GAMBAR PONPES (BLEND MODE) */}
+      {/* ========================================================= */}
+      <div className="absolute inset-0 z-0 bg-emerald-950 overflow-hidden">
+        {/* Opacity gambar dinaikkan dan mix-blend dihapus agar foto lebih asli dan terlihat */}
         <img 
-          src="bgfooter4.png" 
-          alt="Masjid Background" 
-         className="w-full h-full object-cover opacity-100 dark:opacity-80 dark:grayscale-[50%] transition-opacity duration-500"
+          src="bgfooter4.png" // Pastikan gambar ini ada di folder public
+          alt="Latar Belakang Pondok Pesantren Cendekia" 
+          className="w-full h-full object-cover opacity-60 transform scale-105" 
         />
-        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-emerald-950/40 via-emerald-900/50 dark:from-slate-950/40 dark:via-slate-900/90 to-transparent" />
+        {/* Ketebalan gradient diturunkan drastis agar tidak menutupi gambar */}
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-emerald-900/40 to-transparent" />
+        
+        {/* Aksen kilauan kuning ditipiskan menjadi 5% agar sangat halus */}
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[150px]" />
       </div>
 
-      {/* --- KONTEN TEKS & SLIDER MOBILE (Kiri) --- */}
-      <div className="relative z-10 w-full lg:w-3/5 text-white">
+      {/* ========================================================= */}
+      {/* BENTUK CEKUNGAN (KURVA) PEMISAH DI BAWAH (PUTIH) */}
+      {/* ========================================================= */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 translate-y-[1px]">
+        {/* SVG ini membentuk kurva lengkung ke bawah. Warna fill disamakan dengan background section di bawahnya */}
+        <svg 
+          viewBox="0 0 1440 100" 
+          fill="currentColor" 
+          preserveAspectRatio="none" 
+          className="w-full h-[40px] md:h-[80px] lg:h-[120px] text-white dark:text-gray-900"
+        >
+          <path d="M0,0 C480,120 960,120 1440,0 L1440,120 L0,120 Z"></path>
+        </svg>
+      </div>
+
+      {/* ========================================================= */}
+      {/* CONTAINER UTAMA KONTEN (TERPUSAT) */}
+      {/* ========================================================= */}
+      <div className="relative z-20 max-w-7xl mx-auto w-full px-6 md:px-12 pt-28 flex flex-col items-center">
         
-        <span className="inline-block px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6 border border-yellow-500/30 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
-          Pondok Pesantren Cendekia
-        </span>
-        
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
+        {/* JUDUL UTAMA (Typography Premium, tracking-tighter biar padat) */}
+        {/* Delay diturunkan jadi 0 karena dia sekarang elemen pertama yang muncul */}
+        <h2 className="animate-on-scroll-hero opacity-0 translate-y-16 transition-all duration-1000 ease-out fill-mode-both text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter mb-8 leading-[1.1] max-w-5xl">
           Mencetak Generasi <br /> 
-          <span className="text-yellow-500 drop-shadow-sm">Qur'ani & Beradab</span>
+          <span className="text-yellow-400">Qur'ani & Beradab</span>
         </h2>
 
-        {/* --- AKSEN STACKED SLIDER (KHUSUS MOBILE - MUNCUL DI TENGAH) --- */}
-        {/* Slider mobile muncul dengan animasi beruntun (delay 300) */}
-        <div className="flex lg:hidden relative w-full flex-col items-center justify-center my-10 h-[400px] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-both">
-          {sliderContent}
-        </div>
-        
-        <p className="text-base md:text-lg text-emerald-10/90 dark:text-slate-100 mb-10 leading-relaxed max-w-xl font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
-          Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning.
+        {/* DESKRIPSI UTAMA (max-w-3xl agar nyaman dibaca penuh) */}
+        <p className="animate-on-scroll-hero opacity-0 translate-y-16 transition-all duration-1000 ease-out delay-200 fill-mode-both text-base md:text-lg text-emerald-50 mb-14 leading-relaxed max-w-3xl opacity-90">
+          Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning untuk masa depan global. Bergabunglah bersama kami membangun generasi masa depan yang kokoh iman dan ilmu.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 lg:mb-0 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[500ms] fill-mode-both">
-  
-  {/* TOMBOL 1: DAFTAR SEKARANG (Mengarah ke halaman /penerimaan) */}
-  <Link 
-    href="/penerimaan" 
-    className="bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/20 w-full sm:w-auto"
-  >
-    Daftar Sekarang <ArrowRight size={20} />
-  </Link>
-  
-  {/* TOMBOL 2: VIDEO PROFIL (Mengarah ke YouTube/Google Drive) */}
-  <a 
-    href="https://youtube.com/link-video-ponpes-kamu-disini" 
-    target="_blank" 
-    rel="noopener noreferrer"
-    className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition-all w-full sm:w-auto"
-  >
-    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-      <Play size={16} fill="white" />
-    </div>
-    Video Profil
-  </a>
+        {/* TOMBOL AKSI TERPUSAT */}
+        <div className="animate-on-scroll-hero opacity-0 translate-y-16 transition-all duration-1000 ease-out delay-400 fill-mode-both flex flex-col sm:flex-row gap-5 w-full sm:w-auto justify-center items-center">
+          {/* TOMBOL 1: DAFTAR (Kuning Mencolok) */}
+          <Link 
+            href="/penerimaan" 
+            className="group bg-yellow-500 text-emerald-950 px-9 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-400 hover:scale-105 transition-all shadow-xl shadow-yellow-500/30 w-full sm:w-auto active:scale-95 text-base md:text-lg whitespace-nowrap"
+          >
+            Daftar Sekarang 
+            <ArrowRight size={20} className="group-hover:translate-x-1.5 transition-transform" />
+          </Link>
+          
+          {/* TOMBOL 2: VIDEO PROFIL (Glassmorphism Transparan) */}
+          <a 
+            href="https://youtube.com/link-video-ponpes-kamu-disini" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group bg-white/10 backdrop-blur-md border border-white/20 text-white px-9 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition-all w-full sm:w-auto active:scale-95 text-base md:text-lg whitespace-nowrap"
+          >
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Play size={16} fill="currentColor" />
+            </div>
+            Video Profil Pesantren
+          </a>
+        </div>
 
-</div>
       </div>
-
-      {/* --- AKSEN STACKED SLIDER (KHUSUS DESKTOP - Kanan) --- */}
-      {/* Slider PC muncul menyamping dari kanan (slide-in-from-right-12) dengan delay 500 */}
-      <div className="hidden lg:flex relative z-10 w-full lg:w-2/5 flex-col items-center justify-center mt-10 lg:mt-0 h-[500px] animate-in fade-in slide-in-from-right-12 duration-1000 delay-[500ms] fill-mode-both">
-        {sliderContent}
-      </div>
-
     </section>
   );
 };
