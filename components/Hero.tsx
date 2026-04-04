@@ -4,7 +4,7 @@ import { ArrowRight, Play } from 'lucide-react';
 import Link from 'next/link';
 
 const Hero = () => {
-  // --- EFEK ANIMASI SCROLL UNTUK KONTEN ---
+  // --- EFEK ANIMASI SCROLL UNTUK KONTEN TEKS SAJA ---
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -62,19 +62,21 @@ const Hero = () => {
       <div className="relative z-20 max-w-7xl mx-auto w-full px-6 md:px-12 pt-28 flex flex-col items-center">
         
         {/* JUDUL UTAMA (Typography Premium, tracking-tighter biar padat) */}
-        {/* Delay diturunkan jadi 0 karena dia sekarang elemen pertama yang muncul */}
+        {/* Tetap menggunakan animasi */}
         <h2 className="animate-on-scroll-hero opacity-0 translate-y-16 transition-all duration-1000 ease-out fill-mode-both text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter mb-8 leading-[1.1] max-w-5xl">
           Mencetak Generasi <br /> 
           <span className="text-yellow-400">Qur'ani & Beradab</span>
         </h2>
 
         {/* DESKRIPSI UTAMA (max-w-3xl agar nyaman dibaca penuh) */}
+        {/* Tetap menggunakan animasi dengan delay sedikit */}
         <p className="animate-on-scroll-hero opacity-0 translate-y-16 transition-all duration-1000 ease-out delay-200 fill-mode-both text-base md:text-lg text-emerald-50 mb-14 leading-relaxed max-w-3xl opacity-90">
           Menggabungkan ketajaman intelektual dengan kedalaman spiritual melalui kurikulum Tahfidz Mutqin dan penguasaan Kitab Kuning untuk masa depan global. Bergabunglah bersama kami membangun generasi masa depan yang kokoh iman dan ilmu.
         </p>
         
         {/* TOMBOL AKSI TERPUSAT */}
-        <div className="animate-on-scroll-hero opacity-0 translate-y-16 transition-all duration-1000 ease-out delay-400 fill-mode-both flex flex-col sm:flex-row gap-5 w-full sm:w-auto justify-center items-center">
+        {/* Animasi DIHAPUS agar langsung muncul tanpa delay */}
+        <div className="flex flex-col sm:flex-row gap-5 w-full sm:w-auto justify-center items-center">
           {/* TOMBOL 1: DAFTAR (Kuning Mencolok) */}
           <Link 
             href="/penerimaan" 
