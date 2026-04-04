@@ -4,31 +4,42 @@ import { Heart } from 'lucide-react';
 import Link from 'next/link';
 
 const AboutTeaser = () => {
+  // --- KONTEN FOTO (Diekstrak agar bisa dipanggil 2 kali untuk HP & Laptop) ---
+  const imageFrame = (
+    <div className="relative w-full">
+      {/* Hiasan Lingkaran */}
+      <div className="absolute -top-6 -left-6 w-32 h-32 bg-emerald-100 dark:bg-yellow-900/90 rounded-full -z-10" />
+      
+      <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-gray-50 dark:border-gray-900">
+        {/* Ganti dengan foto santri sedang belajar atau cium tangan guru */}
+        <img 
+          src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80" 
+          alt="Kegiatan Santri Cendekia" 
+          className="w-full aspect-[4/5] object-cover hover:scale-110 transition-transform duration-1000"
+        />
+        {/* Badge Statistik Kecil */}
+        <div className="absolute bottom-6 left-6 bg-yellow-500 p-4 rounded-2xl shadow-xl hidden sm:block">
+            <p className="text-emerald-950 font-black text-xl leading-none">100%</p>
+            <p className="text-emerald-900 text-[10px] font-bold uppercase tracking-tight">Beasiswa Dhuafa</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="py-16 md:py-28 px-6 md:px-12 bg-white dark:bg-gray-950 transition-colors duration-500 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
         
-        {/* SISI KIRI: FOTO KEGIATAN (Lebih Emosional) */}
-        <div className="relative w-full md:w-5/12 mb-12 md:mb-0">
-          {/* Hiasan Lingkaran */}
-          <div className="absolute -top-6 -left-6 w-32 h-32 bg-emerald-100 dark:bg-yellow-900/90 rounded-full -z-10" />
-          
-          <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-gray-50 dark:border-gray-900">
-            {/* Ganti dengan foto santri sedang belajar atau cium tangan guru */}
-            <img 
-              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80" 
-              alt="Kegiatan Santri Cendekia" 
-              className="w-full aspect-[4/5] object-cover hover:scale-110 transition-transform duration-1000"
-            />
-            {/* Badge Statistik Kecil */}
-            <div className="absolute bottom-6 left-6 bg-yellow-500 p-4 rounded-2xl shadow-xl hidden sm:block">
-                <p className="text-emerald-950 font-black text-xl leading-none">100%</p>
-                <p className="text-emerald-900 text-[10px] font-bold uppercase tracking-tight">Beasiswa Dhuafa</p>
-            </div>
-          </div>
+        {/* ======================================================= */}
+        {/* SISI KIRI: FOTO KEGIATAN (HANYA TAMPIL DI LAPTOP/TABLET) */}
+        {/* ======================================================= */}
+        <div className="hidden md:block relative w-full md:w-5/12 mb-12 md:mb-0">
+          {imageFrame}
         </div>
 
-        {/* SISI KANAN: CERITA SINGKAT */}
+        {/* ======================================================= */}
+        {/* SISI KANAN: CERITA SINGKAT & QUOTE */}
+        {/* ======================================================= */}
         <div className="w-full md:w-7/12">
           <div className="relative z-10">
             <div className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-[0.2em] mb-4">
@@ -48,8 +59,15 @@ const AboutTeaser = () => {
               </p>
             </div>
 
+            {/* ======================================================= */}
+            {/* FOTO KEGIATAN (HANYA TAMPIL DI HP - SEBELUM QUOTE MUDIR) */}
+            {/* ======================================================= */}
+            <div className="block md:hidden mt-10 mb-6 w-full">
+              {imageFrame}
+            </div>
+
             {/* SIGNATURE MUDIR (Sentuhan Personal) */}
-            <div className="mt-10 pt-8 border-t border-gray-100 dark:border-gray-800">
+            <div className="mt-8 md:mt-10 pt-8 border-t border-gray-100 dark:border-gray-800">
                <p className="text-emerald-900 dark:text-gray-300 font-serif italic text-lg leading-relaxed">
                  &quot;Kami mendidik bukan hanya agar mereka pintar secara logika, tapi juga bercahaya secara akhlak.&quot;
                </p>
