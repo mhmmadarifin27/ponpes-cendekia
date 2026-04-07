@@ -136,21 +136,7 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* --- GARIS EMAS PEMISAH (GOLD LINE) --- */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-yellow-600 via-yellow-300 to-yellow-600 shadow-[0_0_8px_rgba(250,204,21,0.5)] z-20"></div>
-
-      {/* --- 2. RUNNING TEXT (Lengkap 3 Baris) --- */}
-      <div className="bg-emerald-950 dark:bg-gray-900 text-yellow-400 py-3 overflow-hidden flex items-center w-full shadow-inner transition-colors duration-300 relative">
-        <div className="w-full fade-edges relative overflow-hidden">
-          <div className="animate-marquee text-[13px] font-bold tracking-[0.2em] cursor-default">
-            <span className="mx-8 whitespace-nowrap">✨ SELAMAT DATANG DI WEBSITE RESMI PONDOK PESANTREN CENDEKIA ✨</span>
-            <span className="mx-8 text-white dark:text-gray-500">•</span>
-            <span className="mx-8 text-emerald-100 dark:text-gray-300 whitespace-nowrap">Membangun Generasi Qur'ani, Beradab, dan Berwawasan Global</span>
-            <span className="mx-8 text-white dark:text-gray-500">•</span>
-            <span className="mx-8 text-emerald-100 dark:text-gray-300 whitespace-nowrap">Pendaftaran Santri Baru Tahun Ajaran 2026/2027 Telah Dibuka</span>
-          </div>
-        </div>
-      </div>
+      
 
     </header>
   );

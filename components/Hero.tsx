@@ -24,18 +24,21 @@ const Hero = () => {
   return (
     <section className="relative min-h-[90vh] lg:min-h-screen w-full flex flex-col justify-center bg-white dark:bg-gray-900 transition-colors duration-500 overflow-hidden text-center pb-20 md:pb-28">
       
-      {/* ========================================================= */}
+     {/* ========================================================= */}
       {/* BACKGROUND HIJAU CEKUNG + GAMBAR PONPES (BLEND MODE) */}
       {/* ========================================================= */}
-      <div className="absolute inset-0 z-0 bg-emerald-950 overflow-hidden">
-        {/* Opacity gambar dinaikkan dan mix-blend dihapus agar foto lebih asli dan terlihat */}
+      {/* Tambahkan dark:bg-slate-950 agar berubah gelap di dark mode */}
+      <div className="absolute inset-0 z-0 bg-emerald-950 dark:bg-slate-950 overflow-hidden transition-colors duration-500">
+        
+        {/* Opacity gambar bisa diturunkan sedikit di dark mode (dark:opacity-40) agar tidak menyilaukan */}
         <img 
-          src="bgfooter4.png" // Pastikan gambar ini ada di folder public
+          src="bgfooter4.png" 
           alt="Latar Belakang Pondok Pesantren Cendekia" 
-          className="w-full h-full object-cover opacity-60 transform scale-105" 
+          className="w-full h-full object-cover opacity-60 dark:opacity-40 transform scale-105 transition-opacity duration-500" 
         />
-        {/* Ketebalan gradient diturunkan drastis agar tidak menutupi gambar */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-emerald-900/40 to-transparent" />
+        
+        {/* Gradient disesuaikan untuk dark mode (dark:from-slate-950/80 dll) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-emerald-900/40 dark:from-slate-950/80 dark:via-slate-900/60 to-transparent transition-colors duration-500" />
         
         {/* Aksen kilauan kuning ditipiskan menjadi 5% agar sangat halus */}
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[150px]" />
