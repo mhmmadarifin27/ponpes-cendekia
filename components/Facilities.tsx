@@ -205,7 +205,7 @@ const Facilities = () => {
 
         {/* TOMBOL LIHAT SEMUA */}
         {/* PERBAIKAN: Warna disamakan dengan Pilar Kami (Bg Emerald, Text White) */}
-        <div className="mt-8 md:mt-16 text-center scroll-anim-fasilitas opacity-0 translate-y-24 transition-all duration-1000 delay-[600ms] ease-out px-6">
+        <div className="mt-8 md:mt-16 text-center scroll-anim-fasilitas opacity-0 translate-y-24 transition-all ease-out px-6">
             <Link href="/fasilitas" className="inline-flex items-center justify-center w-full md:w-auto gap-3 bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-gray-800 dark:hover:bg-yellow-500 dark:hover:text-emerald-950 px-8 py-4 rounded-2xl font-bold transition-all duration-300 active:scale-95 shadow-lg hover:shadow-emerald-700/30 group">
                 Jelajahi Semua Fasilitas
                 <ArrowRight size={20} className="group-hover:translate-x-1.5 transition-transform" />
