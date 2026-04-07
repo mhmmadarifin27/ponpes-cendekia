@@ -16,7 +16,7 @@ const AboutTeaser = () => {
       <div className="relative z-10 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-xl border-4 md:border-8 border-gray-50 dark:border-gray-900 transform-gpu">
         <img 
           // Ditambah &w=800 agar Unsplash mengirim gambar ukuran kecil, BUKAN 4K (Ini rahasia biar gak patah-patah)
-          src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=800" 
+          src="kegiatan santri.jpg" 
           alt="Kegiatan Santri Cendekia" 
           loading="lazy"
           className="w-full aspect-[4/5] object-cover hover:scale-110 transition-transform duration-700 transform-gpu"
@@ -88,8 +88,8 @@ const AboutTeaser = () => {
             
             <Link 
               href="/tentang" 
-              className="inline-flex items-center gap-3 mt-10 md:mt-12 bg-emerald-50 dark:bg-gray-800 text-emerald-700 dark:text-emerald-400 font-bold py-4 px-8 rounded-2xl hover:bg-emerald-700 hover:text-white dark:hover:bg-emerald-700 transition-all duration-300 group shadow-sm w-fit"
-            >
+              className="group inline-flex items-center justify-center gap-3 mt-10 md:mt-12 bg-yellow-500 text-emerald-950 px-8 py-4 rounded-xl font-bold hover:bg-yellow-400 hover:scale-105 transition-all duration-300 shadow-xl shadow-yellow-500/30 active:scale-95 text-base md:text-lg w-fit whitespace-nowrap"
+              >
               Baca Sejarah Lengkap
               <span className="group-hover:translate-x-2 transition-transform">→</span>
             </Link>

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { 
   LayoutGrid, FileText, Building2, Settings, LogOut, 
   Search, Bell, Moon, Sun, Camera, Plus, Trash2, Loader2, X, UploadCloud, Menu,
-  BarChart3, Image as ImageIcon, Zap
+  BarChart3, Image as ImageIcon, Zap, Edit // <-- DITAMBAHKAN ICON EDIT
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -29,6 +29,9 @@ const AdminDashboard = () => {
   const [isModalWartaOpen, setIsModalWartaOpen] = useState(false);
   const [formDataWarta, setFormDataWarta] = useState({ judul: '', konten: '', penulis: '', gambar_url: '' });
   const [fileWarta, setFileWarta] = useState<File | null>(null);
+  
+  // --- DITAMBAHKAN: STATE UNTUK MELACAK ID BERITA YANG MAU DIEDIT ---
+  const [editingWartaId, setEditingWartaId] = useState<number | null>(null);
 
   const [dokumentasi, setDokumentasi] = useState<any[]>([]);
   const [isLoadingDokumentasi, setIsLoadingDokumentasi] = useState(false);
@@ -116,6 +119,9 @@ const AdminDashboard = () => {
     }
   };
 
+  // ==========================================================
+  // BAGIAN WARTA (SUDAH DITAMBAHKAN LOGIKA EDIT)
+  // ==========================================================
   const fetchWarta = async () => {
     setIsLoadingWarta(true);
     const { data } = await supabase.from('warta').select('*').order('created_at', { ascending: false });
@@ -123,17 +129,55 @@ const AdminDashboard = () => {
     setIsLoadingWarta(false);
   };
 
+  // --- DITAMBAHKAN: FUNGSI UNTUK MEMBUKA MODAL TAMBAH (KOSONGAN) ---
+  const handleOpenAddWartaModal = () => {
+    setEditingWartaId(null);
+    setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
+    setFileWarta(null);
+    setIsModalWartaOpen(true);
+  };
+
+  // --- DITAMBAHKAN: FUNGSI UNTUK MEMBUKA MODAL EDIT (ISI DATA LAMA) ---
+  const handleEditWarta = (w: any) => {
+    setEditingWartaId(w.id);
+    setFormDataWarta({
+      judul: w.judul,
+      konten: w.konten,
+      penulis: w.penulis || '',
+      gambar_url: w.gambar_url || ''
+    });
+    setFileWarta(null);
+    setIsModalWartaOpen(true);
+  };
+
   const handleSaveWarta = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     try {
       let imageUrl = formDataWarta.gambar_url;
+      // Jika ada file baru yang diupload, ganti imageUrl-nya
       if (fileWarta) imageUrl = await uploadImage(fileWarta, 'warta_images');
-      const { error } = await supabase.from('warta').insert([{ ...formDataWarta, gambar_url: imageUrl }]);
-      if (error) throw error;
+      
+      // --- DITAMBAHKAN: CEK APAKAH LAGI EDIT ATAU TAMBAH ---
+      if (editingWartaId) {
+        // Lakukan UPDATE jika editingWartaId ada
+        const { error } = await supabase
+          .from('warta')
+          .update({ ...formDataWarta, gambar_url: imageUrl })
+          .eq('id', editingWartaId);
+        if (error) throw error;
+      } else {
+        // Lakukan INSERT jika editingWartaId null (Baru)
+        const { error } = await supabase
+          .from('warta')
+          .insert([{ ...formDataWarta, gambar_url: imageUrl }]);
+        if (error) throw error;
+      }
+
       setIsModalWartaOpen(false);
       setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
       setFileWarta(null);
+      setEditingWartaId(null); // Reset state edit
       fetchWarta();
     } catch (error: any) {
       alert('Gagal menyimpan Warta: ' + error.message);
@@ -149,6 +193,9 @@ const AdminDashboard = () => {
     }
   };
 
+  // ==========================================================
+  // BAGIAN DOKUMENTASI (TETAP SAMA)
+  // ==========================================================
   const fetchDokumentasi = async () => {
     setIsLoadingDokumentasi(true);
     const { data } = await supabase.from('dokumentasi').select('*').order('created_at', { ascending: false });
@@ -185,7 +232,7 @@ const AdminDashboard = () => {
       fetchDokumentasi();
     }
   };
-
+  
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-gray-900 transition-colors duration-500 font-sans text-gray-800 dark:text-gray-100">
       
@@ -467,16 +514,17 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB: WARTA (BERITA) */}
+         {/* TAB: WARTA (BERITA) */}
           {activeTab === 'berita' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Berita (Warta)</h3>
                 </div>
-                <button onClick={() => setIsModalWartaOpen(true)} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2 transition-transform active:scale-95 shadow-sm">
-                  <Plus size={18} /> Tambah Warta
-                </button>
+               {/* UBAH DARI handleOpenAddModal MENJADI handleOpenAddWartaModal */}
+<button onClick={handleOpenAddWartaModal} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2 transition-transform active:scale-95 shadow-sm">
+  <Plus size={18} /> Tambah Warta
+</button>
               </div>
 
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
@@ -490,7 +538,7 @@ const AdminDashboard = () => {
                           <th className="p-4 font-semibold w-24">Gambar</th>
                           <th className="p-4 font-semibold min-w-[200px]">Judul Berita</th>
                           <th className="p-4 font-semibold">Penulis</th>
-                          <th className="p-4 font-semibold text-center w-24">Aksi</th>
+                          <th className="p-4 font-semibold text-center w-32">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
@@ -499,8 +547,17 @@ const AdminDashboard = () => {
                               <td className="p-4"><img src={w.gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md border border-gray-200 dark:border-gray-700" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white border-none whitespace-normal"><p className="line-clamp-2">{w.judul}</p></td>
                               <td className="p-4 text-gray-500 dark:text-gray-400">{w.penulis}</td>
+                              
+                              {/* Kolom Aksi dengan tombol Edit & Delete */}
                               <td className="p-4 text-center">
-                                <button onClick={() => handleDeleteWarta(w.id)} className="text-red-500 hover:text-red-700 transition-colors hover:scale-110"><Trash2 size={18} /></button>
+                                <div className="flex justify-center items-center gap-3">
+                                  <button onClick={() => handleEditWarta(w)} className="text-blue-500 hover:text-blue-700 transition-colors hover:scale-110" title="Edit Berita">
+                                    <Edit size={18} />
+                                  </button>
+                                  <button onClick={() => handleDeleteWarta(w.id)} className="text-red-500 hover:text-red-700 transition-colors hover:scale-110" title="Hapus Berita">
+                                    <Trash2 size={18} />
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                         ))}
@@ -588,13 +645,16 @@ const AdminDashboard = () => {
       )}
 
       {/* ========================================================= */}
-      {/* MODAL TAMBAH WARTA */}
+      {/* MODAL TAMBAH & EDIT WARTA */}
       {/* ========================================================= */}
       {isModalWartaOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Publikasi Warta / Berita</h3>
+              {/* Judul Modal berubah otomatis */}
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                {editingWartaId ? 'Edit Warta / Berita' : 'Publikasi Warta / Berita'}
+              </h3>
               <button onClick={() => setIsModalWartaOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveWarta} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
@@ -608,7 +668,9 @@ const AdminDashboard = () => {
                   <input type="text" value={formDataWarta.penulis} onChange={(e) => setFormDataWarta({...formDataWarta, penulis: e.target.value})} placeholder="Admin" className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Upload Gambar Cover</label>
+                  <label className="block text-sm font-medium mb-1">
+                    {editingWartaId ? 'Ganti Gambar Cover (Opsional)' : 'Upload Gambar Cover'}
+                  </label>
                   <input type="file" accept="image/*" onChange={(e) => setFileWarta(e.target.files ? e.target.files[0] : null)} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm dark:border-gray-700" />
                 </div>
               </div>
@@ -618,7 +680,7 @@ const AdminDashboard = () => {
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
                 <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2">
-                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Publikasi Berita'}
+                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : (editingWartaId ? 'Simpan Perubahan' : 'Publikasi Berita')}
                 </button>
               </div>
             </form>

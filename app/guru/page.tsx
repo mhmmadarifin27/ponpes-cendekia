@@ -154,7 +154,7 @@ const GuruKamiPage = () => {
 
           <div className="w-full relative rounded-[2rem] overflow-hidden shadow-xl aspect-video md:aspect-[21/9]">
             <img 
-              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80" 
+              src="flyercendekia.jpeg" 
               alt="Keluarga Besar Asatidz" 
               className="w-full h-full object-cover"
             />

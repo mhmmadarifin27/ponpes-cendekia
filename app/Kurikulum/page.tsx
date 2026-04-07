@@ -47,7 +47,7 @@ const KurikulumPage = () => {
             {/* FOTO LEBAR DI TENGAH TEKS */}
             <div className="w-full my-12 rounded-2xl md:rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-500 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
               <img 
-                src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80" 
+                src="flyercendekia.jpeg" 
                 alt="Kegiatan Kurikulum Cendekia" 
                 className="w-full h-[300px] md:h-[450px] object-cover hover:scale-105 transition-transform duration-1000"
               />
@@ -70,7 +70,7 @@ const KurikulumPage = () => {
             </div>
             <div className="order-1 md:order-2 w-full h-[250px] md:h-[350px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 translate-x-24 transition-all duration-1000 delay-200 ease-out">
                <img 
-                src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80" 
+                src="visi.jpg" 
                 alt="Fondasi Kurikulum" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
@@ -81,7 +81,7 @@ const KurikulumPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center overflow-hidden">
             <div className="w-full h-[300px] md:h-[450px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
               <img 
-                src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80" 
+                src="misi.jpg" 
                 alt="Metode Pembelajaran" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />

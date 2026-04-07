@@ -45,7 +45,7 @@ const TentangKamiPage = () => {
                <div className="w-full sm:w-2/3 lg:w-1/3 shrink-0 scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 delay-200 ease-out">
                   <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white dark:border-gray-700">
                     <img 
-                      src="https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&q=80&w=600" 
+                      src="flyercendekia.jpeg" 
                       alt="KH. Ahmad Ridwan, Lc." 
                       className="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700" 
                     />
@@ -108,7 +108,7 @@ const TentangKamiPage = () => {
             {/* FOTO LEBAR DI TENGAH TEKS */}
             <div className="w-full my-12 rounded-2xl md:rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-500 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
               <img 
-                src="https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80" 
+                src="flyercendekia.jpeg" 
                 alt="Gedung Pondok Pesantren" 
                 className="w-full h-[300px] md:h-[450px] object-cover hover:scale-105 transition-transform duration-1000"
               />
@@ -141,7 +141,7 @@ const TentangKamiPage = () => {
             </div>
             <div className="order-1 md:order-2 w-full h-[250px] md:h-[350px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 translate-x-24 transition-all duration-1000 delay-200 ease-out">
                <img 
-                src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80" 
+                src="visi.jpg" 
                 alt="Kegiatan Santri Visi" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
@@ -152,7 +152,7 @@ const TentangKamiPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center overflow-hidden">
             <div className="w-full h-[300px] md:h-[450px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
               <img 
-                src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80" 
+                src="misi.jpg" 
                 alt="Kegiatan Belajar Misi" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />

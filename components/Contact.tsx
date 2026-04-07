@@ -132,8 +132,8 @@ const Contact = () => {
             <Link 
               href="https://wa.me/6285267962898?text=Assalamu'alaikum,%20saya%20ingin%20mendaftar%20di%20Ponpes%20Cendekia." 
               target="_blank" 
-              className="inline-flex items-center gap-3 bg-white text-emerald-800 font-bold py-5 px-10 rounded-2xl hover:bg-yellow-500 hover:text-emerald-950 transition-all duration-300 group shadow-lg active:scale-95 text-lg md:text-xl w-full sm:w-auto justify-center"
-            >
+              className="group inline-flex items-center justify-center gap-3 bg-yellow-500 text-emerald-950 px-9 py-5 rounded-xl font-bold hover:bg-yellow-400 hover:scale-105 transition-all duration-300 shadow-xl shadow-yellow-500/30 active:scale-95 text-lg md:text-xl w-full sm:w-auto whitespace-nowrap"
+              >
               Daftar Sekarang Melalui WhatsApp
               <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" />
             </Link>
