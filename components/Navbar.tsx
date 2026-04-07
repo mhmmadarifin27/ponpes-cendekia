@@ -24,7 +24,7 @@ const Navbar = () => {
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col w-full transition-all duration-300">
       
       
-      {/* --- 2. MAIN NAVBAR (Glassmorphism Effect) --- */}
+      {/* --- 1. MAIN NAVBAR (Glassmorphism Effect) --- */}
       <nav className={`
         relative px-6 md:px-12 py-4 transition-all duration-300 border-b
         ${scrolled 
@@ -34,13 +34,37 @@ const Navbar = () => {
       `}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           
-          {/* Logo Gambar Asli (Tetap bisa diklik ke halaman Login Admin) */}
-          <Link href="/login" className="flex items-center cursor-pointer group" title="Area Admin">
-            <img 
-              src="/logo.png" // Pastikan gambar logo.png ada di dalam folder 'public'
-              alt="Logo Pondok Pesantren Cendekia" 
-              className="h-10 md:h-15 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
-            />
+          {/* Logo, Teks, dan Logo Baznas (Tetap bisa diklik ke halaman Login Admin) */}
+          <Link href="/login" className="flex items-center gap-3 md:gap-4 cursor-pointer group" title="Area Admin">
+            
+            {/* Kumpulan Gambar Logo */}
+            <div className="flex items-center gap-1.5 md:gap-3">
+              {/* 1. Logo Utama (Cendekia) */}
+              <img 
+                src="/logo.png" 
+                alt="Logo Pondok Pesantren Cendekia" 
+                className="h-10 md:h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+              />
+              
+              {/* Garis Pemisah Vertikal (Sekarang muncul di HP juga tapi lebih kecil) */}
+              <div className="h-6 md:h-10 w-[1px] md:w-[1.5px] bg-gray-200 dark:bg-gray-700 rounded-full mx-0.5 md:mx-1" />
+
+              {/* 2. Logo BAZNAS (Sekarang muncul di HP, ukuran h-8) */}
+              <img 
+                src="/logo baznas.png" // PASTIKAN NAMA FILE-NYA SESUAI, JANGAN ADA SPASI
+                alt="Logo Baznas" 
+                className="h-8 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+              />
+            </div>
+
+            {/* Teks Pendamping Logo (Dikecilkan sedikit di HP agar tidak nabrak menu) */}
+            <div className="flex flex-col justify-center">
+              <h1 className="text-emerald-950 dark:text-white font-black text-sm md:text-lg leading-none tracking-tight">Pondok Pesantren</h1>
+              <p className="text-[8px] md:text-[10px] text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-0.5 md:mt-1">
+                Cendekia Baznas
+              </p>
+            </div>
+
           </Link>
 
           {/* Menu Links (Desktop) - Menggunakan Micro-interaction Underline */}
@@ -119,7 +143,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* --- 3. MOBILE MENU DROPDOWN (Clean Design) --- */}
+      {/* --- 2. MOBILE MENU DROPDOWN (Clean Design) --- */}
       <div className={`
         md:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden transition-all duration-300 ease-in-out origin-top
         ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 py-4' : 'max-h-0 opacity-0 py-0'}
