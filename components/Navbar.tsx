@@ -24,7 +24,6 @@ const Navbar = () => {
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col w-full transition-all duration-300">
       
       
-
       {/* --- 2. MAIN NAVBAR (Glassmorphism Effect) --- */}
       <nav className={`
         relative px-6 md:px-12 py-4 transition-all duration-300 border-b
@@ -35,15 +34,13 @@ const Navbar = () => {
       `}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           
-          {/* Logo */}
-          <Link href="/login" className="flex items-center gap-3 cursor-pointer group" title="Area Admin">
-            <div className="w-10 h-10 bg-emerald-800 dark:bg-emerald-700 rounded-xl flex items-center justify-center text-white font-black group-hover:bg-emerald-700 group-hover:scale-105 transition-all shadow-sm">
-              Az
-            </div>
-            <div className="flex flex-col">
-              <h1 className="text-emerald-950 dark:text-white font-black text-lg leading-none tracking-tight">Cendekia</h1>
-              <p className="text-[9px] text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-0.5">Pondok Pesantren</p>
-            </div>
+          {/* Logo Gambar Asli (Tetap bisa diklik ke halaman Login Admin) */}
+          <Link href="/login" className="flex items-center cursor-pointer group" title="Area Admin">
+            <img 
+              src="/logo.png" // Pastikan gambar logo.png ada di dalam folder 'public'
+              alt="Logo Pondok Pesantren Cendekia" 
+              className="h-10 md:h-15 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+            />
           </Link>
 
           {/* Menu Links (Desktop) - Menggunakan Micro-interaction Underline */}
@@ -145,7 +142,8 @@ const Navbar = () => {
           <Link href="/hubungi" className="py-3 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 transition-colors">Hubungi Kami</Link>
         </div>
       </div>
-{/* --- GARIS EMAS PEMISAH (GOLD LINE) --- */}
+      
+      {/* --- GARIS EMAS PEMISAH (GOLD LINE) --- */}
       <div className="h-[2px] w-full bg-gradient-to-r from-yellow-600 via-yellow-300 to-yellow-600 shadow-[0_0_8px_rgba(250,204,21,0.5)] z-20"></div>
 
     </header>
