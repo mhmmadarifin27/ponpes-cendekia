@@ -136,8 +136,10 @@ const Navbar = () => {
         )}
       </nav>
 
-      
+      {/* --- GARIS EMAS PEMISAH (GOLD LINE) --- */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-yellow-600 via-yellow-300 to-yellow-600 shadow-[0_0_8px_rgba(250,204,21,0.5)] z-20"></div>
 
+      
     </header>
   );
 };
