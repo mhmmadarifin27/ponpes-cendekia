@@ -53,7 +53,7 @@ const Navbar = () => {
               <img 
                 src="/logo baznas.png" // PASTIKAN NAMA FILE-NYA SESUAI, JANGAN ADA SPASI
                 alt="Logo Baznas" 
-                className="h-8 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+                className="h-8 md:h-15 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
               />
             </div>
 
@@ -85,13 +85,14 @@ const Navbar = () => {
               </div>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-600 dark:bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
               
-              {/* Menu Dropdown - Smooth Fade */}
-              <div className={`absolute top-full -left-4 w-56 pt-2 transition-all duration-300 ${isProfileOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
-                <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xl rounded-2xl py-2 overflow-hidden">
-                  <Link href="/tentang" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Tentang Kami</Link>
-                  <Link href="/guru" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Guru & Asatidz</Link>
-                  <Link href="/fasilitas" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Fasilitas Ponpes</Link>
-                  <Link href="/Kurikulum" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Sistem Kurikulum</Link>
+              {/* Menu Dropdown - Dipertebal dengan z-50 dan shadow-2xl */}
+              <div className={`absolute top-full -left-4 w-56 pt-2 z-50 transition-all duration-300 ${isProfileOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
+                {/* bg-white murni (tanpa transparansi) agar solid dan tidak nembus */}
+                <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-2xl rounded-2xl py-2 overflow-hidden">
+                  <Link href="/tentang" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Tentang Kami</Link>
+                  <Link href="/guru" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Guru & Asatidz</Link>
+                  <Link href="/fasilitas" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Fasilitas Ponpes</Link>
+                  <Link href="/Kurikulum" className="block px-5 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 hover:text-emerald-700 dark:hover:text-yellow-400 text-sm font-medium transition-colors">Sistem Kurikulum</Link>
                 </div>
               </div>
             </div>

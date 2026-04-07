@@ -65,16 +65,38 @@ const Footer = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 mb-12 md:mb-16">
             
-            {/* Kolom 1: Identitas & SOSMED */}
-            <div className="md:col-span-5 relative">
-              <div className="flex items-center gap-4 mb-5 md:mb-6">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-emerald-900 dark:text-white font-bold text-xl md:text-2xl shadow-xl">
-                  Az
-                </div>
-                <div>
-                   <h2 className="text-xl md:text-2xl font-bold leading-none text-white">Ponpes Cendekia</h2>
-                   <p className="text-[9px] md:text-[10px] text-yellow-500 font-bold uppercase tracking-[0.2em] mt-1">Membangun Generasi Qur'ani</p>
-                </div>
+           {/* Kolom 1: Identitas & SOSMED */}
+          <div className="md:col-span-5 relative">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mb-6 md:mb-8">
+              
+              {/* Kumpulan Gambar Logo */}
+              <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                {/* 1. Logo Utama (Cendekia) */}
+                <img 
+                  src="/logo.png" 
+                  alt="Logo Pondok Pesantren Cendekia" 
+                  className="h-10 md:h-15 w-auto object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+                />
+                
+                {/* Garis Pemisah Vertikal */}
+                <div className="h-8 md:h-10 w-[1px] md:w-[1.5px] bg-emerald-800 dark:bg-gray-700 rounded-full mx-0.5 md:mx-1" />
+
+                {/* 2. Logo BAZNAS */}
+                <img 
+                  src="/logo baznas.png" 
+                  alt="Logo Baznas" 
+                  className="h-8 md:h-15 w-auto object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              {/* Teks Pendamping Logo (Disesuaikan khusus warna terang untuk Footer) */}
+              <div className="flex flex-col justify-center">
+                <h1 className="text-black font-black text-lg md:text-xl leading-none tracking-tight">Pondok Pesantren</h1>
+                <p className="text-[9px] md:text-[11px] text-yellow-500 font-bold uppercase tracking-widest mt-1">
+                  Cendekia Baznas
+                </p>
+              </div>
+
               </div>
               <p className="text-emerald-100/70 dark:text-gray-400 leading-relaxed text-sm max-w-sm mb-8 md:mb-10">
                 Lembaga pendidikan Islam yang berdedikasi melahirkan generasi pemimpin masa depan yang bertaqwa, beradab, dan berwawasan global.

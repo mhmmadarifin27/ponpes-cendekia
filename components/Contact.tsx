@@ -94,41 +94,76 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* ============================================================== */}
+       {/* ============================================================== */}
         {/* SISI KANAN: AJAKAN DAFTAR (Kotak Hijau Tua Monolitik & Standout) */}
         {/* ============================================================== */}
-        <div className="w-full lg:w-1/2 bg-emerald-800 dark:bg-gray-900 rounded-[2.5rem] shadow-2xl p-10 md:p-16 flex flex-col justify-center animate-on-scroll-contact opacity-0 translate-y-20 lg:translate-y-0 lg:scale-95 transition-all duration-1000 ease-out delay-400 overflow-hidden relative group">
+        <div className="w-full lg:w-1/2 bg-emerald-800 dark:bg-gray-900 rounded-[2.5rem] shadow-2xl p-10 md:p-16 flex flex-col justify-center animate-on-scroll-contact opacity-0 translate-y-20 lg:translate-y-0 lg:scale-95 transition-all duration-1000 ease-out delay-400 overflow-hidden relative group border border-emerald-700/50 dark:border-gray-800">
           
-          {/* Pola Islami Halus di Background (Opacity 5% biar nggak ganggu) */}
-          <div className="absolute inset-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-             <img src="https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80" alt="pattern" className="w-full h-full object-cover" />
+          {/* ==================================================== */}
+          {/* EFEK BACKGROUND BARU (Pure CSS - Anti Gagal/Error) */}
+          {/* ==================================================== */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            {/* Efek Cahaya Kuning di Kanan Atas */}
+            <div className="absolute -top-24 -right-24 w-72 h-72 bg-yellow-500/30 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000 ease-out" />
+            
+            {/* Efek Cahaya Hijau Terang di Kiri Bawah */}
+            <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-400/20 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000 ease-out" />
+            
+            {/* Pola Titik Elegan (CSS Grid Pattern) */}
+            <div 
+              className="absolute inset-0 opacity-[0.08] dark:opacity-[0.03]" 
+              style={{ backgroundImage: 'radial-gradient(#ffffff 2px, transparent 2px)', backgroundSize: '24px 24px' }}
+            />
           </div>
           
-          {/* Konten CTA (Wajib relative z-10 biar di atas pola) */}
+          {/* Konten CTA (Wajib relative z-10 biar di atas efek) */}
           <div className="relative z-10">
             
-            {/* Logo Badge */}
-            <div className="flex items-center gap-3.5 mb-8">
-              <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center text-emerald-950 font-extrabold shadow-md text-xl">
-                Az
+            {/* Kumpulan Gambar Logo & Teks Pendaftaran */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
+              
+              {/* Box Logo Cendekia & Baznas (Dengan efek kaca tipis) */}
+              <div className="flex items-center gap-2 shrink-0 bg-white/10 dark:bg-black/20 p-2.5 rounded-2xl backdrop-blur-sm border border-white/10">
+                {/* 1. Logo Utama (Cendekia) */}
+                <img 
+                  src="/logo.png" 
+                  alt="Logo Pondok Pesantren Cendekia" 
+                  className="h-10 md:h-12 w-auto object-contain drop-shadow-md"
+                />
+                
+                {/* Garis Pemisah */}
+                <div className="h-8 w-[1.5px] bg-emerald-500/50 dark:bg-gray-600 rounded-full mx-0.5" />
+
+                {/* 2. Logo BAZNAS */}
+                <img 
+                  src="/logo baznas.png" 
+                  alt="Logo Baznas" 
+                  className="h-8 md:h-12 w-auto object-contain drop-shadow-md"
+                />
               </div>
-              <div>
-                <h4 className="text-lg font-bold text-yellow-400 dark:text-yellow-500">Pendaftaran Santri</h4>
-                <p className="text-xs text-emerald-200 dark:text-gray-400 font-medium">Tahun Ajaran 2026/2027</p>
+
+              {/* Teks Pendamping (Pendaftaran) */}
+              <div className="flex flex-col justify-center">
+                {/* Diubah jadi text-white agar terbaca jelas di background gelap */}
+                <h1 className="text-white font-black text-lg md:text-xl leading-none tracking-tight">Pondok Pesantren</h1>
+                <p className="text-[9px] md:text-[11px] text-yellow-500 font-bold uppercase tracking-widest mt-1">
+                  Cendekia Baznas
+                </p>
               </div>
+
             </div>
 
-            {/* Judul CTA (Dibuat text-4xl lg:text-5xl biar mantap) */}
+            {/* Judul CTA */}
             <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6 tracking-tighter">
               Siap Menjadi Bagian Dari <span className="text-yellow-400">Generasi Qur'ani</span> & Berwawasan Global?
             </h3>
 
-            {/* Deskripsi CTA (text-base md:text-lg biar lega) */}
+            {/* Deskripsi CTA */}
             <p className="text-emerald-100 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-12 opacity-95 max-w-xl">
               Bergabunglah bersama keluarga besar Pondok Pesantren Cendekia Palembang. Kami berkomitmen mendidik generasi huffadz Al-Qur'an yang cerdas logika, mulia akhlak, dan siap hadapi teknologi masa depan.
             </p>
 
-            {/* Tombol Pendaftaran (text-lg md:text-xl biar gede dan gampang diklik HP) */}
+            {/* Tombol Pendaftaran */}
             <Link 
               href="https://wa.me/6285267962898?text=Assalamu'alaikum,%20saya%20ingin%20mendaftar%20di%20Ponpes%20Cendekia." 
               target="_blank" 
@@ -139,8 +174,7 @@ const Contact = () => {
             </Link>
           </div>
         </div>
-
-      </div>
+        </div>
     </section>
   );
 };
