@@ -134,7 +134,7 @@ const Contact = () => {
               target="_blank" 
               className="group inline-flex items-center justify-center gap-3 bg-yellow-500 text-emerald-950 px-9 py-5 rounded-xl font-bold hover:bg-yellow-400 hover:scale-105 transition-all duration-300 shadow-xl shadow-yellow-500/30 active:scale-95 text-lg md:text-xl w-full sm:w-auto whitespace-nowrap"
               >
-              Daftar Sekarang Melalui WhatsApp
+              Daftar Sekarang
               <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" />
             </Link>
           </div>
