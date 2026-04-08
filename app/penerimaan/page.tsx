@@ -62,9 +62,7 @@ const PenerimaanPage = () => {
         {/* ========================================= */}
         <section className="max-w-6xl mx-auto px-6 md:px-12 text-center mb-20">
           <div className="scroll-anim-ppdb opacity-0 translate-y-24 transition-all duration-1000 ease-out">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4">
-              Penerimaan Santri Baru 2026/2027
-            </span>
+           
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tight">
               Bergabunglah Bersama <br className="hidden md:block" />
               <span className="text-emerald-700 dark:text-yellow-500">Generasi Emas Cendekia</span>

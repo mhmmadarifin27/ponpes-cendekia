@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Mail, Lock, ArrowRight, Home, Loader2 } from 'lucide-react';
+import { Mail, Lock, Home, Loader2, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
@@ -10,6 +10,20 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // --- STATE DAN FUNGSI BARU UNTUK ANIMASI TOMBOL HOME ---
+  const [isHomeClicked, setIsHomeClicked] = useState(false);
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsHomeClicked(true); // Mengaktifkan class animasi (geser & menghilang)
+    
+    // Menunda pindah halaman selama 300 milidetik agar animasi sempat diputar
+    setTimeout(() => {
+      router.push('/'); 
+    }, 300);
+  };
+  // --------------------------------------------------------
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,33 +48,68 @@ const LoginPage = () => {
       {/* --- KOTAK LOGIN UTAMA --- */}
       <div className="w-full max-w-[1000px] relative bg-white dark:bg-gray-900 rounded-3xl md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col-reverse md:flex-row animate-in fade-in zoom-in-[0.98] duration-1000 ease-out border border-gray-100 dark:border-gray-800">
         
-        {/* --- TOMBOL KEMBALI KE BERANDA --- */}
-        <Link 
-          href="/" 
-          className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-2 p-1.5 pr-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-full shadow-sm hover:border-emerald-500 transition-all group animate-in fade-in slide-in-from-top-4 duration-700 delay-500 fill-mode-both"
+        {/* --- TOMBOL KEMBALI KE BERANDA (Dengan Animasi Isi Meluncur) --- */}
+        <button 
+          onClick={handleHomeClick}
+          // Button utama kita buat overflow-hidden dan efek geser dihapus dari sini
+          className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-1.5 sm:pr-5 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-full shadow-sm hover:border-emerald-500 hover:scale-105 transition-all duration-300 ease-in-out group animate-in fade-in slide-in-from-top-4 delay-500 fill-mode-both overflow-hidden"
         >
-          <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-gray-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-            <Home size={16} />
+          {/* Wrapper untuk isi tombol (Ini yang akan meluncur ke kanan saat isHomeClicked true) */}
+          <div className={`flex items-center gap-0 sm:gap-2 transition-all duration-300 ease-out ${isHomeClicked ? 'translate-x-24 opacity-0' : 'translate-x-0 opacity-100'}`}>
+            
+            <div className="w-8 h-8 shrink-0 rounded-full bg-emerald-50 dark:bg-gray-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+              <Home size={16} />
+            </div>
+            
+            <span className="font-bold text-xs sm:text-sm text-gray-700 dark:text-gray-300 hidden sm:flex items-center gap-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              Beranda
+              
+            </span>
+            
           </div>
-          <span className="font-bold text-xs sm:text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 hidden sm:block">
-            Home
-          </span>
-        </Link>
+        </button>
 
         {/* BAGIAN KIRI: FORM LOGIN */}
         <div className="w-full md:w-1/2 p-6 sm:p-12 lg:p-16 flex flex-col justify-center">
           
-          {/* Logo Kecil */}
-          <div className="hidden md:flex w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl items-center justify-center text-emerald-700 dark:text-emerald-400 font-black text-xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
-            Az
+          {/* ========================================================= */}
+          {/* LOGO BARU (Cendekia & Baznas) */}
+          {/* Ditambahkan justify-center md:justify-start agar rata tengah di HP */}
+          {/* ========================================================= */}
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
+            {/* 1. Logo Utama (Cendekia) */}
+            <img 
+              src="/logo.png" 
+              alt="Logo Pondok Pesantren Cendekia" 
+              className="h-10 md:h-12 w-auto object-contain drop-shadow-sm"
+            />
+            
+            {/* Garis Pemisah */}
+            <div className="h-8 w-[1px] md:w-[1.5px] bg-gray-200 dark:bg-gray-700 rounded-full mx-0.5" />
+
+            {/* 2. Logo BAZNAS */}
+            <img 
+              src="/logo baznas.png" 
+              alt="Logo Baznas" 
+              className="h-8 md:h-10 w-auto object-contain drop-shadow-sm"
+            />
+
+            {/* Teks Pendamping - Ditambahkan text-center md:text-left */}
+            <div className="flex flex-col justify-center ml-1 text-center md:text-left">
+              <h1 className="text-gray-900 dark:text-white font-black text-sm md:text-lg leading-none tracking-tight">Pondok Pesantren</h1>
+              <p className="text-[8px] md:text-[10px] text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-0.5">
+                Cendekia Baznas
+              </p>
+            </div>
           </div>
 
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
+            {/* Ditambahkan text-center md:text-left pada h1 dan p */}
             <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-2 text-center md:text-left">
               Selamat Datang!
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 md:mb-10 text-center md:text-left">
-              Silakan login untuk mengakses Dashboard Cendekia.
+              Silakan login untuk mengakses Dashboard Admin.
             </p>
           </div>
 
@@ -120,7 +169,7 @@ const LoginPage = () => {
           </form>
 
           {/* Footer Login */}
-          <div className="mt-8 md:mt-12 text-center animate-in fade-in duration-1000 delay-700 fill-mode-both">
+          <div className="mt-8 md:mt-12 text-center md:text-left animate-in fade-in duration-1000 delay-700 fill-mode-both">
             <p className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
               © {new Date().getFullYear()} Website Pondok Pesantren Cendekia.<br className="md:hidden" /> Developed by IT Cendekia.
             </p>
@@ -132,7 +181,7 @@ const LoginPage = () => {
           
           {/* Gambar Background dengan efek zoom lambat */}
           <img 
-            src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80" 
+            src="flyercendekia.jpeg" 
             alt="Santri" 
             className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay animate-[spin_60s_linear_infinite] [animation-play-state:paused] hover:[animation-play-state:running] hover:scale-110 transition-transform duration-[10s]"
           />

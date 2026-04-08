@@ -248,15 +248,37 @@ const AdminDashboard = () => {
         ${isMobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 dark:border-gray-700 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white shadow-md">
-              <span className="font-black text-sm">Az</span>
+          <div className="flex items-center gap-2.5">
+            
+            {/* Kumpulan Gambar Logo */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Logo Cendekia */}
+              <img 
+                src="/logo.png" 
+                alt="Logo Cendekia" 
+                className="h-8 md:h-9 w-auto object-contain drop-shadow-sm" 
+              />
+              {/* Garis Pemisah */}
+              <div className="h-5 w-[1.5px] bg-gray-200 dark:bg-gray-700 rounded-full mx-0.5" />
+              {/* Logo Baznas */}
+              <img 
+                src="/logo baznas.png" 
+                alt="Logo Baznas" 
+                className="h-6 md:h-8 w-auto object-contain drop-shadow-sm" 
+              />
             </div>
-            <div>
-              <h1 className="font-bold text-sm leading-tight text-gray-900 dark:text-white tracking-wide">Cendekia</h1>
-              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold tracking-widest">DASHBOARD</p>
+            
+            {/* Teks Pendamping */}
+            <div className="flex flex-col justify-center ml-1">
+              <h1 className="text-gray-900 dark:text-white font-black text-sm md:text-SM leading-none tracking-tight">Pondok Pesantren</h1>
+              <p className="text-[8px] md:text-[10px] text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-0.5">
+                Cendekia Baznas
+              </p>
             </div>
+
           </div>
+          
+          {/* Tombol Tutup Sidebar di HP (Kalau ada di kodingan aslimu, biarkan saja di sini) */}
           <button onClick={() => setIsMobileSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-white">
             <X size={20} />
           </button>
@@ -314,7 +336,7 @@ const AdminDashboard = () => {
                 <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">Admin Utama</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Super Admin</p>
               </div>
-              <img src="https://ui-avatars.com/api/?name=Admin+Utama&background=047857&color=fff" alt="Profile" className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-gray-200 dark:border-gray-700" />
+              <img src="LOGO.PNG" alt="Profile" className="w-8 h-8 md:w-9 md:h-10 rounded-full border border-gray-200 dark:border-gray-700" />
             </div>
           </div>
         </header>
