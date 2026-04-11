@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { 
   LayoutGrid, FileText, Building2, Settings, LogOut, 
   Search, Bell, Moon, Sun, Camera, Plus, Trash2, Loader2, X, UploadCloud, Menu,
-  BarChart3, Image as ImageIcon, Zap, Edit // <-- DITAMBAHKAN ICON EDIT
+  BarChart3, Image as ImageIcon, Zap, Edit
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -30,7 +30,6 @@ const AdminDashboard = () => {
   const [formDataWarta, setFormDataWarta] = useState({ judul: '', konten: '', penulis: '', gambar_url: '' });
   const [fileWarta, setFileWarta] = useState<File | null>(null);
   
-  // --- DITAMBAHKAN: STATE UNTUK MELACAK ID BERITA YANG MAU DIEDIT ---
   const [editingWartaId, setEditingWartaId] = useState<number | null>(null);
 
   const [dokumentasi, setDokumentasi] = useState<any[]>([]);
@@ -119,9 +118,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // ==========================================================
-  // BAGIAN WARTA (SUDAH DITAMBAHKAN LOGIKA EDIT)
-  // ==========================================================
   const fetchWarta = async () => {
     setIsLoadingWarta(true);
     const { data } = await supabase.from('warta').select('*').order('created_at', { ascending: false });
@@ -129,7 +125,6 @@ const AdminDashboard = () => {
     setIsLoadingWarta(false);
   };
 
-  // --- DITAMBAHKAN: FUNGSI UNTUK MEMBUKA MODAL TAMBAH (KOSONGAN) ---
   const handleOpenAddWartaModal = () => {
     setEditingWartaId(null);
     setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
@@ -137,7 +132,6 @@ const AdminDashboard = () => {
     setIsModalWartaOpen(true);
   };
 
-  // --- DITAMBAHKAN: FUNGSI UNTUK MEMBUKA MODAL EDIT (ISI DATA LAMA) ---
   const handleEditWarta = (w: any) => {
     setEditingWartaId(w.id);
     setFormDataWarta({
@@ -155,19 +149,15 @@ const AdminDashboard = () => {
     setIsSaving(true);
     try {
       let imageUrl = formDataWarta.gambar_url;
-      // Jika ada file baru yang diupload, ganti imageUrl-nya
       if (fileWarta) imageUrl = await uploadImage(fileWarta, 'warta_images');
       
-      // --- DITAMBAHKAN: CEK APAKAH LAGI EDIT ATAU TAMBAH ---
       if (editingWartaId) {
-        // Lakukan UPDATE jika editingWartaId ada
         const { error } = await supabase
           .from('warta')
           .update({ ...formDataWarta, gambar_url: imageUrl })
           .eq('id', editingWartaId);
         if (error) throw error;
       } else {
-        // Lakukan INSERT jika editingWartaId null (Baru)
         const { error } = await supabase
           .from('warta')
           .insert([{ ...formDataWarta, gambar_url: imageUrl }]);
@@ -177,7 +167,7 @@ const AdminDashboard = () => {
       setIsModalWartaOpen(false);
       setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
       setFileWarta(null);
-      setEditingWartaId(null); // Reset state edit
+      setEditingWartaId(null); 
       fetchWarta();
     } catch (error: any) {
       alert('Gagal menyimpan Warta: ' + error.message);
@@ -193,9 +183,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // ==========================================================
-  // BAGIAN DOKUMENTASI (TETAP SAMA)
-  // ==========================================================
   const fetchDokumentasi = async () => {
     setIsLoadingDokumentasi(true);
     const { data } = await supabase.from('dokumentasi').select('*').order('created_at', { ascending: false });
@@ -250,17 +237,13 @@ const AdminDashboard = () => {
         <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 dark:border-gray-700 shrink-0">
           <div className="flex items-center gap-2.5">
             
-            {/* Kumpulan Gambar Logo */}
             <div className="flex items-center gap-1.5 shrink-0">
-              {/* Logo Cendekia */}
               <img 
                 src="/logo.png" 
                 alt="Logo Cendekia" 
                 className="h-8 md:h-9 w-auto object-contain drop-shadow-sm" 
               />
-              {/* Garis Pemisah */}
               <div className="h-5 w-[1.5px] bg-gray-200 dark:bg-gray-700 rounded-full mx-0.5" />
-              {/* Logo Baznas */}
               <img 
                 src="/logo baznas.png" 
                 alt="Logo Baznas" 
@@ -268,9 +251,8 @@ const AdminDashboard = () => {
               />
             </div>
             
-            {/* Teks Pendamping */}
             <div className="flex flex-col justify-center ml-1">
-              <h1 className="text-gray-900 dark:text-white font-black text-sm md:text-SM leading-none tracking-tight">Pondok Pesantren</h1>
+              <h1 className="text-gray-900 dark:text-white font-black text-sm md:text-sm leading-none tracking-tight">Pondok Pesantren</h1>
               <p className="text-[8px] md:text-[10px] text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-0.5">
                 Cendekia Baznas
               </p>
@@ -278,32 +260,32 @@ const AdminDashboard = () => {
 
           </div>
           
-          {/* Tombol Tutup Sidebar di HP (Kalau ada di kodingan aslimu, biarkan saja di sini) */}
-          <button onClick={() => setIsMobileSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-white">
+          <button onClick={() => setIsMobileSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-white active:scale-90 transition-transform">
             <X size={20} />
           </button>
         </div>
 
         <nav className="flex-1 py-6 flex flex-col gap-1 px-4 overflow-y-auto">
-          <button onClick={() => handleTabClick('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'overview' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          {/* Efek touch (active:scale-[0.98]) ditambahkan di semua tombol nav */}
+          <button onClick={() => handleTabClick('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'overview' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <LayoutGrid size={18} /> Overview
           </button>
 
-          <button onClick={() => handleTabClick('berita')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'berita' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('berita')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'berita' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <FileText size={18} /> Manajemen Berita
           </button>
 
-          <button onClick={() => handleTabClick('fasilitas')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'fasilitas' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('fasilitas')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'fasilitas' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <Building2 size={18} /> Kelola Fasilitas
           </button>
 
-          <button onClick={() => handleTabClick('dokumentasi')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'dokumentasi' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+          <button onClick={() => handleTabClick('dokumentasi')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'dokumentasi' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <Camera size={18} /> Galeri & Dokumentasi
           </button>
         </nav>
 
         <div className="p-4 flex flex-col gap-1 border-t border-gray-100 dark:border-gray-700 shrink-0">
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 active:scale-[0.98] transition-all">
             <LogOut size={18} /> Logout
           </button>
         </div>
@@ -313,7 +295,7 @@ const AdminDashboard = () => {
         
         <header className="h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 md:px-8 z-40 transition-colors duration-500 sticky top-0 shrink-0 shadow-sm">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsMobileSidebarOpen(true)} className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <button onClick={() => setIsMobileSidebarOpen(true)} className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-90 rounded-lg transition-all">
               <Menu size={24} />
             </button>
             <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white capitalize">
@@ -327,7 +309,7 @@ const AdminDashboard = () => {
               <input type="text" placeholder="Cari data..." className="pl-10 pr-4 py-2 w-64 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white transition-all"/>
             </div>
             <div className="flex items-center gap-2 md:gap-3 text-gray-500 dark:text-gray-400">
-              <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+              <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-90 rounded-full transition-all">
                 {!mounted ? <Moon size={20} className="opacity-50" /> : theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
             </div>
@@ -336,7 +318,7 @@ const AdminDashboard = () => {
                 <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">Admin Utama</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Super Admin</p>
               </div>
-              <img src="logo.png" alt="Profile" className="w-8 h-8 md:w-9 md:h-10 rounded-full border border-gray-200 dark:border-gray-700" />
+              <img src="/logo.png" alt="Profile" className="w-8 h-8 md:w-9 md:h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover bg-emerald-50" />
             </div>
           </div>
         </header>
@@ -351,7 +333,7 @@ const AdminDashboard = () => {
               ) : (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('berita')}>
                       <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full blur-2xl group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors" />
                       <div className="flex justify-between items-start mb-4 relative z-10">
                         <div className="p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl"><FileText size={22} /></div>
@@ -360,7 +342,7 @@ const AdminDashboard = () => {
                       <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.warta}</h3>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('fasilitas')}>
                       <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-full blur-2xl group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/40 transition-colors" />
                       <div className="flex justify-between items-start mb-4 relative z-10">
                         <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl"><Building2 size={22} /></div>
@@ -369,7 +351,7 @@ const AdminDashboard = () => {
                       <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.fasilitas}</h3>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('dokumentasi')}>
                       <div className="absolute -right-6 -top-6 w-24 h-24 bg-yellow-50 dark:bg-yellow-900/20 rounded-full blur-2xl group-hover:bg-yellow-100 dark:group-hover:bg-yellow-900/40 transition-colors" />
                       <div className="flex justify-between items-start mb-4 relative z-10">
                         <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-500 rounded-xl"><ImageIcon size={22} /></div>
@@ -405,7 +387,7 @@ const AdminDashboard = () => {
                               <div className="h-full border-b border-gray-300 dark:border-gray-600 border-dashed"></div>
                             </div>
 
-                            <div className="flex items-end justify-around w-full px-4 sm:px-12 relative z-10 pt-6 pb-2">
+                            <div className="flex items-end justify-around w-full px-2 sm:px-12 relative z-10 pt-6 pb-2">
                               <div className="flex flex-col items-center justify-end group w-1/3 h-full">
                                 <div className="w-full h-full flex items-end justify-center">
                                   <div className="w-full max-w-[50px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(59,130,246,0.3)]" style={{ height: `${wPct}%` }}>
@@ -438,7 +420,7 @@ const AdminDashboard = () => {
                       })()}
                     </div>
 
-                    {/* AKSES CEPAT (Pengganti Grafik Dummy) */}
+                    {/* AKSES CEPAT */}
                     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden p-6 md:p-8 flex flex-col h-[400px]">
                       <div className="flex items-center justify-between mb-6 shrink-0">
                         <div>
@@ -453,29 +435,29 @@ const AdminDashboard = () => {
                       <div className="flex-grow flex flex-col justify-center gap-4">
                         <button 
                           onClick={() => { setActiveTab('berita'); setTimeout(() => setIsModalWartaOpen(true), 100); }} 
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-800 transition-all group"
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
                         >
                           <div className="flex items-center gap-4">
                             <div className="p-2.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg group-hover:scale-110 transition-transform"><FileText size={18} /></div>
                             <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tulis Berita Baru</p><p className="text-xs text-gray-500 dark:text-gray-400">Publikasikan informasi terkini</p></div>
                           </div>
-                          <Plus size={18} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
+                          <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
                         </button>
 
                         <button 
                           onClick={() => { setActiveTab('dokumentasi'); setTimeout(() => setIsModalDokumentasiOpen(true), 100); }} 
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:border-yellow-200 dark:hover:border-yellow-800 transition-all group"
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
                         >
                           <div className="flex items-center gap-4">
                             <div className="p-2.5 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-500 rounded-lg group-hover:scale-110 transition-transform"><Camera size={18} /></div>
                             <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Upload Galeri</p><p className="text-xs text-gray-500 dark:text-gray-400">Tambahkan foto dokumentasi</p></div>
                           </div>
-                          <Plus size={18} className="text-gray-400 group-hover:text-yellow-600 transition-colors" />
+                          <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
                         </button>
 
                         <button 
                           onClick={() => { setActiveTab('fasilitas'); setTimeout(() => setIsModalFasilitasOpen(true), 100); }} 
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all group"
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
                         >
                           <div className="flex items-center gap-4">
                             <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-lg group-hover:scale-110 transition-transform"><Building2 size={18} /></div>
@@ -507,7 +489,7 @@ const AdminDashboard = () => {
                 {isLoadingFasilitas ? (
                   <div className="flex justify-center items-center py-20 text-gray-400"><Loader2 className="animate-spin mr-2" /></div>
                 ) : (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto scroll-smooth pb-2">
                     <table className="w-full text-left border-collapse whitespace-nowrap">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
@@ -519,12 +501,12 @@ const AdminDashboard = () => {
                       </thead>
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         {facilities.map((f) => (
-                            <tr key={f.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <tr key={f.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 active:bg-gray-100 dark:active:bg-gray-700 transition-colors">
                               <td className="p-4"><img src={f.gambar_url || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md border border-gray-200 dark:border-gray-700" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white">{f.nama}</td>
                               <td className="p-4"><span className="px-3 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-full text-xs font-bold">{f.kategori}</span></td>
                               <td className="p-4 text-center">
-                                <button onClick={() => handleDeleteFasilitas(f.id)} className="text-red-500 hover:text-red-700 transition-colors hover:scale-110"><Trash2 size={18} /></button>
+                                <button onClick={() => handleDeleteFasilitas(f.id)} className="text-red-500 hover:text-red-700 active:scale-90 transition-all hover:scale-110 p-2"><Trash2 size={18} /></button>
                               </td>
                             </tr>
                         ))}
@@ -543,17 +525,17 @@ const AdminDashboard = () => {
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Berita (Warta)</h3>
                 </div>
-               {/* UBAH DARI handleOpenAddModal MENJADI handleOpenAddWartaModal */}
-<button onClick={handleOpenAddWartaModal} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2 transition-transform active:scale-95 shadow-sm">
-  <Plus size={18} /> Tambah Warta
-</button>
+                {/* UBAH WARNA JADI EMERALD */}
+                <button onClick={handleOpenAddWartaModal} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 transition-transform active:scale-95 shadow-sm">
+                  <Plus size={18} /> Tambah Warta
+                </button>
               </div>
 
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
                 {isLoadingWarta ? (
                   <div className="flex justify-center items-center py-20 text-gray-400"><Loader2 className="animate-spin mr-2" /></div>
                 ) : (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto scroll-smooth pb-2">
                     <table className="w-full text-left border-collapse whitespace-nowrap">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
@@ -565,18 +547,17 @@ const AdminDashboard = () => {
                       </thead>
                       <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         {warta.map((w) => (
-                            <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 active:bg-gray-100 dark:active:bg-gray-700 transition-colors">
                               <td className="p-4"><img src={w.gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md border border-gray-200 dark:border-gray-700" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white border-none whitespace-normal"><p className="line-clamp-2">{w.judul}</p></td>
                               <td className="p-4 text-gray-500 dark:text-gray-400">{w.penulis}</td>
                               
-                              {/* Kolom Aksi dengan tombol Edit & Delete */}
                               <td className="p-4 text-center">
-                                <div className="flex justify-center items-center gap-3">
-                                  <button onClick={() => handleEditWarta(w)} className="text-blue-500 hover:text-blue-700 transition-colors hover:scale-110" title="Edit Berita">
+                                <div className="flex justify-center items-center gap-1">
+                                  <button onClick={() => handleEditWarta(w)} className="text-blue-500 hover:text-blue-700 active:scale-90 transition-all hover:scale-110 p-2" title="Edit Berita">
                                     <Edit size={18} />
                                   </button>
-                                  <button onClick={() => handleDeleteWarta(w.id)} className="text-red-500 hover:text-red-700 transition-colors hover:scale-110" title="Hapus Berita">
+                                  <button onClick={() => handleDeleteWarta(w.id)} className="text-red-500 hover:text-red-700 active:scale-90 transition-all hover:scale-110 p-2" title="Hapus Berita">
                                     <Trash2 size={18} />
                                   </button>
                                 </div>
@@ -598,7 +579,8 @@ const AdminDashboard = () => {
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Galeri Dokumentasi</h3>
               </div>
-                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
+                {/* UBAH WARNA JADI EMERALD */}
+                <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Upload Foto Baru
                 </button>
               </div>
@@ -610,9 +592,9 @@ const AdminDashboard = () => {
                   {dokumentasi.map((d) => (
                     <div key={d.id} className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:-translate-y-1 transition-transform duration-300">
                       <img src={d.gambar_url} alt="Dokumentasi" className="w-full h-48 sm:h-40 object-cover" />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3 active:opacity-100">
                         <h4 className="text-white text-xs font-bold truncate">{d.judul}</h4>
-                        <button onClick={() => handleDeleteDokumentasi(d.id)} className="absolute top-2 right-2 bg-red-500 p-1.5 rounded-lg text-white hover:bg-red-600 hover:scale-110 transition-transform"><Trash2 size={14}/></button>
+                        <button onClick={() => handleDeleteDokumentasi(d.id)} className="absolute top-2 right-2 bg-red-500 p-1.5 rounded-lg text-white hover:bg-red-600 active:scale-90 transition-transform"><Trash2 size={14}/></button>
                       </div>
                     </div>
                   ))}
@@ -630,18 +612,21 @@ const AdminDashboard = () => {
       {isModalFasilitasOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
+            {/* Gagang Swipe Modal Mobile */}
+            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
+            
+            <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tambah Fasilitas Baru</h3>
-              <button onClick={() => setIsModalFasilitasOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
+              <button onClick={() => setIsModalFasilitasOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 active:scale-90"><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveFasilitas} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Nama Fasilitas *</label>
-                <input required type="text" value={formDataFasilitas.nama} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, nama: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500" />
+                <input required type="text" value={formDataFasilitas.nama} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, nama: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Kategori</label>
-                <select value={formDataFasilitas.kategori} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, kategori: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500">
+                <select value={formDataFasilitas.kategori} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, kategori: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors">
                   <option value="">Pilih Kategori</option>
                   <option value="Ibadah">Ibadah</option>
                   <option value="Akademik">Akademik</option>
@@ -654,10 +639,10 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Deskripsi Singkat</label>
-                <textarea rows={3} value={formDataFasilitas.deskripsi} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, deskripsi: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-sm resize-none outline-none focus:border-emerald-500"></textarea>
+                <textarea rows={3} value={formDataFasilitas.deskripsi} onChange={(e) => setFormDataFasilitas({...formDataFasilitas, deskripsi: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-sm resize-none outline-none focus:border-emerald-500 transition-colors"></textarea>
               </div>
               <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Simpan Fasilitas'}
                 </button>
               </div>
@@ -672,22 +657,24 @@ const AdminDashboard = () => {
       {isModalWartaOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
-              {/* Judul Modal berubah otomatis */}
+            {/* Gagang Swipe Modal Mobile */}
+            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
+
+            <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                 {editingWartaId ? 'Edit Warta / Berita' : 'Publikasi Warta / Berita'}
               </h3>
-              <button onClick={() => setIsModalWartaOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
+              <button onClick={() => setIsModalWartaOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 active:scale-90"><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveWarta} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Judul Berita *</label>
-                <input required type="text" value={formDataWarta.judul} onChange={(e) => setFormDataWarta({...formDataWarta, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-500" />
+                <input required type="text" value={formDataWarta.judul} onChange={(e) => setFormDataWarta({...formDataWarta, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Penulis</label>
-                  <input type="text" value={formDataWarta.penulis} onChange={(e) => setFormDataWarta({...formDataWarta, penulis: e.target.value})} placeholder="Admin" className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-blue-500" />
+                  <input type="text" value={formDataWarta.penulis} onChange={(e) => setFormDataWarta({...formDataWarta, penulis: e.target.value})} placeholder="Admin" className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-emerald-500 transition-colors" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -698,10 +685,11 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Isi Berita</label>
-                <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700 outline-none focus:border-blue-500"></textarea>
+                <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700 outline-none focus:border-emerald-500 transition-colors"></textarea>
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex justify-center items-center gap-2">
+                {/* UBAH WARNA JADI EMERALD */}
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : (editingWartaId ? 'Simpan Perubahan' : 'Publikasi Berita')}
                 </button>
               </div>
@@ -716,24 +704,28 @@ const AdminDashboard = () => {
       {isModalDokumentasiOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
+            {/* Gagang Swipe Modal Mobile */}
+            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
+
+            <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Upload Foto Galeri</h3>
-              <button onClick={() => setIsModalDokumentasiOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white"><X size={20} /></button>
+              <button onClick={() => setIsModalDokumentasiOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 active:scale-90"><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveDokumentasi} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium mb-1">Upload Foto *</label>
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer active:bg-gray-200 dark:active:bg-gray-700">
                   <UploadCloud size={32} className="text-gray-400 mb-2" />
-                  <input required type="file" accept="image/*" onChange={(e) => setFileDokumentasi(e.target.files ? e.target.files[0] : null)} className="text-sm w-full text-center" />
+                  <input required type="file" accept="image/*" onChange={(e) => setFileDokumentasi(e.target.files ? e.target.files[0] : null)} className="text-sm w-full text-center cursor-pointer" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Judul / Keterangan Foto *</label>
-                <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-yellow-500" />
+                <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors" />
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg flex justify-center items-center gap-2">
+                {/* UBAH WARNA JADI EMERALD */}
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Upload Foto'}
                 </button>
               </div>
