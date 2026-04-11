@@ -388,32 +388,40 @@ const AdminDashboard = () => {
                             </div>
 
                             <div className="flex items-end justify-around w-full px-2 sm:px-12 relative z-10 pt-6 pb-2">
-                              <div className="flex flex-col items-center justify-end group w-1/3 h-full">
+                              
+                              {/* BATANG 1: BERITA */}
+                              <div className="flex flex-col items-center justify-end group w-1/3 h-full cursor-pointer">
                                 <div className="w-full h-full flex items-end justify-center">
-                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(59,130,246,0.3)]" style={{ height: `${wPct}%` }}>
-                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">{stats.warta}</span>
+                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(59,130,246,0.3)]" style={{ height: `${wPct}%` }}>
+                                    {/* Angka: Pudar default, terang & loncat saat disentuh/hover */}
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.warta}</span>
                                   </div>
                                 </div>
-                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">Berita</span>
+                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors">Berita</span>
                               </div>
 
-                              <div className="flex flex-col items-center justify-end group w-1/3 h-full">
+                              {/* BATANG 2: FASILITAS */}
+                              <div className="flex flex-col items-center justify-end group w-1/3 h-full cursor-pointer">
                                 <div className="w-full h-full flex items-end justify-center">
-                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ height: `${fPct}%` }}>
-                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">{stats.fasilitas}</span>
+                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ height: `${fPct}%` }}>
+                                    {/* Angka: Pudar default, terang & loncat saat disentuh/hover */}
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.fasilitas}</span>
                                   </div>
                                 </div>
-                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">Fasilitas</span>
+                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-emerald-600 transition-colors">Fasilitas</span>
                               </div>
 
-                              <div className="flex flex-col items-center justify-end group w-1/3 h-full">
+                              {/* BATANG 3: GALERI */}
+                              <div className="flex flex-col items-center justify-end group w-1/3 h-full cursor-pointer">
                                 <div className="w-full h-full flex items-end justify-center">
-                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-yellow-500 to-yellow-300 rounded-t-xl relative transition-all duration-1000 ease-out flex items-start justify-center group-hover:opacity-90 shadow-[0_0_15px_rgba(234,179,8,0.3)]" style={{ height: `${dPct}%` }}>
-                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">{stats.dokumentasi}</span>
+                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-yellow-500 to-yellow-300 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(234,179,8,0.3)]" style={{ height: `${dPct}%` }}>
+                                    {/* Angka: Pudar default, terang & loncat saat disentuh/hover */}
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.dokumentasi}</span>
                                   </div>
                                 </div>
-                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">Galeri</span>
+                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-yellow-500 transition-colors">Galeri</span>
                               </div>
+
                             </div>
                           </div>
                         );
