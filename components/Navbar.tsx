@@ -111,7 +111,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Fitur Kanan (Search, Theme, Mobile Menu) */}
+         {/* Fitur Kanan (Search, Theme, Mobile Menu) */}
           <div className="flex items-center gap-2 md:gap-4">
             
             {/* Search Input Sleek */}
@@ -124,18 +124,18 @@ const Navbar = () => {
               />
             </div>
 
-            {/* Dark Mode Toggle */}
+            {/* Dark Mode Toggle - Ditambahkan active:scale-90 */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100/80 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-emerald-600 dark:hover:text-yellow-400 transition-all border border-transparent dark:border-gray-800"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100/80 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-emerald-600 dark:hover:text-yellow-400 active:scale-90 transition-all duration-200 border border-transparent dark:border-gray-800"
               aria-label="Toggle Dark Mode"
             >
               {!mounted ? <Moon size={16} className="opacity-0" /> : theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Ditambahkan active:scale-90 */}
             <button 
-              className="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-emerald-50 dark:bg-gray-900 text-emerald-900 dark:text-gray-200 border border-emerald-100 dark:border-gray-800"
+              className="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-emerald-50 dark:bg-gray-900 text-emerald-900 dark:text-gray-200 border border-emerald-100 dark:border-gray-800 active:scale-90 transition-all duration-200"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -144,27 +144,38 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* --- 2. MOBILE MENU DROPDOWN (Clean Design) --- */}
+      {/* ========================================================= */}
+      {/* BACKDROP KLIK BEBAS (Klik di luar menu untuk menutup) */}
+      {/* ========================================================= */}
+      {isMobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 w-full h-screen bg-black/20 backdrop-blur-[2px] -z-10 animate-in fade-in duration-300"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* --- 2. MOBILE MENU DROPDOWN (Clean Design dengan Efek Sentuh) --- */}
       <div className={`
         md:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden transition-all duration-300 ease-in-out origin-top
-        ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 py-4' : 'max-h-0 opacity-0 py-0'}
+        ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 py-2' : 'max-h-0 opacity-0 py-0'}
       `}>
-        <div className="flex flex-col px-6 gap-1">
-          <Link href="/" className="py-3 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 transition-colors border-b border-gray-100 dark:border-gray-800/50">Beranda</Link>
+        {/* Ditambahkan flex-col tanpa gap besar, diganti dengan padding pada masing-masing link agar area klik lebih luas */}
+        <div className="flex flex-col px-4">
+          <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Beranda</Link>
           
-          <div className="py-3 border-b border-gray-100 dark:border-gray-800/50 flex flex-col">
-            <span className="text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">Profil Pesantren</span>
-            <div className="flex flex-col gap-3 pl-4 border-l-2 border-emerald-100 dark:border-gray-800">
-              <Link href="/tentang" className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-yellow-400 transition-colors">Tentang Kami</Link>
-              <Link href="/guru" className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-yellow-400 transition-colors">Guru & Asatidz</Link>
-              <Link href="/fasilitas" className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-yellow-400 transition-colors">Fasilitas</Link>
-              <Link href="/Kurikulum" className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-yellow-400 transition-colors">Kurikulum</Link>
+          <div className="px-4 py-2 flex flex-col">
+            <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Profil Pesantren</span>
+            <div className="flex flex-col border-l-2 border-emerald-100 dark:border-gray-800 ml-1">
+              <Link href="/tentang" onClick={() => setIsMobileMenuOpen(false)} className="pl-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 active:bg-gray-50 dark:active:bg-gray-800 rounded-r-lg transition-all">Tentang Kami</Link>
+              <Link href="/guru" onClick={() => setIsMobileMenuOpen(false)} className="pl-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 active:bg-gray-50 dark:active:bg-gray-800 rounded-r-lg transition-all">Guru & Asatidz</Link>
+              <Link href="/fasilitas" onClick={() => setIsMobileMenuOpen(false)} className="pl-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 active:bg-gray-50 dark:active:bg-gray-800 rounded-r-lg transition-all">Fasilitas</Link>
+              <Link href="/Kurikulum" onClick={() => setIsMobileMenuOpen(false)} className="pl-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 active:bg-gray-50 dark:active:bg-gray-800 rounded-r-lg transition-all">Kurikulum</Link>
             </div>
           </div>
           
-          <Link href="/penerimaan" className="py-3 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 transition-colors border-b border-gray-100 dark:border-gray-800/50">Penerimaan Santri Baru</Link>
-          <Link href="/warta" className="py-3 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 transition-colors border-b border-gray-100 dark:border-gray-800/50">Berita Terkini</Link>
-          <Link href="/hubungi" className="py-3 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 transition-colors">Hubungi Kami</Link>
+          <Link href="/penerimaan" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Penerimaan Santri Baru</Link>
+          <Link href="/warta" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Berita Terkini</Link>
+          <Link href="/hubungi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Hubungi Kami</Link>
         </div>
       </div>
       
