@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { MapPin, Phone, Clock, MessageCircle, Mail, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, Clock, MessageCircle, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HubungiPage() {
@@ -101,12 +101,6 @@ export default function HubungiPage() {
               </div>
             </div>
 
-            {/* Sosial Media & Email */}
-            <div className="flex gap-4 pt-4 scroll-anim-page opacity-0 translate-y-12 transition-all duration-1000 delay-300 ease-out">
-              <a href="mailto:info@cendekia.ac.id" className="w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-full flex items-center justify-center text-gray-500 hover:bg-emerald-600 hover:text-white dark:hover:bg-yellow-500 dark:hover:text-emerald-950 transition-all hover:scale-110">
-                <Mail size={20} />
-              </a>
-            </div>
 
           </div>
 
