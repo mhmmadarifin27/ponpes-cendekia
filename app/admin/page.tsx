@@ -336,7 +336,7 @@ const AdminDashboard = () => {
                 <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">Admin Utama</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Super Admin</p>
               </div>
-              <img src="LOGO.PNG" alt="Profile" className="w-8 h-8 md:w-9 md:h-10 rounded-full border border-gray-200 dark:border-gray-700" />
+              <img src="logo.png" alt="Profile" className="w-8 h-8 md:w-9 md:h-10 rounded-full border border-gray-200 dark:border-gray-700" />
             </div>
           </div>
         </header>
