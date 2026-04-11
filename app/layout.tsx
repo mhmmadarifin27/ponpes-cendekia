@@ -4,6 +4,7 @@ import "./globals.css";
 // Pastikan path ThemeProvider ini benar sesuai letak folder kamu
 import { ThemeProvider } from "../components/ThemeProvider"; 
 import { Analytics } from "@vercel/analytics/react"; // <-- 1. Import Vercel Analytics
+import FloatingWhatsApp from "../components/FloatingWhatsApp"; // <-- 2. Import Tombol WhatsApp Melayang
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,8 +36,11 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col overflow-x-hidden w-full">
         <ThemeProvider>
           {children}
-          {/* 2. Taruh komponen Analytics di bawah children */}
+          {/* Taruh komponen Analytics di bawah children */}
           <Analytics /> 
+          
+          {/* Taruh komponen FloatingWhatsApp di sini agar muncul di semua halaman */}
+          <FloatingWhatsApp />
         </ThemeProvider>
       </body>
     </html>
