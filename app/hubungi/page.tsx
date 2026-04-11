@@ -25,7 +25,8 @@ export default function HubungiPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-gray-900 transition-colors duration-500 font-sans">
+    // Tambahkan overflow-x-hidden di root div agar aman 100% dari horizontal scroll
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-gray-900 transition-colors duration-500 font-sans overflow-x-hidden">
       <Navbar />
 
       {/* HEADER SECTION */}
@@ -56,7 +57,7 @@ export default function HubungiPage() {
           <div className="w-full lg:w-5/12 flex flex-col gap-6">
             
             {/* Card 1: Alamat */}
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-700 flex gap-6 group hover:shadow-xl hover:border-emerald-200 transition-all scroll-anim-page opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-700 flex gap-6 group hover:shadow-xl hover:border-emerald-200 transition-all scroll-anim-page opacity-0 -translate-x-24 duration-1000 ease-out">
               <div className="w-14 h-14 bg-emerald-100 dark:bg-gray-900 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                 <MapPin size={24} />
               </div>
@@ -71,7 +72,7 @@ export default function HubungiPage() {
             </div>
 
             {/* Card 2: WhatsApp Admin */}
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-700 flex gap-6 group hover:shadow-xl hover:border-emerald-200 transition-all scroll-anim-page opacity-0 -translate-x-24 transition-all duration-1000 ease-out delay-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-700 flex gap-6 group hover:shadow-xl hover:border-emerald-200 transition-all scroll-anim-page opacity-0 -translate-x-24 duration-1000 ease-out delay-100">
               <div className="w-14 h-14 bg-emerald-100 dark:bg-gray-900 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                 <Phone size={24} />
               </div>
@@ -85,7 +86,7 @@ export default function HubungiPage() {
             </div>
 
             {/* Card 3: Waktu Operasional */}
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-700 flex gap-6 group hover:shadow-xl hover:border-emerald-200 transition-all scroll-anim-page opacity-0 -translate-x-24 transition-all duration-1000 ease-out delay-200">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-700 flex gap-6 group hover:shadow-xl hover:border-emerald-200 transition-all scroll-anim-page opacity-0 -translate-x-24 duration-1000 ease-out delay-200">
               <div className="w-14 h-14 bg-emerald-100 dark:bg-gray-900 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                 <Clock size={24} />
               </div>
