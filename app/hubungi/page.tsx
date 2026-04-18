@@ -1,11 +1,45 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { MapPin, Phone, Clock, MessageCircle, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, Clock, MessageCircle, ChevronRight, ChevronDown, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HubungiPage() {
+  // --- STATE UNTUK FAQ DROPDOWN ---
+  const [openFaq, setOpenFaq] = useState<number | null>(0); // Default FAQ pertama terbuka
+
+  // Data Pertanyaan Sering Diajukan (FAQ) Lebih Lengkap
+  const faqs = [
+    {
+      question: "Bagaimana cara mendaftar sebagai santri baru?",
+      answer: "Pendaftaran dapat dilakukan secara online melalui tombol 'Daftar Sekarang' yang akan mengarahkan Anda ke WhatsApp admin PPDB kami. Anda juga bisa datang langsung ke Sekretariat Pendaftaran di lokasi pesantren pada jam kerja."
+    },
+    {
+      question: "Berapa rincian biaya pendidikan dan asrama di Ponpes Cendekia?",
+      answer: "Rincian biaya (SPP, uang pangkal, seragam, dan kitab) akan diinformasikan secara detail oleh Admin PPDB. Silakan hubungi nomor WhatsApp yang tertera di bawah untuk mendapatkan brosur biaya terbaru."
+    },
+    {
+      question: "Apakah santri diizinkan membawa alat komunikasi (HP/Laptop)?",
+      answer: "Untuk menjaga fokus hafalan dan belajar, santri TIDAK diizinkan membawa HP. Penggunaan laptop diizinkan hanya pada jadwal tertentu untuk keperluan kelas IT & Coding dengan pengawasan ketat dari pengurus."
+    },
+    {
+      question: "Bagaimana jika santri sakit saat berada di asrama?",
+      answer: "Pesantren memiliki fasilitas Poskestren (Pos Kesehatan Pesantren) ringan. Jika santri mengalami sakit yang membutuhkan penanganan lebih lanjut, pihak pengurus akan segera membawa santri ke klinik/rumah sakit terdekat dan menginformasikan kepada wali santri."
+    },
+    {
+      question: "Berapa kali wali santri boleh menjenguk atau menelepon?",
+      answer: "Kunjungan wali santri dijadwalkan setiap Hari Ahad (Minggu) pada pekan ke-2 dan ke-4 setiap bulannya. Untuk komunikasi telepon, disediakan layanan telepon pesantren (Wartel Ponpes) pada jadwal yang telah ditentukan pengurus asrama."
+    },
+    {
+      question: "Apa saja syarat administrasi untuk pendaftaran?",
+      answer: "Syarat umum meliputi: Fotokopi KK, Akta Kelahiran, NISN, Pas Foto terbaru, dan Surat Keterangan Sehat. Syarat tambahan (seperti legalisir ijazah/SKL) akan menyusul sesuai ketentuan PPDB berjalan."
+    }
+  ];
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
 
   // --- EFEK ANIMASI SCROLL ---
   useEffect(() => {
@@ -49,8 +83,71 @@ export default function HubungiPage() {
         </div>
       </section>
 
-      {/* KONTEN UTAMA (Kiri: Info, Kanan: Maps) */}
-      <main className="flex-grow max-w-7xl mx-auto w-full px-6 md:px-12 py-16 md:py-24">
+      {/* KONTEN UTAMA */}
+      <main className="flex-grow max-w-7xl mx-auto w-full px-6 md:px-12 py-16 md:py-24 space-y-24">
+        
+        {/* ============================================================= */}
+        {/* SECTION 1: FAQ LENGKAP */}
+        {/* ============================================================= */}
+        <div className="w-full flex flex-col lg:flex-row gap-12 lg:gap-16 items-start scroll-anim-page opacity-0 translate-y-24 transition-all duration-1000 ease-out">
+          
+          {/* Judul & Pengantar FAQ (Kiri) */}
+          <div className="w-full lg:w-1/3 flex flex-col gap-4">
+            <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-2">
+              <HelpCircle size={24} />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-emerald-950 dark:text-white tracking-tight">
+              Pertanyaan yang Sering Diajukan
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed">
+              Sebelum menghubungi admin kami, Anda dapat membaca daftar pertanyaan (FAQ) di samping untuk menemukan jawaban secara cepat.
+            </p>
+          </div>
+
+          {/* List Accordion FAQ (Kanan) */}
+          <div className="w-full lg:w-2/3 flex flex-col gap-4">
+            {faqs.map((faq, index) => (
+              <div 
+                key={index} 
+                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
+                  openFaq === index 
+                    ? 'border-emerald-500 dark:border-emerald-600 bg-white dark:bg-gray-800 shadow-md shadow-emerald-900/5' 
+                    : 'border-gray-200 dark:border-gray-800 hover:border-emerald-300 dark:hover:border-gray-700 bg-white dark:bg-gray-800/50'
+                }`}
+              >
+                <button 
+                  onClick={() => toggleFaq(index)}
+                  className="w-full flex items-center justify-between p-5 md:p-6 text-left outline-none active:scale-[0.99] transition-transform duration-200 group"
+                >
+                  <span className={`font-bold text-sm md:text-base pr-4 ${openFaq === index ? 'text-emerald-800 dark:text-emerald-400' : 'text-gray-800 dark:text-gray-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-500'}`}>
+                    {faq.question}
+                  </span>
+                  <div className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${openFaq === index ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rotate-180' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 group-hover:bg-emerald-50 dark:group-hover:bg-gray-700'}`}>
+                    <ChevronDown size={18} />
+                  </div>
+                </button>
+                
+                <div 
+                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                    openFaq === index ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="p-5 md:p-6 pt-0 text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed border-t border-gray-100 dark:border-gray-700 mx-5 md:mx-6 mt-1">
+                    {faq.answer}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        {/* Garis Pemisah Halus */}
+        <div className="w-full h-px bg-gray-200 dark:bg-gray-800 scroll-anim-page opacity-0 transition-opacity duration-1000"></div>
+
+        {/* ============================================================= */}
+        {/* SECTION 2: INFORMASI KONTAK & MAPS (Kiri: Info, Kanan: Maps) */}
+        {/* ============================================================= */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-stretch">
           
           {/* SISI KIRI: KARTU INFORMASI */}
@@ -76,11 +173,13 @@ export default function HubungiPage() {
               <div className="w-14 h-14 bg-emerald-100 dark:bg-gray-900 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                 <Phone size={24} />
               </div>
-              <div className="flex-grow">
-                <h3 className="font-bold text-lg text-emerald-950 dark:text-white mb-2">Admin PPDB (Nanda)</h3>
-                <p className="font-semibold text-base text-gray-800 dark:text-gray-200 mb-4 tracking-wide">0852-6796-2898</p>
-                <a href="https://wa.me/6285267962898" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs font-bold bg-yellow-500 text-emerald-950 px-5 py-2.5 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm w-fit active:scale-95">
-                  <MessageCircle size={16} /> Chat WhatsApp Sekarang
+              <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-lg text-emerald-950 dark:text-white mb-1">Admin PPDB (Nanda)</h3>
+                  <p className="font-semibold text-base text-gray-800 dark:text-gray-200 tracking-wide">0852-6796-2898</p>
+                </div>
+                <a href="https://wa.me/6285267962898" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 text-xs font-bold bg-yellow-500 text-emerald-950 px-5 py-3 rounded-xl hover:bg-yellow-400 shadow-sm shrink-0 whitespace-nowrap active:scale-95 transition-all">
+                  <MessageCircle size={16} /> Chat Sekarang
                 </a>
               </div>
             </div>
@@ -100,7 +199,6 @@ export default function HubungiPage() {
                 </p>
               </div>
             </div>
-
 
           </div>
 

@@ -142,7 +142,6 @@ const Features = () => {
 
       </div>
 
-      {/* --- TOMBOL CEK SELENGKAPNYA (DI BAWAH) --- */}
       <div className="mt-4 sm:mt-16 text-center scroll-anim-features opacity-0 translate-y-24 transition-all ease-out px-6">
         <Link 
           href="/program"

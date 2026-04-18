@@ -178,8 +178,7 @@ const Navbar = () => {
           <Link href="/hubungi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Hubungi Kami</Link>
         </div>
       </div>
-      
-      {/* --- GARIS EMAS PEMISAH (GOLD LINE) --- */}
+
       <div className="h-[2px] w-full bg-gradient-to-r from-yellow-600 via-yellow-300 to-yellow-600 shadow-[0_0_8px_rgba(250,204,21,0.5)] z-20"></div>
 
     </header>
