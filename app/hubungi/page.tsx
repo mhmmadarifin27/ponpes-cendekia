@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { MapPin, Phone, Clock, MessageCircle, ChevronRight, ChevronDown, HelpCircle } from 'lucide-react';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 export default function HubungiPage() {
   // --- STATE UNTUK FAQ DROPDOWN ---
   const [openFaq, setOpenFaq] = useState<number | null>(0); // Default FAQ pertama terbuka
+  const faqRef = useRef<HTMLDivElement>(null); // Reference untuk mendeteksi klik di luar FAQ
 
   // Data Pertanyaan Sering Diajukan (FAQ) Lebih Lengkap
   const faqs = [
@@ -40,6 +41,22 @@ export default function HubungiPage() {
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
+
+  // --- EFEK KLIK DI LUAR FAQ UNTUK MENUTUP ---
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Jika klik terjadi di luar area container faqRef, tutup FAQ
+      if (faqRef.current && !faqRef.current.contains(event.target as Node)) {
+        setOpenFaq(null);
+      }
+    };
+
+    // Tambahkan event listener ke document
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // --- EFEK ANIMASI SCROLL ---
   useEffect(() => {
@@ -89,10 +106,11 @@ export default function HubungiPage() {
         {/* ============================================================= */}
         {/* SECTION 1: FAQ LENGKAP */}
         {/* ============================================================= */}
-        <div className="w-full flex flex-col lg:flex-row gap-12 lg:gap-16 items-start scroll-anim-page opacity-0 translate-y-24 transition-all duration-1000 ease-out">
+        {/* Tambahkan ref={faqRef} ke bungkus luar FAQ agar area ini dideteksi */}
+        <div ref={faqRef} className="w-full flex flex-col gap-10 items-center scroll-anim-page opacity-0 translate-y-24 transition-all duration-1000 ease-out">
           
-          {/* Judul & Pengantar FAQ (Kiri) */}
-          <div className="w-full lg:w-1/3 flex flex-col gap-4">
+          {/* Judul & Pengantar FAQ (Sekarang Rata Tengah) */}
+          <div className="w-full max-w-3xl flex flex-col items-center text-center gap-4">
             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-2">
               <HelpCircle size={24} />
             </div>
@@ -100,12 +118,12 @@ export default function HubungiPage() {
               Pertanyaan yang Sering Diajukan
             </h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-              Sebelum menghubungi admin kami, Anda dapat membaca daftar pertanyaan (FAQ) di samping untuk menemukan jawaban secara cepat.
+              Sebelum menghubungi admin kami, Anda dapat membaca daftar pertanyaan (FAQ) di bawah ini untuk menemukan jawaban secara cepat.
             </p>
           </div>
 
-          {/* List Accordion FAQ (Kanan) */}
-          <div className="w-full lg:w-2/3 flex flex-col gap-4">
+          {/* List Accordion FAQ (Sekarang Rata Tengah dan Lebar Maksimal 4xl) */}
+          <div className="w-full max-w-4xl flex flex-col gap-4">
             {faqs.map((faq, index) => (
               <div 
                 key={index} 

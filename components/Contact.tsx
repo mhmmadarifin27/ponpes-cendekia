@@ -205,7 +205,7 @@ const Contact = () => {
                 <div className="flex items-center gap-2 shrink-0 bg-white/10 dark:bg-black/20 p-2.5 rounded-2xl backdrop-blur-sm border border-white/10">
                   <img src="/logo.png" alt="Logo Pondok Pesantren Cendekia" className="h-10 md:h-12 w-auto object-contain drop-shadow-md" />
                   <div className="h-8 w-[1.5px] bg-emerald-500/50 dark:bg-gray-600 rounded-full mx-0.5" />
-                  <img src="/logo-baznas.png" alt="Logo Baznas" className="h-8 md:h-12 w-auto object-contain drop-shadow-md" />
+                  <img src="/logo baznas.png" alt="Logo Baznas" className="h-8 md:h-12 w-auto object-contain drop-shadow-md" />
                 </div>
                 <div className="flex flex-col justify-center">
                   <h1 className="text-white font-black text-lg md:text-xl leading-none tracking-tight">Pondok Pesantren</h1>
