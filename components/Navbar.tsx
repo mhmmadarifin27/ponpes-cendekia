@@ -106,7 +106,7 @@ const Navbar = () => {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-600 dark:bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link href="/hubungi" className="relative group py-2">
-              <span className="group-hover:text-emerald-700 dark:group-hover:text-yellow-400 transition-colors">Kontak</span>
+              <span className="group-hover:text-emerald-700 dark:group-hover:text-yellow-400 transition-colors">FAQ</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-600 dark:bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </div>
@@ -175,7 +175,7 @@ const Navbar = () => {
           
           <Link href="/penerimaan" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Penerimaan Santri Baru</Link>
           <Link href="/warta" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Berita Terkini</Link>
-          <Link href="/hubungi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">Hubungi Kami</Link>
+          <Link href="/hubungi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-600 active:bg-emerald-50 dark:active:bg-gray-800 rounded-xl transition-all">FAQ</Link>
         </div>
       </div>
 

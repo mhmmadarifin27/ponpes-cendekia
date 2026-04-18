@@ -1,11 +1,12 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { MapPin, Phone, MessageCircle, Clock, ArrowRight, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapPin, Phone, MessageCircle, Clock, ArrowRight, ChevronDown, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 
 const Contact = () => {
   // --- STATE UNTUK FAQ DROPDOWN ---
-  const [openFaq, setOpenFaq] = useState<number | null>(0); // Default FAQ pertama terbuka (0)
+  const [openFaq, setOpenFaq] = useState<number | null>(0); // Default FAQ pertama terbuka
+  const faqRef = useRef<HTMLDivElement>(null); // Reference untuk mendeteksi klik di luar FAQ
 
   // Data Pertanyaan Sering Diajukan (FAQ)
   const faqs = [
@@ -35,6 +36,20 @@ const Contact = () => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
+  // --- EFEK KLIK DI LUAR FAQ UNTUK MENUTUP ---
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (faqRef.current && !faqRef.current.contains(event.target as Node)) {
+        setOpenFaq(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   // --- EFEK ANIMASI SCROLL ---
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -61,21 +76,23 @@ const Contact = () => {
         {/* ============================================================= */}
         {/* SECTION 1: FAQ (FREQUENTLY ASKED QUESTIONS) */}
         {/* ============================================================= */}
-        <div className="w-full flex flex-col items-center">
+        {/* Tambahkan ref={faqRef} ke bungkus luar FAQ */}
+        <div ref={faqRef} className="w-full flex flex-col items-center">
           
-          <div className="text-center animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out mb-10">
-            <span className="inline-block py-1.5 px-4 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-400 font-bold text-xs tracking-widest uppercase mb-4 shadow-sm border border-emerald-200 dark:border-gray-800">
-              Frequently Asked Questions
-            </span>
+          {/* Judul & Pengantar FAQ (Sekarang Rata Tengah dan Icon Ditambahkan) */}
+          <div className="w-full max-w-3xl flex flex-col items-center text-center animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out mb-10">
+             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-4">
+              <HelpCircle size={24} />
+            </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-emerald-950 dark:text-white tracking-tighter mb-4">
               Pusat Informasi Bantuan
             </h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-              Temukan jawaban cepat untuk pertanyaan yang paling sering diajukan mengenai program akademik, pendaftaran, dan fasilitas di Pondok Pesantren Cendekia Baznas.
+              Sebelum menghubungi admin kami, Anda dapat membaca daftar pertanyaan (FAQ) di bawah ini untuk menemukan jawaban secara cepat.
             </p>
           </div>
 
-          {/* Wrapper FAQ Kotak-Kotak (Desain Mirip Referensi) */}
+          {/* Wrapper FAQ Kotak-Kotak (Desain Rata Tengah Max-W-4xl) */}
           <div className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[2rem] shadow-xl shadow-emerald-900/5 dark:shadow-none border border-gray-100 dark:border-gray-800 p-4 sm:p-8 animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out delay-200">
             <div className="flex flex-col gap-4">
               {faqs.map((faq, index) => (
@@ -89,12 +106,12 @@ const Contact = () => {
                 >
                   <button 
                     onClick={() => toggleFaq(index)}
-                    className="w-full flex items-center justify-between p-5 sm:p-6 text-left outline-none active:scale-[0.99] transition-transform duration-200"
+                    className="w-full flex items-center justify-between p-5 sm:p-6 text-left outline-none active:scale-[0.99] transition-transform duration-200 group"
                   >
-                    <span className={`font-bold text-sm sm:text-base pr-4 ${openFaq === index ? 'text-emerald-800 dark:text-emerald-400' : 'text-gray-800 dark:text-gray-200'}`}>
+                    <span className={`font-bold text-sm sm:text-base pr-4 ${openFaq === index ? 'text-emerald-800 dark:text-emerald-400' : 'text-gray-800 dark:text-gray-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-500'}`}>
                       {faq.question}
                     </span>
-                    <div className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-transform duration-300 ${openFaq === index ? 'bg-emerald-600 text-white rotate-180' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'}`}>
+                    <div className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-transform duration-300 ${openFaq === index ? 'bg-emerald-600 text-white rotate-180' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:bg-emerald-50 dark:group-hover:bg-gray-700'}`}>
                       <ChevronDown size={18} />
                     </div>
                   </button>
