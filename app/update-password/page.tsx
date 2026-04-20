@@ -1,12 +1,17 @@
 "use client";
 import React, { useState } from 'react';
-import { Lock, Loader2, CheckCircle2 } from 'lucide-react';
+// Tambahkan Eye dan EyeOff
+import { Lock, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // Set default ke TRUE agar tulisan langsung muncul saat pertama kali halaman dibuka
+  const [showPassword, setShowPassword] = useState(true); 
+  
   const router = useRouter();
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -35,7 +40,7 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4 font-sans">
       <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-[2rem] shadow-xl p-8 border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-500">
         
         {/* Ikon & Judul */}
@@ -55,14 +60,27 @@ export default function UpdatePasswordPage() {
             <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password Baru</label>
             <div className="relative group">
               <input 
-                type="password" 
+                // Jika showPassword true, tipe inputnya "text" (huruf kelihatan). Jika false, jadi "password" (titik/lingkaran)
+                type={showPassword ? "text" : "password"} 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimal 6 karakter" 
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all text-sm"
+                // Ditambahkan pl-10 dan pr-12 agar teks tidak menabrak ikon gembok & ikon mata
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 pl-10 pr-12 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                 required
               />
-              <Lock className="absolute left-3.5 top-3.5 text-gray-400" size={18} />
+              <Lock className="absolute left-3.5 top-3.5 text-gray-400 transition-colors group-focus-within:text-emerald-500" size={18} />
+              
+              {/* TOMBOL ICON MATA */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-emerald-500 transition-colors"
+                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+              >
+                {/* Jika lagi tampil teks, tombolnya EyeOff (coret). Kalau disembunyiin, iconnya Eye (mata terbuka) */}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

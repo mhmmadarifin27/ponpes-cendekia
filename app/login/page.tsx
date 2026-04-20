@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
-import { Mail, Lock, Home, Loader2, ArrowRight } from 'lucide-react';
+// 1. TAMBAHKAN ICON EYE DAN EYEOFF DARI LUCIDE
+import { Mail, Lock, Home, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
@@ -9,6 +10,10 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // 2. STATE BARU UNTUK MATA PASSWORD
+  const [showPassword, setShowPassword] = useState(false);
+  
   const router = useRouter();
 
   // --- STATE DAN FUNGSI BARU UNTUK ANIMASI TOMBOL HOME ---
@@ -16,9 +21,8 @@ const LoginPage = () => {
 
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsHomeClicked(true); // Mengaktifkan class animasi (geser & menghilang)
+    setIsHomeClicked(true); 
     
-    // Menunda pindah halaman selama 300 milidetik agar animasi sempat diputar
     setTimeout(() => {
       router.push('/'); 
     }, 300);
@@ -73,53 +77,37 @@ const LoginPage = () => {
       {/* --- KOTAK LOGIN UTAMA --- */}
       <div className="w-full max-w-[1000px] relative bg-white dark:bg-gray-900 rounded-3xl md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col-reverse md:flex-row animate-in fade-in zoom-in-[0.98] duration-1000 ease-out border border-gray-100 dark:border-gray-800">
         
-        {/* --- TOMBOL KEMBALI KE BERANDA (Dengan Animasi Isi Meluncur) --- */}
+        {/* --- TOMBOL KEMBALI KE BERANDA --- */}
         <button 
           onClick={handleHomeClick}
-          // Button utama kita buat overflow-hidden dan efek geser dihapus dari sini
           className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-1.5 sm:pr-5 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-full shadow-sm hover:border-emerald-500 hover:scale-105 transition-all duration-300 ease-in-out group animate-in fade-in slide-in-from-top-4 delay-500 fill-mode-both overflow-hidden"
         >
-          {/* Wrapper untuk isi tombol (Ini yang akan meluncur ke kanan saat isHomeClicked true) */}
           <div className={`flex items-center gap-0 sm:gap-2 transition-all duration-300 ease-out ${isHomeClicked ? 'translate-x-24 opacity-0' : 'translate-x-0 opacity-100'}`}>
-            
             <div className="w-8 h-8 shrink-0 rounded-full bg-emerald-50 dark:bg-gray-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
               <Home size={16} />
             </div>
-            
             <span className="font-bold text-xs sm:text-sm text-gray-700 dark:text-gray-300 hidden sm:flex items-center gap-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
               Beranda
-              
             </span>
-            
           </div>
         </button>
 
         {/* BAGIAN KIRI: FORM LOGIN */}
         <div className="w-full md:w-1/2 p-6 sm:p-12 lg:p-16 flex flex-col justify-center">
           
-          {/* ========================================================= */}
-          {/* LOGO BARU (Cendekia & Baznas) */}
-          {/* Ditambahkan justify-center md:justify-start agar rata tengah di HP */}
-          {/* ========================================================= */}
+          {/* LOGO BARU */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
-            {/* 1. Logo Utama (Cendekia) */}
             <img 
               src="/logo.png" 
               alt="Logo Pondok Pesantren Cendekia" 
               className="h-10 md:h-12 w-auto object-contain drop-shadow-sm"
             />
-            
-            {/* Garis Pemisah */}
             <div className="h-8 w-[1px] md:w-[1.5px] bg-gray-200 dark:bg-gray-700 rounded-full mx-0.5" />
-
-            {/* 2. Logo BAZNAS */}
             <img 
               src="/logo baznas.png" 
               alt="Logo Baznas" 
               className="h-8 md:h-10 w-auto object-contain drop-shadow-sm"
             />
-
-            {/* Teks Pendamping - Ditambahkan text-center md:text-left */}
             <div className="flex flex-col justify-center ml-1 text-center md:text-left">
               <h1 className="text-gray-900 dark:text-white font-black text-sm md:text-lg leading-none tracking-tight">Pondok Pesantren</h1>
               <p className="text-[8px] md:text-[10px] text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-0.5">
@@ -129,7 +117,6 @@ const LoginPage = () => {
           </div>
 
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
-            {/* Ditambahkan text-center md:text-left pada h1 dan p */}
             <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-2 text-center md:text-left">
               Selamat Datang!
             </h1>
@@ -140,7 +127,7 @@ const LoginPage = () => {
 
           <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
             
-            {/* Input Email (Placeholder Dihapus) */}
+            {/* Input Email */}
             <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
               <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Email Address</label>
               <div className="relative group">
@@ -149,37 +136,48 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="" 
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                   required
                 />
                 <Mail className="absolute left-3.5 top-3.5 text-gray-400 transition-colors group-focus-within:text-emerald-500" size={18} />
               </div>
             </div>
 
-            {/* Input Password (Placeholder Dihapus) */}
+            {/* Input Password dengan Tombol Mata */}
             <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
               <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password</label>
               <div className="relative group">
                 <input 
-                  type="password" 
+                  // 3. LOGIKA TIPE INPUT
+                  type={showPassword ? "text" : "password"} 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="" 
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
+                  // 4. Tambah pr-12 agar teks tidak nabrak icon mata di sebelah kanan
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 pl-10 pr-12 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                   required
                 />
                 <Lock className="absolute left-3.5 top-3.5 text-gray-400 transition-colors group-focus-within:text-emerald-500" size={18} />
+                
+                {/* 5. TOMBOL ICON MATA */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-gray-400 hover:text-emerald-500 transition-colors"
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
-            {/* Fitur Ekstra & Lupa Password yang Berfungsi */}
+            {/* Fitur Ekstra & Lupa Password */}
             <div className="flex items-center justify-between mt-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" />
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Ingat Saya</span>
               </label>
               
-              {/* TOMBOL LUPA PASSWORD */}
               <button 
                 onClick={handleResetPassword}
                 type="button" 
@@ -210,19 +208,14 @@ const LoginPage = () => {
 
         {/* BAGIAN KANAN: GAMBAR & TEKS OVERLAY */}
         <div className="w-full h-48 sm:h-64 md:h-auto md:w-1/2 relative bg-emerald-900 overflow-hidden flex flex-shrink-0">
-          
-          {/* Gambar Background dengan efek zoom lambat */}
           <img 
             src="flyercendekia.jpeg" 
             alt="Santri" 
             className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay animate-[spin_60s_linear_infinite] [animation-play-state:paused] hover:[animation-play-state:running] hover:scale-110 transition-transform duration-[10s]"
           />
-          
-          {/* Overlay Warna Hijau */}
           <div className="absolute inset-0 bg-emerald-900/80 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-transparent to-transparent opacity-80" />
 
-          {/* Konten Teks di Atas Gambar */}
           <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center p-6 md:p-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-2 md:mb-6 leading-tight drop-shadow-md animate-in fade-in slide-in-from-right-8 duration-1000 delay-300 fill-mode-both">
               Pendidikan Qur&apos;ani <br className="hidden md:block" /> & Beradab
