@@ -1,7 +1,17 @@
+"use client"; // Wajib ditambahkan karena kita menggunakan hooks Next.js
 import React from 'react';
-import { MessageCircle } from 'lucide-react'; // Menggunakan icon chat dari Lucide
+import { MessageCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation'; // Import pendeteksi URL
 
 const FloatingWhatsApp = () => {
+  const pathname = usePathname();
+
+  // --- LOGIKA PENYEMBUNYIAN ---
+  // Jika URL saat ini adalah /login atau berawalan /admin, jangan render apa-apa (return null)
+  if (pathname === '/login' || pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <a
       // Ganti nomor ini kalau mau diarahkan ke nomor lain, formatnya 628...

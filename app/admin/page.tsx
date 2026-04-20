@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { supabase } from '@/lib/supabase';
 import { 
   LayoutGrid, FileText, Building2, Settings, LogOut, 
   Search, Bell, Moon, Sun, Camera, Plus, Trash2, Loader2, X, UploadCloud, Menu,
-  BarChart3, Image as ImageIcon, Zap, Edit
+  BarChart3, Image as ImageIcon, Zap, Edit, Users
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -15,8 +15,11 @@ const AdminDashboard = () => {
   
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const [stats, setStats] = useState({ warta: 0, fasilitas: 0, dokumentasi: 0 });
+  const [stats, setStats] = useState({ warta: 0, fasilitas: 0, dokumentasi: 0, guru: 0 });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
+
+  // --- REF UNTUK SLIDER STATS DI HP ---
+  const scrollRefStats = useRef<HTMLDivElement | null>(null);
 
   const [facilities, setFacilities] = useState<any[]>([]);
   const [isLoadingFasilitas, setIsLoadingFasilitas] = useState(false);
@@ -38,6 +41,12 @@ const AdminDashboard = () => {
   const [formDataDokumentasi, setFormDataDokumentasi] = useState({ judul: '', deskripsi: '', gambar_url: '' });
   const [fileDokumentasi, setFileDokumentasi] = useState<File | null>(null);
 
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [isLoadingTeachers, setIsLoadingTeachers] = useState(false);
+  const [isModalTeacherOpen, setIsModalTeacherOpen] = useState(false);
+  const [formDataTeacher, setFormDataTeacher] = useState({ nama: '', mata_pelajaran: '', pendidikan: '', gambar_url: '' });
+  const [fileTeacher, setFileTeacher] = useState<File | null>(null);
+
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -49,6 +58,29 @@ const AdminDashboard = () => {
     if (activeTab === 'fasilitas') fetchFacilities();
     if (activeTab === 'berita') fetchWarta();
     if (activeTab === 'dokumentasi') fetchDokumentasi();
+    if (activeTab === 'guru') fetchTeachers();
+  }, [activeTab]);
+
+  // --- EFEK AUTO-SCROLL UNTUK OVERVIEW STATS DI HP ---
+  useEffect(() => {
+    if (activeTab !== 'overview') return;
+
+    const autoScroll = () => {
+      if (scrollRefStats.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRefStats.current;
+        // Hanya jalankan auto-scroll jika elemen bisa di-scroll (yakni layar HP)
+        if (scrollWidth > clientWidth) {
+          if (scrollLeft + clientWidth >= scrollWidth - 10) {
+            scrollRefStats.current.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            scrollRefStats.current.scrollBy({ left: clientWidth * 0.8, behavior: 'smooth' });
+          }
+        }
+      }
+    };
+
+    const interval = setInterval(autoScroll, 3000); // Geser setiap 3 detik
+    return () => clearInterval(interval);
   }, [activeTab]);
 
   const handleLogout = async () => {
@@ -76,11 +108,13 @@ const AdminDashboard = () => {
     const { count: wCount } = await supabase.from('warta').select('*', { count: 'exact', head: true });
     const { count: fCount } = await supabase.from('fasilitas').select('*', { count: 'exact', head: true });
     const { count: dCount } = await supabase.from('dokumentasi').select('*', { count: 'exact', head: true });
+    const { count: tCount } = await supabase.from('guru').select('*', { count: 'exact', head: true });
     
     setStats({
       warta: wCount || 0,
       fasilitas: fCount || 0,
-      dokumentasi: dCount || 0
+      dokumentasi: dCount || 0,
+      guru: tCount || 0
     });
     setIsLoadingStats(false);
   };
@@ -219,6 +253,41 @@ const AdminDashboard = () => {
       fetchDokumentasi();
     }
   };
+
+  const fetchTeachers = async () => {
+    setIsLoadingTeachers(true);
+    const { data } = await supabase.from('guru').select('*').order('created_at', { ascending: false });
+    if (data) setTeachers(data);
+    setIsLoadingTeachers(false);
+  };
+
+  const handleSaveTeacher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      let imageUrl = formDataTeacher.gambar_url;
+      if (fileTeacher) imageUrl = await uploadImage(fileTeacher, 'guru_images');
+      
+      const { error } = await supabase.from('guru').insert([{ ...formDataTeacher, gambar_url: imageUrl }]);
+      if (error) throw error;
+
+      setIsModalTeacherOpen(false);
+      setFormDataTeacher({ nama: '', mata_pelajaran: '', pendidikan: '', gambar_url: '' });
+      setFileTeacher(null);
+      fetchTeachers();
+    } catch (error: any) {
+      alert('Gagal menyimpan Data Guru: ' + error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteTeacher = async (id: number) => {
+    if(confirm('Yakin ingin menghapus data tenaga pendidik ini?')) {
+      await supabase.from('guru').delete().eq('id', id);
+      fetchTeachers();
+    }
+  };
   
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-gray-900 transition-colors duration-500 font-sans text-gray-800 dark:text-gray-100">
@@ -266,7 +335,6 @@ const AdminDashboard = () => {
         </div>
 
         <nav className="flex-1 py-6 flex flex-col gap-1 px-4 overflow-y-auto">
-          {/* Efek touch (active:scale-[0.98]) ditambahkan di semua tombol nav */}
           <button onClick={() => handleTabClick('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'overview' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <LayoutGrid size={18} /> Overview
           </button>
@@ -277,6 +345,10 @@ const AdminDashboard = () => {
 
           <button onClick={() => handleTabClick('fasilitas')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'fasilitas' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
             <Building2 size={18} /> Kelola Fasilitas
+          </button>
+
+          <button onClick={() => handleTabClick('guru')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'guru' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
+            <Users size={18} /> Tenaga Pendidik
           </button>
 
           <button onClick={() => handleTabClick('dokumentasi')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] ${activeTab === 'dokumentasi' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50'}`}>
@@ -332,37 +404,50 @@ const AdminDashboard = () => {
                 <div className="flex justify-center items-center py-32 text-gray-400"><Loader2 className="animate-spin mr-2" /> Mengambil data statistik...</div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('berita')}>
+                  {/* SLIDER STATS OVERVIEW KHUSUS HP (Desktop tetap Grid) */}
+                  <div 
+                    ref={scrollRefStats}
+                    className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory hide-scrollbar pb-4 md:pb-0"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  >
+                    <div className="w-[85vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-center bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('berita')}>
                       <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full blur-2xl group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors" />
                       <div className="flex justify-between items-start mb-4 relative z-10">
                         <div className="p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl"><FileText size={22} /></div>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Total Berita Dipublikasi</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Total Berita</p>
                       <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.warta}</h3>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('fasilitas')}>
+                    <div className="w-[85vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-center bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('fasilitas')}>
                       <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-full blur-2xl group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/40 transition-colors" />
                       <div className="flex justify-between items-start mb-4 relative z-10">
                         <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl"><Building2 size={22} /></div>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Fasilitas Terdaftar</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Fasilitas</p>
                       <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.fasilitas}</h3>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('dokumentasi')}>
+                    <div className="w-[85vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-center bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('guru')}>
+                      <div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 dark:bg-purple-900/20 rounded-full blur-2xl group-hover:bg-purple-100 dark:group-hover:bg-purple-900/40 transition-colors" />
+                      <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="p-3 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl"><Users size={22} /></div>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Tenaga Pendidik</p>
+                      <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.guru}</h3>
+                    </div>
+
+                    <div className="w-[85vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-center bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group cursor-pointer" onClick={() => handleTabClick('dokumentasi')}>
                       <div className="absolute -right-6 -top-6 w-24 h-24 bg-yellow-50 dark:bg-yellow-900/20 rounded-full blur-2xl group-hover:bg-yellow-100 dark:group-hover:bg-yellow-900/40 transition-colors" />
                       <div className="flex justify-between items-start mb-4 relative z-10">
                         <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-500 rounded-xl"><ImageIcon size={22} /></div>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Foto Dokumentasi</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 relative z-10">Galeri Foto</p>
                       <h3 className="text-3xl font-black text-gray-900 dark:text-white relative z-10">{stats.dokumentasi}</h3>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                    {/* GRAFIK 1: Distribusi Konten */}
                     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden p-6 md:p-8 relative h-[400px] flex flex-col">
                       <div className="flex items-center justify-between mb-8 shrink-0">
                         <div>
@@ -374,9 +459,10 @@ const AdminDashboard = () => {
                       </div>
 
                       {(() => {
-                        const total = stats.warta + stats.fasilitas + stats.dokumentasi || 1; 
+                        const total = stats.warta + stats.fasilitas + stats.dokumentasi + stats.guru || 1; 
                         const wPct = Math.max(10, Math.round((stats.warta / total) * 100));
                         const fPct = Math.max(10, Math.round((stats.fasilitas / total) * 100));
+                        const gPct = Math.max(10, Math.round((stats.guru / total) * 100));
                         const dPct = Math.max(10, Math.round((stats.dokumentasi / total) * 100));
 
                         return (
@@ -387,39 +473,42 @@ const AdminDashboard = () => {
                               <div className="h-full border-b border-gray-300 dark:border-gray-600 border-dashed"></div>
                             </div>
 
-                            <div className="flex items-end justify-around w-full px-2 sm:px-12 relative z-10 pt-6 pb-2">
+                            <div className="flex items-end justify-around w-full px-2 sm:px-6 relative z-10 pt-6 pb-2">
                               
-                              {/* BATANG 1: BERITA */}
-                              <div className="flex flex-col items-center justify-end group w-1/3 h-full cursor-pointer">
+                              <div className="flex flex-col items-center justify-end group w-1/4 h-full cursor-pointer" onClick={() => handleTabClick('berita')}>
                                 <div className="w-full h-full flex items-end justify-center">
-                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(59,130,246,0.3)]" style={{ height: `${wPct}%` }}>
-                                    {/* Angka: Pudar default, terang & loncat saat disentuh/hover */}
+                                  <div className="w-full max-w-[40px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(59,130,246,0.3)]" style={{ height: `${wPct}%` }}>
                                     <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.warta}</span>
                                   </div>
                                 </div>
-                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors">Berita</span>
+                                <span className="mt-3 text-[10px] md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors">Berita</span>
                               </div>
 
-                              {/* BATANG 2: FASILITAS */}
-                              <div className="flex flex-col items-center justify-end group w-1/3 h-full cursor-pointer">
+                              <div className="flex flex-col items-center justify-end group w-1/4 h-full cursor-pointer" onClick={() => handleTabClick('fasilitas')}>
                                 <div className="w-full h-full flex items-end justify-center">
-                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ height: `${fPct}%` }}>
-                                    {/* Angka: Pudar default, terang & loncat saat disentuh/hover */}
+                                  <div className="w-full max-w-[40px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ height: `${fPct}%` }}>
                                     <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.fasilitas}</span>
                                   </div>
                                 </div>
-                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-emerald-600 transition-colors">Fasilitas</span>
+                                <span className="mt-3 text-[10px] md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-emerald-600 transition-colors">Fasilitas</span>
                               </div>
 
-                              {/* BATANG 3: GALERI */}
-                              <div className="flex flex-col items-center justify-end group w-1/3 h-full cursor-pointer">
+                              <div className="flex flex-col items-center justify-end group w-1/4 h-full cursor-pointer" onClick={() => handleTabClick('guru')}>
                                 <div className="w-full h-full flex items-end justify-center">
-                                  <div className="w-full max-w-[50px] bg-gradient-to-t from-yellow-500 to-yellow-300 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(234,179,8,0.3)]" style={{ height: `${dPct}%` }}>
-                                    {/* Angka: Pudar default, terang & loncat saat disentuh/hover */}
+                                  <div className="w-full max-w-[40px] bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(168,85,247,0.3)]" style={{ height: `${gPct}%` }}>
+                                    <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.guru}</span>
+                                  </div>
+                                </div>
+                                <span className="mt-3 text-[10px] md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-purple-600 transition-colors">Guru</span>
+                              </div>
+
+                              <div className="flex flex-col items-center justify-end group w-1/4 h-full cursor-pointer" onClick={() => handleTabClick('dokumentasi')}>
+                                <div className="w-full h-full flex items-end justify-center">
+                                  <div className="w-full max-w-[40px] bg-gradient-to-t from-yellow-500 to-yellow-300 rounded-t-xl relative transition-all duration-500 ease-out flex items-start justify-center group-hover:opacity-90 group-active:scale-95 shadow-[0_0_15px_rgba(234,179,8,0.3)]" style={{ height: `${dPct}%` }}>
                                     <span className="absolute -top-7 text-xs font-bold text-gray-700 dark:text-gray-300 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 group-active:opacity-100 group-active:-translate-y-2 group-active:scale-125">{stats.dokumentasi}</span>
                                   </div>
                                 </div>
-                                <span className="mt-3 text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-yellow-500 transition-colors">Galeri</span>
+                                <span className="mt-3 text-[10px] md:text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-yellow-500 transition-colors">Galeri</span>
                               </div>
 
                             </div>
@@ -428,7 +517,6 @@ const AdminDashboard = () => {
                       })()}
                     </div>
 
-                    {/* AKSES CEPAT */}
                     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden p-6 md:p-8 flex flex-col h-[400px]">
                       <div className="flex items-center justify-between mb-6 shrink-0">
                         <div>
@@ -440,39 +528,40 @@ const AdminDashboard = () => {
                         </div>
                       </div>
 
-                      <div className="flex-grow flex flex-col justify-center gap-4">
+                      <div className="flex-grow flex flex-col justify-center gap-3">
+                        <button 
+                          onClick={() => { setActiveTab('guru'); setTimeout(() => setIsModalTeacherOpen(true), 100); }} 
+                          className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-lg group-hover:scale-110 transition-transform"><Users size={18} /></div>
+                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tambah Data Guru</p><p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Perbarui profil tenaga pendidik</p></div>
+                          </div>
+                          <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
+                        </button>
+
                         <button 
                           onClick={() => { setActiveTab('berita'); setTimeout(() => setIsModalWartaOpen(true), 100); }} 
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
+                          className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
                         >
                           <div className="flex items-center gap-4">
                             <div className="p-2.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg group-hover:scale-110 transition-transform"><FileText size={18} /></div>
-                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tulis Berita Baru</p><p className="text-xs text-gray-500 dark:text-gray-400">Publikasikan informasi terkini</p></div>
+                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tulis Berita Baru</p><p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Publikasikan informasi terkini</p></div>
                           </div>
                           <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
                         </button>
 
                         <button 
                           onClick={() => { setActiveTab('dokumentasi'); setTimeout(() => setIsModalDokumentasiOpen(true), 100); }} 
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
+                          className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
                         >
                           <div className="flex items-center gap-4">
                             <div className="p-2.5 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-500 rounded-lg group-hover:scale-110 transition-transform"><Camera size={18} /></div>
-                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Upload Galeri</p><p className="text-xs text-gray-500 dark:text-gray-400">Tambahkan foto dokumentasi</p></div>
+                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Upload Galeri</p><p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Tambahkan foto dokumentasi</p></div>
                           </div>
                           <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
                         </button>
 
-                        <button 
-                          onClick={() => { setActiveTab('fasilitas'); setTimeout(() => setIsModalFasilitasOpen(true), 100); }} 
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 dark:hover:border-emerald-800 active:scale-[0.98] transition-all group"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-lg group-hover:scale-110 transition-transform"><Building2 size={18} /></div>
-                            <div className="text-left"><p className="font-bold text-gray-900 dark:text-white text-sm">Tambah Fasilitas</p><p className="text-xs text-gray-500 dark:text-gray-400">Perbarui sarana prasarana</p></div>
-                          </div>
-                          <Plus size={18} className="text-gray-400 group-hover:text-emerald-600 transition-colors" />
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -481,7 +570,6 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB: FASILITAS */}
           {activeTab === 'fasilitas' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -526,14 +614,12 @@ const AdminDashboard = () => {
             </div>
           )}
 
-         {/* TAB: WARTA (BERITA) */}
           {activeTab === 'berita' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Berita (Warta)</h3>
                 </div>
-                {/* UBAH WARNA JADI EMERALD */}
                 <button onClick={handleOpenAddWartaModal} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 transition-transform active:scale-95 shadow-sm">
                   <Plus size={18} /> Tambah Warta
                 </button>
@@ -580,14 +666,12 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB: DOKUMENTASI */}
           {activeTab === 'dokumentasi' && (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Galeri Dokumentasi</h3>
               </div>
-                {/* UBAH WARNA JADI EMERALD */}
                 <button onClick={() => setIsModalDokumentasiOpen(true)} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
                   <Plus size={18} /> Upload Foto Baru
                 </button>
@@ -611,16 +695,64 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* TAB BARU: GURU */}
+          {activeTab === 'guru' && (
+            <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Tenaga Pendidik</h3>
+                </div>
+                <button onClick={() => setIsModalTeacherOpen(true)} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm w-full sm:w-auto transition-transform active:scale-95">
+                  <Plus size={18} /> Tambah Data Guru
+                </button>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                {isLoadingTeachers ? (
+                  <div className="flex justify-center items-center py-20 text-gray-400"><Loader2 className="animate-spin mr-2" /></div>
+                ) : (
+                  <div className="overflow-x-auto scroll-smooth pb-2">
+                    <table className="w-full text-left border-collapse whitespace-nowrap">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
+                          <th className="p-4 font-semibold w-24">Foto</th>
+                          <th className="p-4 font-semibold">Nama Lengkap</th>
+                          <th className="p-4 font-semibold">Mata Pelajaran</th>
+                          <th className="p-4 font-semibold">Pendidikan</th>
+                          <th className="p-4 font-semibold text-center w-24">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700">
+                        {teachers.length === 0 ? (
+                          <tr><td colSpan={5} className="p-8 text-center text-gray-400 font-medium">Belum ada data guru terdaftar.</td></tr>
+                        ) : (
+                          teachers.map((t) => (
+                              <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 active:bg-gray-100 dark:active:bg-gray-700 transition-colors">
+                                <td className="p-4"><img src={t.gambar_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80"} alt="img" className="w-12 h-12 object-cover rounded-full border border-gray-200 dark:border-gray-700" /></td>
+                                <td className="p-4 font-bold text-gray-900 dark:text-white">{t.nama}</td>
+                                <td className="p-4 text-emerald-600 dark:text-emerald-400 font-medium">{t.mata_pelajaran}</td>
+                                <td className="p-4 text-gray-500 dark:text-gray-400">{t.pendidikan}</td>
+                                <td className="p-4 text-center">
+                                  <button onClick={() => handleDeleteTeacher(t.id)} className="text-red-500 hover:text-red-700 active:scale-90 transition-all hover:scale-110 p-2"><Trash2 size={18} /></button>
+                                </td>
+                              </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
-      {/* ========================================================= */}
-      {/* MODAL TAMBAH FASILITAS */}
-      {/* ========================================================= */}
+      {/* MODAL FASILITAS */}
       {isModalFasilitasOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
-            {/* Gagang Swipe Modal Mobile */}
             <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
             
             <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
@@ -659,13 +791,10 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* MODAL TAMBAH & EDIT WARTA */}
-      {/* ========================================================= */}
+      {/* MODAL WARTA */}
       {isModalWartaOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
-            {/* Gagang Swipe Modal Mobile */}
             <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
 
             <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
@@ -696,7 +825,6 @@ const AdminDashboard = () => {
                 <textarea rows={6} value={formDataWarta.konten} onChange={(e) => setFormDataWarta({...formDataWarta, konten: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm resize-none dark:border-gray-700 outline-none focus:border-emerald-500 transition-colors"></textarea>
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                {/* UBAH WARNA JADI EMERALD */}
                 <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : (editingWartaId ? 'Simpan Perubahan' : 'Publikasi Berita')}
                 </button>
@@ -706,13 +834,10 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* MODAL UPLOAD DOKUMENTASI */}
-      {/* ========================================================= */}
+      {/* MODAL DOKUMENTASI */}
       {isModalDokumentasiOpen && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
-            {/* Gagang Swipe Modal Mobile */}
             <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
 
             <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
@@ -732,9 +857,54 @@ const AdminDashboard = () => {
                 <input required type="text" value={formDataDokumentasi.judul} onChange={(e) => setFormDataDokumentasi({...formDataDokumentasi, judul: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors" />
               </div>
               <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-6">
-                {/* UBAH WARNA JADI EMERALD */}
                 <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Upload Foto'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL GURU BARU (Form Input Guru) */}
+      {/* ========================================================= */}
+      {isModalTeacherOpen && (
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-gray-800 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-gray-100 dark:border-gray-700 overflow-hidden animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0">
+            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mt-3 sm:hidden"></div>
+            
+            <div className="flex justify-between items-center px-6 pb-6 pt-3 sm:pt-6 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><Users size={20} className="text-emerald-500"/> Tambah Data Guru</h3>
+              <button onClick={() => setIsModalTeacherOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 active:scale-90"><X size={20} /></button>
+            </div>
+            
+            <form onSubmit={handleSaveTeacher} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div>
+                <label className="block text-sm font-medium mb-1">Nama Lengkap & Gelar *</label>
+                <input required type="text" placeholder="Cth: Ust. Fulan bin Fulan, Lc., M.A." value={formDataTeacher.nama} onChange={(e) => setFormDataTeacher({...formDataTeacher, nama: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm dark:bg-gray-900 dark:border-gray-700 focus:border-emerald-500 outline-none transition-colors" />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Mata Pelajaran yang Diampu *</label>
+                <input required type="text" placeholder="Cth: Tafsir & Hadits" value={formDataTeacher.mata_pelajaran} onChange={(e) => setFormDataTeacher({...formDataTeacher, mata_pelajaran: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm dark:bg-gray-900 dark:border-gray-700 focus:border-emerald-500 outline-none transition-colors" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Riwayat Pendidikan Terakhir *</label>
+                <input required type="text" placeholder="Cth: Universitas Al-Azhar, Kairo" value={formDataTeacher.pendidikan} onChange={(e) => setFormDataTeacher({...formDataTeacher, pendidikan: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm dark:bg-gray-900 dark:border-gray-700 focus:border-emerald-500 outline-none transition-colors" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Upload Pas Foto Guru *</label>
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-5 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 cursor-pointer hover:bg-emerald-50 hover:border-emerald-300 dark:hover:bg-gray-800 transition-colors active:bg-emerald-100">
+                  <input required type="file" accept="image/*" onChange={(e) => setFileTeacher(e.target.files ? e.target.files[0] : null)} className="text-sm w-full text-center" />
+                </div>
+              </div>
+              
+              <div className="pt-4 flex justify-end border-t border-gray-100 dark:border-gray-700 mt-4">
+                <button type="submit" disabled={isSaving} className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Simpan Data Pendidik'}
                 </button>
               </div>
             </form>

@@ -25,6 +25,31 @@ const LoginPage = () => {
   };
   // --------------------------------------------------------
 
+  // --- FUNGSI UNTUK RESET / LUPA PASSWORD ---
+  const handleResetPassword = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      alert("Silakan ketik alamat email Anda di kolom email terlebih dahulu, lalu klik Lupa Password.");
+      return;
+    }
+
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/update-password`, 
+    });
+
+    if (error) {
+      alert("Gagal mengirim link reset password: " + error.message);
+    } else {
+      alert("Berhasil! Silakan cek kotak masuk (atau folder spam) email Anda untuk link reset password.");
+    }
+    
+    setLoading(false);
+  };
+  // --------------------------------------------------------
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -115,7 +140,7 @@ const LoginPage = () => {
 
           <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
             
-            {/* Input Email */}
+            {/* Input Email (Placeholder Dihapus) */}
             <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
               <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Email Address</label>
               <div className="relative group">
@@ -123,15 +148,15 @@ const LoginPage = () => {
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@cendekia.ac.id"
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
+                  placeholder="" 
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                   required
                 />
                 <Mail className="absolute left-3.5 top-3.5 text-gray-400 transition-colors group-focus-within:text-emerald-500" size={18} />
               </div>
             </div>
 
-            {/* Input Password */}
+            {/* Input Password (Placeholder Dihapus) */}
             <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
               <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password</label>
               <div className="relative group">
@@ -139,23 +164,30 @@ const LoginPage = () => {
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan password"
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
+                  placeholder="" 
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 px-10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                   required
                 />
                 <Lock className="absolute left-3.5 top-3.5 text-gray-400 transition-colors group-focus-within:text-emerald-500" size={18} />
               </div>
             </div>
 
-            {/* Fitur Ekstra */}
+            {/* Fitur Ekstra & Lupa Password yang Berfungsi */}
             <div className="flex items-center justify-between mt-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" />
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Ingat Saya</span>
               </label>
-              <a href="#" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
+              
+              {/* TOMBOL LUPA PASSWORD */}
+              <button 
+                onClick={handleResetPassword}
+                type="button" 
+                className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline disabled:opacity-50 active:scale-95 transition-transform"
+                disabled={loading}
+              >
                 Lupa Password?
-              </a>
+              </button>
             </div>
 
             {/* Tombol Submit */}

@@ -2,47 +2,51 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { ChevronRight, BookOpen, GraduationCap, ShieldCheck, HeartHandshake, Medal, ChevronLeft } from 'lucide-react';
+import { ChevronRight, BookOpen, GraduationCap, ShieldCheck, HeartHandshake, Medal, ChevronLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase'; // PASTIKAN IMPORT SUPABASE INI ADA!
 
-// Data Dummy Guru
-const teachers = [
+// Data Dummy Guru (Sebagai Cadangan / Fallback jika database kosong)
+const dummyTeachers = [
   { 
-    id: 1, name: "Ust. H. Abdul Somad, Lc., M.A.", subject: "Tafsir & Hadits", 
-    edu: "Universitas Al-Azhar, Kairo", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=500" 
+    id: 1, nama: "Ust. H. Abdul Somad, Lc., M.A.", mata_pelajaran: "Tafsir & Hadits", 
+    pendidikan: "Universitas Al-Azhar, Kairo", gambar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=500" 
   },
   { 
-    id: 2, name: "Ustadzah Fatimah Zahra, S.Pd.I.", subject: "Tahfidz Al-Qur'an", 
-    edu: "UIN Sunan Kalijaga", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=500" 
+    id: 2, nama: "Ustadzah Fatimah Zahra, S.Pd.I.", mata_pelajaran: "Tahfidz Al-Qur'an", 
+    pendidikan: "UIN Sunan Kalijaga", gambar_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=500" 
   },
   { 
-    id: 3, name: "Ust. Muhammad Ali, M.Pd.", subject: "Bahasa Arab & Nahwu", 
-    edu: "LIPIA Jakarta", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500" 
+    id: 3, nama: "Ust. Muhammad Ali, M.Pd.", mata_pelajaran: "Bahasa Arab & Nahwu", 
+    pendidikan: "LIPIA Jakarta", gambar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500" 
   },
   { 
-    id: 4, name: "Ustadzah Aisyah Aminah, M.Sc.", subject: "Matematika & Sains", 
-    edu: "Universitas Gadjah Mada", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500" 
+    id: 4, nama: "Ustadzah Aisyah Aminah, M.Sc.", mata_pelajaran: "Matematika & Sains", 
+    pendidikan: "Universitas Gadjah Mada", gambar_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500" 
   },
   { 
-    id: 5, name: "Ust. Ibrahim Hasan, B.A.", subject: "Fiqih & Ushul Fiqih", 
-    edu: "Universitas Islam Madinah", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500" 
+    id: 5, nama: "Ust. Ibrahim Hasan, B.A.", mata_pelajaran: "Fiqih & Ushul Fiqih", 
+    pendidikan: "Universitas Islam Madinah", gambar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500" 
   },
   { 
-    id: 6, name: "Ustadzah Siti Maryam, S.S., M.A.", subject: "Bahasa Inggris", 
-    edu: "Universitas Indonesia", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500" 
+    id: 6, nama: "Ustadzah Siti Maryam, S.S., M.A.", mata_pelajaran: "Bahasa Inggris", 
+    pendidikan: "Universitas Indonesia", gambar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500" 
   },
   { 
-    id: 7, name: "Ust. Umar Faruq, S.Kom.", subject: "Teknologi Informasi", 
-    edu: "Institut Teknologi Bandung", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=500" 
+    id: 7, nama: "Ust. Umar Faruq, S.Kom.", mata_pelajaran: "Teknologi Informasi", 
+    pendidikan: "Institut Teknologi Bandung", gambar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=500" 
   },
   { 
-    id: 8, name: "Ustadzah Khadijah, S.Ag.", subject: "Sejarah Kebudayaan Islam", 
-    edu: "UIN Syarif Hidayatullah", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=500" 
+    id: 8, nama: "Ustadzah Khadijah, S.Ag.", mata_pelajaran: "Sejarah Kebudayaan Islam", 
+    pendidikan: "UIN Syarif Hidayatullah", gambar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=500" 
   },
 ];
 
 const GuruKamiPage = () => {
-  
+  // --- STATE DATABASE GURU ---
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
+
   // --- STATE & REF UNTUK SLIDER KOMITMEN ---
   const scrollRefKomitmen = useRef<HTMLDivElement | null>(null);
   const [canScrollLeftKomitmen, setCanScrollLeftKomitmen] = useState(false);
@@ -53,7 +57,34 @@ const GuruKamiPage = () => {
   const [canScrollLeftGuru, setCanScrollLeftGuru] = useState(false);
   const [canScrollRightGuru, setCanScrollRightGuru] = useState(true);
 
-  // Fungsi Cek Scroll (Reusable & Aman dari TypeScript)
+  // --- FUNGSI AMBIL DATA DARI SUPABASE ---
+  useEffect(() => {
+    const fetchTeachersFromDB = async () => {
+      setIsLoadingTeachers(true);
+      try {
+        // Mengambil data dari tabel 'guru'
+        const { data, error } = await supabase.from('guru').select('*').order('created_at', { ascending: true });
+        
+        if (error) {
+          console.error("Error fetching teachers:", error);
+          setTeachers(dummyTeachers); // Pakai dummy kalau error
+        } else if (data && data.length > 0) {
+          setTeachers(data); // Pakai data asli dari database
+        } else {
+          setTeachers(dummyTeachers); // Pakai dummy kalau database kosong
+        }
+      } catch (err) {
+        console.error("Supabase connection error:", err);
+        setTeachers(dummyTeachers);
+      } finally {
+        setIsLoadingTeachers(false);
+      }
+    };
+
+    fetchTeachersFromDB();
+  }, []);
+
+  // Fungsi Cek Scroll
   const checkScroll = (
     ref: React.RefObject<HTMLDivElement | null>, 
     setLeft: React.Dispatch<React.SetStateAction<boolean>>, 
@@ -66,7 +97,7 @@ const GuruKamiPage = () => {
     }
   };
 
-  // Fungsi Scroll Manual (Diganti nama jadi geserSlider agar tidak bentrok)
+  // Fungsi Scroll Manual
   const geserSlider = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
     if (ref.current) {
       const scrollAmount = ref.current.clientWidth * 0.8;
@@ -88,7 +119,6 @@ const GuruKamiPage = () => {
     const hiddenElements = document.querySelectorAll('.scroll-anim');
     hiddenElements.forEach((el) => observer.observe(el));
 
-    // Listeners untuk panah slider
     const handleScrollKomitmen = () => checkScroll(scrollRefKomitmen, setCanScrollLeftKomitmen, setCanScrollRightKomitmen);
     const handleScrollGuru = () => checkScroll(scrollRefGuru, setCanScrollLeftGuru, setCanScrollRightGuru);
 
@@ -103,10 +133,12 @@ const GuruKamiPage = () => {
       if (elKomitmen) elKomitmen.removeEventListener('scroll', handleScrollKomitmen);
       if (elGuru) elGuru.removeEventListener('scroll', handleScrollGuru);
     };
-  }, []);
+  }, [isLoadingTeachers]); // Update observer saat status loading berubah
 
   // --- EFEK AUTO-SCROLL KHUSUS HP ---
   useEffect(() => {
+    if (isLoadingTeachers) return;
+
     const autoScroll = (ref: React.RefObject<HTMLDivElement | null>) => {
       if (ref.current) {
         const { scrollLeft, scrollWidth, clientWidth } = ref.current;
@@ -125,10 +157,10 @@ const GuruKamiPage = () => {
       clearInterval(intervalKomitmen);
       clearInterval(intervalGuru);
     };
-  }, []);
+  }, [isLoadingTeachers]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 font-sans">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 font-sans overflow-x-hidden">
       <Navbar />
       
       {/* ========================================= */}
@@ -188,12 +220,12 @@ const GuruKamiPage = () => {
              className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto overflow-y-hidden md:overflow-visible items-stretch snap-x snap-mandatory hide-scrollbar px-6 sm:px-0 pb-8 md:pb-0"
              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
            >
-              {[
-                { title: "Metode Tahfidz Intensif", desc: "Pendekatan personal dalam menghafal Al-Qur'an dengan muroja'ah berkala.", icon: <BookOpen /> },
-                { title: "Pendampingan Akhlak", desc: "Membentuk karakter islami melalui keteladanan harian di lingkungan pesantren.", icon: <HeartHandshake /> },
-                { title: "Kurikulum Terpadu", desc: "Integrasi harmonis antara ilmu agama mendalam dan pengetahuan umum modern.", icon: <GraduationCap /> },
-                { title: "Sertifikasi Kompetensi", desc: "Seluruh tenaga pendidik tersertifikasi nasional dan memiliki sanad keilmuan.", icon: <Medal /> },
-              ].map((item, idx) => (
+             {[
+               { title: "Metode Tahfidz Intensif", desc: "Pendekatan personal dalam menghafal Al-Qur'an dengan muroja'ah berkala.", icon: <BookOpen /> },
+               { title: "Pendampingan Akhlak", desc: "Membentuk karakter islami melalui keteladanan harian di lingkungan pesantren.", icon: <HeartHandshake /> },
+               { title: "Kurikulum Terpadu", desc: "Integrasi harmonis antara ilmu agama mendalam dan pengetahuan umum modern.", icon: <GraduationCap /> },
+               { title: "Sertifikasi Kompetensi", desc: "Seluruh tenaga pendidik tersertifikasi nasional dan memiliki sanad keilmuan.", icon: <Medal /> },
+             ].map((item, idx) => (
                  <div 
                    key={idx} 
                    className="scroll-anim flex opacity-0 translate-y-24 transition-all duration-1000 ease-out flex-shrink-0 w-[85vw] md:w-auto snap-center" 
@@ -207,7 +239,7 @@ const GuruKamiPage = () => {
                       <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed flex-grow">{item.desc}</p>
                    </div>
                  </div>
-              ))}
+             ))}
            </div>
 
            {/* PANAH NAVIGASI KOMITMEN (HP) */}
@@ -234,66 +266,75 @@ const GuruKamiPage = () => {
               <p className="text-gray-500 dark:text-gray-400">Mengenal lebih dekat para asatidz dan pengajar yang berdedikasi membimbing generasi qurani.</p>
           </div>
 
-          {/* SLIDER GURU */}
-          <div 
-            ref={scrollRefGuru}
-            className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 overflow-x-auto overflow-y-hidden md:overflow-visible items-stretch snap-x snap-mandatory hide-scrollbar px-6 sm:px-0 pb-8 md:pb-0"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {teachers.map((teacher, idx) => (
+          {isLoadingTeachers ? (
+            <div className="flex flex-col items-center justify-center py-20 text-emerald-600">
+              <Loader2 className="animate-spin mb-4" size={40} />
+              <p className="font-medium animate-pulse">Memuat Data Guru...</p>
+            </div>
+          ) : (
+            <>
+              {/* SLIDER GURU */}
               <div 
-                key={teacher.id} 
-                className="scroll-anim flex flex-col opacity-0 translate-y-24 transition-all duration-1000 ease-out flex-shrink-0 w-[85vw] md:w-auto snap-center"
-                style={{ transitionDelay: `${(idx % 4) * 100}ms` }}
+                ref={scrollRefGuru}
+                className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 overflow-x-auto overflow-y-hidden md:overflow-visible items-stretch snap-x snap-mandatory hide-scrollbar px-6 sm:px-0 pb-8 md:pb-0"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
-                <div className="w-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full group">
-                  {/* Foto Guru */}
-                  <div className="w-full aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-700 relative">
-                    <img 
-                      src={teacher.img} 
-                      alt={teacher.name} 
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-emerald-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  
-                  {/* Detail Info */}
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                      {teacher.name}
-                    </h3>
-                    
-                    <div className="h-px w-8 bg-yellow-500 my-4" />
-
-                    <div className="flex flex-col gap-3 mt-auto">
-                      <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400">
-                        <BookOpen size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
-                        <span>{teacher.subject}</span>
+                {teachers.map((teacher, idx) => (
+                  <div 
+                    key={teacher.id} 
+                    className="scroll-anim flex flex-col opacity-0 translate-y-24 transition-all duration-1000 ease-out flex-shrink-0 w-[85vw] md:w-auto snap-center"
+                    style={{ transitionDelay: `${(idx % 4) * 100}ms` }}
+                  >
+                    <div className="w-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full group">
+                      {/* Foto Guru */}
+                      <div className="w-full aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-700 relative">
+                        <img 
+                          src={teacher.gambar_url} 
+                          alt={teacher.nama} 
+                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                        />
+                        <div className="absolute inset-0 bg-emerald-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
-                      <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400">
-                        <GraduationCap size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
-                        <span>{teacher.edu}</span>
+                      
+                      {/* Detail Info */}
+                      <div className="p-6 flex flex-col flex-grow">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                          {teacher.nama}
+                        </h3>
+                        
+                        <div className="h-px w-8 bg-yellow-500 my-4" />
+
+                        <div className="flex flex-col gap-3 mt-auto">
+                          <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400">
+                            <BookOpen size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
+                            <span>{teacher.mata_pelajaran}</span>
+                          </div>
+                          <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400">
+                            <GraduationCap size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
+                            <span>{teacher.pendidikan}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* PANAH NAVIGASI GURU (HP) */}
-          <button 
-             onClick={() => geserSlider(scrollRefGuru, 'left')}
-             className={`absolute left-2 md:hidden top-[60%] -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 z-10 backdrop-blur-sm transition-opacity duration-300 ${canScrollLeftGuru ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-           >
-             <ChevronLeft size={24} />
-           </button>
-           <button 
-             onClick={() => geserSlider(scrollRefGuru, 'right')}
-             className={`absolute right-2 md:hidden top-[60%] -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 z-10 backdrop-blur-sm transition-opacity duration-300 ${canScrollRightGuru ? 'opacity-100 animate-pulse' : 'opacity-0 pointer-events-none'}`}
-           >
-             <ChevronRight size={24} />
-           </button>
+              {/* PANAH NAVIGASI GURU (HP) */}
+              <button 
+                onClick={() => geserSlider(scrollRefGuru, 'left')}
+                className={`absolute left-2 md:hidden top-[60%] -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 z-10 backdrop-blur-sm transition-opacity duration-300 ${canScrollLeftGuru ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button 
+                onClick={() => geserSlider(scrollRefGuru, 'right')}
+                className={`absolute right-2 md:hidden top-[60%] -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 z-10 backdrop-blur-sm transition-opacity duration-300 ${canScrollRightGuru ? 'opacity-100 animate-pulse' : 'opacity-0 pointer-events-none'}`}
+              >
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
 
         </section>
 
