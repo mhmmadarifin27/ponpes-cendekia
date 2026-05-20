@@ -81,7 +81,7 @@ const KurikulumPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center overflow-hidden">
             <div className="w-full h-[300px] md:h-[450px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
               <img
-                src="kegiatan santri2.jpeg"
+                src="visi.jpeg"
                 alt="Metode Pembelajaran"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
