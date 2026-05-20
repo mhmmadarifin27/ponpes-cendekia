@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Phone, MessageCircle, Clock, ArrowRight, ChevronDown, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
+import { ChevronDown, HelpCircle } from 'lucide-react';
+// import Link from 'next/link'; // Dihapus karena tidak dipakai lagi
 import Dokumentasi from './Dokumentasi';
 
 const Contact = () => {

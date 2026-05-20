@@ -9,10 +9,48 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+    <footer className="relative bg-gray-50 dark:bg-gray-900 pt-32 transition-colors duration-500">
 
-      {/* --- BODY FOOTER --- */}
-      <div className="relative pt-20 md:pt-24 pb-12 bg-emerald-950 dark:bg-gray-950 text-white overflow-hidden transition-colors duration-500">
+      {/* --- 1. SECTION MAPS (MENUMPUK NATURAL) --- */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 -mb-40 md:-mb-48">
+        <div className="bg-white dark:bg-gray-800 rounded-[30px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[400px] md:min-h-[450px] border border-gray-100 dark:border-gray-700 transition-colors duration-500">
+
+          {/* Info Alamat */}
+          <div className="w-full md:w-5/12 p-8 md:p-14 flex flex-col justify-center">
+            <div className="flex items-center gap-4 mb-6 md:mb-8">
+              <div className="p-3 md:p-4 bg-emerald-50 dark:bg-gray-700 rounded-2xl border border-emerald-100 dark:border-gray-600">
+                <MapPin className="text-emerald-800 dark:text-yellow-500 w-5 h-5 md:w-6 md:h-6" />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-emerald-900 dark:text-white tracking-tight">Lokasi Yayasan</h3>
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 leading-relaxed mb-8 md:mb-10 text-base md:text-lg">
+              Pondok Pesantren Cendekia Baznas, Kota Palembang, Sumatera Selatan
+            </p>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=-3.0332778,104.8163056"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-emerald-900 dark:bg-yellow-500 text-white dark:text-emerald-950 flex items-center justify-center gap-3 w-full py-4 md:py-5 rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl active:scale-95"
+            >
+              Petunjuk Arah <ArrowUpRight size={20} />
+            </a>
+          </div>
+
+          {/* Google Maps (Iframe) */}
+          <div className="w-full md:w-7/12 bg-gray-100 dark:bg-gray-900 h-[250px] md:h-auto border-l border-gray-100 dark:border-gray-700">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3050.424949570541!2d104.81373707497069!3d-3.033265996942581!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zM8KwMDEnNTkuOCJTIDEwNMKwNDgnNTguNyJF!5e1!3m2!1sid!2sid!4v1779249151784!5m2!1sid!2sid"
+              className="w-full h-full border-0 grayscale dark:invert dark:opacity-70 transition-all"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
+      {/* --- 2. BODY FOOTER --- */}
+      <div className="relative pt-56 md:pt-64 pb-12 bg-emerald-950 dark:bg-gray-950 text-white overflow-hidden transition-colors duration-500">
 
         {/* PERBAIKAN: Background Gambar Ilustrasi */}
         {/* Tinggi gambar di HP dibatasi maksimal 300px agar tidak nge-zoom, menempel di bawah */}
