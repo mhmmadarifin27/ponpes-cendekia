@@ -308,7 +308,7 @@ const WartaPage = () => {
                     {uniqueCategories.map((cat, i) => (
                       <div key={i} onClick={() => handleCategoryClick(cat.name)} className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer group last:border-0">
                         <span className={`text-sm group-hover:text-emerald-600 transition-colors ${categoryParam === cat.name ? 'font-bold text-emerald-600' : 'text-gray-600 dark:text-gray-400'}`}>{cat.name}</span>
-                        <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] px-2 py-1 rounded-md font-bold">{cat.count}</span>
+                        <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] px-2 py-1 rounded-md font-bold">{String(cat.count)}</span>
                       </div>
                     ))}
                   </div>
