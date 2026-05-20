@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
-// import Link from 'next/link'; // Dihapus karena tidak dipakai lagi
+import { MapPin, Phone, MessageCircle, Clock, ArrowRight, ChevronDown, HelpCircle } from 'lucide-react';
+import Link from 'next/link';
 import Dokumentasi from './Dokumentasi';
 
 const Contact = () => {
@@ -136,6 +136,127 @@ const Contact = () => {
         {/* SECTION DOKUMENTASI (BARU) */}
         {/* ============================================================= */}
         <Dokumentasi />
+
+        {/* ============================================================= */}
+        {/* SECTION 2: INFORMASI KONTAK & CTA DAFTAR */}
+        {/* ============================================================= */}
+        <div className="flex flex-col lg:flex-row items-stretch gap-12 lg:gap-16">
+
+          {/* SISI KIRI: INFORMASI KONTAK (Panel Berdesain Bersih & Profesional) */}
+          <div className="w-full lg:w-1/2 flex flex-col gap-6 lg:gap-8 justify-center">
+
+            {/* Header Panel */}
+            <div className="animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out mb-4">
+              <p className="text-emerald-700 dark:text-yellow-500 font-bold uppercase tracking-[0.2em] text-[11px] mb-3">
+                Layanan Admin
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-emerald-950 dark:text-white tracking-tighter mb-5">
+                Hubungi Pesantren
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed max-w-xl">
+                Siap melayani pertanyaan Anda terkait pendaftaran santri baru, program, maupun kunjungan ke lokasi pesantren kami di Palembang.
+              </p>
+            </div>
+
+            {/* Kartu-Kartu Informasi */}
+            <div className="space-y-6">
+
+              {/* Card 1: Alamat */}
+              <div className="animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out delay-100 bg-white dark:bg-gray-900 p-7 rounded-[1.5rem] border border-gray-100 dark:border-gray-800 flex gap-6 group hover:shadow-lg hover:border-emerald-200 transition-all">
+                <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+                  <MapPin size={24} />
+                </div>
+                <div className="flex-grow">
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-1.5">Lokasi Pesantren</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm leading-relaxed">
+                    Pondok Pesantren Cendekia Baznas, Kota Palembang, Sumatera Selatan.<br />
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: WhatsApp Admin */}
+              <div className="animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out delay-200 bg-white dark:bg-gray-900 p-7 rounded-[1.5rem] border border-gray-100 dark:border-gray-800 flex gap-6 group hover:shadow-lg hover:border-emerald-200 transition-all">
+                <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+                  <Phone size={24} />
+                </div>
+                <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-1.5">Admin PPDB (Nanda)</h3>
+                    <p className="font-semibold text-sm md:text-base text-gray-800 dark:text-gray-200 tracking-wider">0852-6796-2898</p>
+                  </div>
+                  <a href="https://wa.me/6285267962898" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 text-xs font-bold bg-yellow-500 text-emerald-950 px-5 py-3 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm shrink-0 whitespace-nowrap active:scale-95">
+                    <MessageCircle size={16} /> Chat WhatsApp
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 3: Jadwal Operasional & Kunjung */}
+              <div className="animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out delay-300 bg-white dark:bg-gray-900 p-7 rounded-[1.5rem] border border-gray-100 dark:border-gray-700 flex gap-6 group hover:shadow-lg hover:border-emerald-200 transition-all">
+                <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-1.5">Jam Operasional & Kunjung</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm mb-2"><span className="font-semibold text-gray-800 dark:text-gray-100">Senin - Jum'at:</span> 08.00 - 15.00 WIB (Layanan Informasi)</p>
+                  <p className="text-xs md:text-sm text-emerald-800 dark:text-emerald-400 font-semibold leading-relaxed">Jadwal Kunjungan Wali Santri: Setiap Ahad (Minggu) pekan ke-2 & ke-4.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* SISI KANAN: AJAKAN DAFTAR (Kotak Hijau Tua Monolitik & Standout) */}
+          <div className="w-full lg:w-1/2 bg-emerald-800 dark:bg-gray-900 rounded-[2.5rem] shadow-2xl p-10 md:p-16 flex flex-col justify-center animate-on-scroll-contact opacity-0 translate-y-20 lg:translate-y-0 lg:scale-95 transition-all duration-1000 ease-out delay-400 overflow-hidden relative group border border-emerald-700/50 dark:border-gray-800">
+
+            {/* EFEK BACKGROUND BARU (Pure CSS) */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <div className="absolute -top-24 -right-24 w-72 h-72 bg-yellow-500/30 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000 ease-out" />
+              <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-400/20 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000 ease-out" />
+              <div
+                className="absolute inset-0 opacity-[0.08] dark:opacity-[0.03]"
+                style={{ backgroundImage: 'radial-gradient(#ffffff 2px, transparent 2px)', backgroundSize: '24px 24px' }}
+              />
+            </div>
+
+            {/* Konten CTA */}
+            <div className="relative z-10">
+
+              {/* Kumpulan Gambar Logo & Teks Pendaftaran */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
+                <div className="flex items-center gap-2 shrink-0 bg-white/10 dark:bg-black/20 p-2.5 rounded-2xl backdrop-blur-sm border border-white/10">
+                  <img src="/logo.png" alt="Logo Pondok Pesantren Cendekia" className="h-10 md:h-12 w-auto object-contain drop-shadow-md" />
+                  <div className="h-8 w-[1.5px] bg-emerald-500/50 dark:bg-gray-600 rounded-full mx-0.5" />
+                  <img src="/logo baznas.png" alt="Logo Baznas" className="h-8 md:h-12 w-auto object-contain drop-shadow-md" />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <h1 className="text-white font-black text-lg md:text-xl leading-none tracking-tight">Pondok Pesantren</h1>
+                  <p className="text-[9px] md:text-[11px] text-yellow-500 font-bold uppercase tracking-widest mt-1">Cendekia Baznas</p>
+                </div>
+              </div>
+
+              {/* Judul CTA */}
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6 tracking-tighter">
+                Siap Menjadi Bagian Dari <span className="text-yellow-400">Generasi Qur'ani</span> & Berwawasan Global?
+              </h3>
+
+              {/* Deskripsi CTA */}
+              <p className="text-emerald-100 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-12 opacity-95 max-w-xl">
+                Bergabunglah bersama keluarga besar Pondok Pesantren Cendekia Palembang. Kami berkomitmen mendidik generasi huffadz Al-Qur'an yang cerdas logika, mulia akhlak, dan siap hadapi teknologi masa depan.
+              </p>
+
+              {/* Tombol Pendaftaran */}
+              <Link
+                href="https://wa.me/6285267962898?text=Assalamu'alaikum,%20saya%20ingin%20mendaftar%20di%20Ponpes%20Cendekia."
+                target="_blank"
+                className="group inline-flex items-center justify-center gap-3 bg-yellow-500 text-emerald-950 px-9 py-5 rounded-xl font-bold hover:bg-yellow-400 hover:scale-105 transition-all duration-300 shadow-xl shadow-yellow-500/30 active:scale-95 text-lg md:text-xl w-full sm:w-auto whitespace-nowrap"
+              >
+                Daftar Sekarang
+                <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+        </div>
 
       </div>
     </section>
