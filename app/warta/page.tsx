@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '../../components/Navbar';
@@ -7,7 +7,7 @@ import Footer from '../../components/Footer';
 import { Search, ChevronRight, ChevronLeft, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-const WartaPage = () => {
+const WartaContent = () => {
   const [warta, setWarta] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -321,6 +321,14 @@ const WartaPage = () => {
       </main>
       <Footer />
     </div>
+  );
+};
+
+const WartaPage = () => {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-emerald-600" size={40} /></div>}>
+      <WartaContent />
+    </Suspense>
   );
 };
 
