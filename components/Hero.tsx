@@ -1,9 +1,27 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import Link from 'next/link';
 
 const Hero = () => {
+  // --- STATE UNTUK IMAGE SLIDER ---
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const images = [
+    '/bgfoto5.jpeg',
+    '/bgfoto4.jpeg',
+    '/kegiatan santri2.jpeg',
+    '/flyer tentang kami.jpeg'
+  ];
+
+  // --- EFEK PERGANTIAN GAMBAR OTOMATIS ---
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 5000); // Ganti gambar setiap 5 detik
+
+    return () => clearInterval(interval);
+  }, [images.length]);
+
   // --- EFEK ANIMASI SCROLL UNTUK KONTEN TEKS SAJA ---
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -30,12 +48,19 @@ const Hero = () => {
       {/* Tambahkan dark:bg-slate-950 agar berubah gelap di dark mode */}
       <div className="absolute inset-0 z-0 bg-emerald-950 dark:bg-slate-950 overflow-hidden transition-colors duration-500">
 
-        {/* Opacity gambar bisa diturunkan sedikit di dark mode (dark:opacity-40) agar tidak menyilaukan */}
-        <img
-          src="bgfoto5.jpeg"
-          alt="Latar Belakang Pondok Pesantren Cendekia"
-          className="w-full h-full object-cover opacity-60 dark:opacity-40 transform scale-105 transition-opacity duration-500"
-        />
+        {/* GAMBAR SLIDESHOW (CROSSFADE) */}
+        {images.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt={`Latar Belakang Pondok Pesantren Cendekia ${index + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transform scale-105 transition-opacity duration-1000 ease-in-out ${
+              index === currentImageIndex 
+                ? 'opacity-60 dark:opacity-40' 
+                : 'opacity-0'
+            }`}
+          />
+        ))}
 
         {/* Gradient disesuaikan untuk dark mode (dark:from-slate-950/80 dll) */}
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-emerald-900/40 dark:from-slate-950/80 dark:via-slate-900/60 to-transparent transition-colors duration-500" />
