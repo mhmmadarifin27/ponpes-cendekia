@@ -24,11 +24,12 @@ const Footer = () => {
               <h3 className="text-xl md:text-2xl font-bold text-emerald-900 dark:text-white tracking-tight">Lokasi Yayasan</h3>
             </div>
             <p className="text-gray-500 dark:text-gray-400 leading-relaxed mb-8 md:mb-10 text-base md:text-lg">
-              Jl. Lintas Timur, Indralaya, Ogan Ilir, Sumatera Selatan, 30862
+              Pondok Pesantren Cendekia Baznas, Kota Palembang, Sumatera Selatan
             </p>
             <a 
-              href="https://maps.google.com" 
+              href="https://www.google.com/maps/dir/?api=1&destination=-3.033265996942581,104.81373707497069" 
               target="_blank" 
+              rel="noopener noreferrer"
               className="bg-emerald-900 dark:bg-yellow-500 text-white dark:text-emerald-950 flex items-center justify-center gap-3 w-full py-4 md:py-5 rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl active:scale-95"
             >
               Petunjuk Arah <ArrowUpRight size={20} />
@@ -38,10 +39,11 @@ const Footer = () => {
           {/* Google Maps (Iframe) */}
           <div className="w-full md:w-7/12 bg-gray-100 dark:bg-gray-900 h-[250px] md:h-auto border-l border-gray-100 dark:border-gray-700">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.44464!2d104.62312!3d-3.21312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM8KwMTInNDcuMiJTIDEwNMKwMzcnMjMuMiJF!5e0!3m2!1sid!2sid!4v1711550000000!5m2!1sid!2sid"
+              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3050.424949570541!2d104.81373707497069!3d-3.033265996942581!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zM8KwMDEnNTkuOCJTIDEwNMKwNDgnNTguNyJF!5e1!3m2!1sid!2sid!4v1779249151784!5m2!1sid!2sid"
               className="w-full h-full border-0 grayscale dark:invert dark:opacity-70 transition-all"
               allowFullScreen
               loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
         </div>

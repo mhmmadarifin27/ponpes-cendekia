@@ -10,10 +10,10 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   // 2. STATE BARU UNTUK MATA PASSWORD
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const router = useRouter();
 
   // --- STATE DAN FUNGSI BARU UNTUK ANIMASI TOMBOL HOME ---
@@ -21,10 +21,10 @@ const LoginPage = () => {
 
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsHomeClicked(true); 
-    
+    setIsHomeClicked(true);
+
     setTimeout(() => {
-      router.push('/'); 
+      router.push('/');
     }, 300);
   };
   // --------------------------------------------------------
@@ -32,7 +32,7 @@ const LoginPage = () => {
   // --- FUNGSI UNTUK RESET / LUPA PASSWORD ---
   const handleResetPassword = async (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       alert("Silakan ketik alamat email Anda di kolom email terlebih dahulu, lalu klik Lupa Password.");
       return;
@@ -41,7 +41,7 @@ const LoginPage = () => {
     setLoading(true);
 
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/update-password`, 
+      redirectTo: `${window.location.origin}/update-password`,
     });
 
     if (error) {
@@ -49,7 +49,7 @@ const LoginPage = () => {
     } else {
       alert("Berhasil! Silakan cek kotak masuk (atau folder spam) email Anda untuk link reset password.");
     }
-    
+
     setLoading(false);
   };
   // --------------------------------------------------------
@@ -73,12 +73,12 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-950 relative p-4 sm:p-6 transition-colors duration-500 font-sans">
-      
+
       {/* --- KOTAK LOGIN UTAMA --- */}
       <div className="w-full max-w-[1000px] relative bg-white dark:bg-gray-900 rounded-3xl md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col-reverse md:flex-row animate-in fade-in zoom-in-[0.98] duration-1000 ease-out border border-gray-100 dark:border-gray-800">
-        
+
         {/* --- TOMBOL KEMBALI KE BERANDA --- */}
-        <button 
+        <button
           onClick={handleHomeClick}
           className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-1.5 sm:pr-5 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-full shadow-sm hover:border-emerald-500 hover:scale-105 transition-all duration-300 ease-in-out group animate-in fade-in slide-in-from-top-4 delay-500 fill-mode-both overflow-hidden"
         >
@@ -94,18 +94,18 @@ const LoginPage = () => {
 
         {/* BAGIAN KIRI: FORM LOGIN */}
         <div className="w-full md:w-1/2 p-6 sm:p-12 lg:p-16 flex flex-col justify-center">
-          
+
           {/* LOGO BARU */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
-            <img 
-              src="/logo.png" 
-              alt="Logo Pondok Pesantren Cendekia" 
+            <img
+              src="/logo.png"
+              alt="Logo Pondok Pesantren Cendekia"
               className="h-10 md:h-12 w-auto object-contain drop-shadow-sm"
             />
             <div className="h-8 w-[1px] md:w-[1.5px] bg-gray-200 dark:bg-gray-700 rounded-full mx-0.5" />
-            <img 
-              src="/logo baznas.png" 
-              alt="Logo Baznas" 
+            <img
+              src="/logo baznas.png"
+              alt="Logo Baznas"
               className="h-8 md:h-10 w-auto object-contain drop-shadow-sm"
             />
             <div className="flex flex-col justify-center ml-1 text-center md:text-left">
@@ -126,16 +126,16 @@ const LoginPage = () => {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
-            
+
             {/* Input Email */}
             <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
               <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Email Address</label>
               <div className="relative group">
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="" 
+                  placeholder=""
                   className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                   required
                 />
@@ -147,18 +147,18 @@ const LoginPage = () => {
             <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[400ms] fill-mode-both">
               <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password</label>
               <div className="relative group">
-                <input 
+                <input
                   // 3. LOGIKA TIPE INPUT
-                  type={showPassword ? "text" : "password"} 
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="" 
+                  placeholder=""
                   // 4. Tambah pr-12 agar teks tidak nabrak icon mata di sebelah kanan
                   className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 pl-10 pr-12 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm group-hover:border-emerald-200 dark:group-hover:border-emerald-900"
                   required
                 />
                 <Lock className="absolute left-3.5 top-3.5 text-gray-400 transition-colors group-focus-within:text-emerald-500" size={18} />
-                
+
                 {/* 5. TOMBOL ICON MATA */}
                 <button
                   type="button"
@@ -177,10 +177,10 @@ const LoginPage = () => {
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" />
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Ingat Saya</span>
               </label>
-              
-              <button 
+
+              <button
                 onClick={handleResetPassword}
-                type="button" 
+                type="button"
                 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline disabled:opacity-50 active:scale-95 transition-transform"
                 disabled={loading}
               >
@@ -189,7 +189,7 @@ const LoginPage = () => {
             </div>
 
             {/* Tombol Submit */}
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md mt-4 disabled:opacity-70 disabled:cursor-not-allowed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both"
@@ -208,9 +208,9 @@ const LoginPage = () => {
 
         {/* BAGIAN KANAN: GAMBAR & TEKS OVERLAY */}
         <div className="w-full h-48 sm:h-64 md:h-auto md:w-1/2 relative bg-emerald-900 overflow-hidden flex flex-shrink-0">
-          <img 
-            src="flyercendekia.jpeg" 
-            alt="Santri" 
+          <img
+            src="kegiatan santri2.jpeg"
+            alt="Santri"
             className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay animate-[spin_60s_linear_infinite] [animation-play-state:paused] hover:[animation-play-state:running] hover:scale-110 transition-transform duration-[10s]"
           />
           <div className="absolute inset-0 bg-emerald-900/80 mix-blend-multiply" />

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -9,6 +10,13 @@ import Link from 'next/link';
 const WartaPage = () => {
   const [warta, setWarta] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const queryParam = searchParams.get('q') || '';
+  const categoryParam = searchParams.get('category') || '';
+
+  const [searchQuery, setSearchQuery] = useState(queryParam);
 
   // Pagination & Slider State
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,12 +41,61 @@ const WartaPage = () => {
     return new Date(dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
+  // Sinkronisasi searchQuery dengan URL parameter
+  useEffect(() => {
+    setSearchQuery(queryParam);
+    setCurrentPage(1);
+  }, [queryParam, categoryParam]);
+
+  const handleSearchSidebar = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const newUrl = new URLSearchParams(searchParams.toString());
+      if (searchQuery.trim()) newUrl.set('q', searchQuery.trim());
+      else newUrl.delete('q');
+      router.push(`/warta?${newUrl.toString()}`);
+    }
+  };
+
+  const handleCategoryClick = (category: string) => {
+    const newUrl = new URLSearchParams(searchParams.toString());
+    if (category) newUrl.set('category', category);
+    else newUrl.delete('category');
+    newUrl.delete('q'); // Hapus query pencarian saat ganti kategori (opsional)
+    router.push(`/warta?${newUrl.toString()}`);
+  };
+
+  // --- LOGIKA FILTER DATA ---
+  let filteredWarta = warta;
+  
+  if (queryParam) {
+    filteredWarta = filteredWarta.filter(item => 
+      item.judul.toLowerCase().includes(queryParam.toLowerCase()) || 
+      item.konten.toLowerCase().includes(queryParam.toLowerCase())
+    );
+  }
+  
+  if (categoryParam) {
+    filteredWarta = filteredWarta.filter(item => 
+      (item.kategori || 'Umum').toLowerCase() === categoryParam.toLowerCase()
+    );
+  }
+
+  // Generate Kategori Dinamis dari data Warta
+  const categoryCounts = warta.reduce((acc, item) => {
+    const cat = item.kategori || 'Umum';
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const uniqueCategories = Object.entries(categoryCounts).map(([name, count]) => ({ name, count }));
+
   // --- LOGIKA PEMBAGIAN DATA ---
-  // 3 Berita terbaru untuk Slider/Flyer di atas
-  const sliderItems = warta.slice(0, 3);
+  // 3 Berita terbaru untuk Slider/Flyer di atas (Hanya ditampilkan jika tidak ada filter pencarian/kategori)
+  const isFiltering = queryParam !== '' || categoryParam !== '';
+  const sliderItems = isFiltering ? [] : warta.slice(0, 3);
   
   // Sisanya untuk daftar berita di bawah
-  const listBeritaAll = warta.slice(3);
+  const listBeritaAll = isFiltering ? filteredWarta : warta.slice(3);
   
   // Hitung total halaman untuk pagination
   const totalPages = Math.ceil(listBeritaAll.length / itemsPerPage);
@@ -151,8 +208,16 @@ const WartaPage = () => {
               <div className="lg:col-span-8 flex flex-col">
                 <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200 dark:border-gray-800">
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                    <span className="w-1.5 h-6 bg-yellow-500 rounded-full"></span> Berita Lainnya
+                    <span className="w-1.5 h-6 bg-yellow-500 rounded-full"></span> 
+                    {isFiltering ? (
+                      `Hasil Pencarian: ${queryParam ? `"${queryParam}"` : ''} ${categoryParam ? `Kategori "${categoryParam}"` : ''}`
+                    ) : (
+                      "Berita Lainnya"
+                    )}
                   </h2>
+                  {isFiltering && (
+                    <button onClick={() => router.push('/warta')} className="text-sm text-emerald-600 hover:underline">Clear Filter</button>
+                  )}
                 </div>
 
                 {currentListBerita.length > 0 ? (
@@ -222,17 +287,28 @@ const WartaPage = () => {
                 {/* Search */}
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"><Search size={18} /> Cari Berita</h3>
-                  <input type="text" placeholder="Ketik kata kunci..." className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" />
+                  <input 
+                    type="text" 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearchSidebar}
+                    placeholder="Ketik kata kunci & Enter..." 
+                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" 
+                  />
                 </div>
 
                 {/* Kategori Populer */}
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4">Kategori Populer</h3>
                   <div className="space-y-3">
-                    {['Kegiatan Santri', 'Akademik & Prestasi', 'Warta Ponpes', 'Artikel Islami'].map((cat, i) => (
-                      <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-700/50 last:border-0">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">{cat}</span>
-                        <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] px-2 py-1 rounded-md font-bold">{Math.floor(Math.random() * 20) + 5}</span>
+                    <div onClick={() => handleCategoryClick('')} className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer group">
+                      <span className={`text-sm group-hover:text-emerald-600 transition-colors ${categoryParam === '' ? 'font-bold text-emerald-600' : 'text-gray-600 dark:text-gray-400'}`}>Semua Berita</span>
+                      <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] px-2 py-1 rounded-md font-bold">{warta.length}</span>
+                    </div>
+                    {uniqueCategories.map((cat, i) => (
+                      <div key={i} onClick={() => handleCategoryClick(cat.name)} className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer group last:border-0">
+                        <span className={`text-sm group-hover:text-emerald-600 transition-colors ${categoryParam === cat.name ? 'font-bold text-emerald-600' : 'text-gray-600 dark:text-gray-400'}`}>{cat.name}</span>
+                        <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] px-2 py-1 rounded-md font-bold">{cat.count}</span>
                       </div>
                     ))}
                   </div>

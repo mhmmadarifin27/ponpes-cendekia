@@ -13,6 +13,7 @@ const WartaDetail = () => {
   const id = params.id; 
   
   const [artikel, setArtikel] = useState<any>(null);
+  const [allWarta, setAllWarta] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +25,13 @@ const WartaDetail = () => {
         .eq('id', id)
         .single(); 
       
+      const { data: allData } = await supabase
+        .from('warta')
+        .select('id, judul, kategori')
+        .order('created_at', { ascending: false });
+
       if (data) setArtikel(data);
+      if (allData) setAllWarta(allData);
       setLoading(false);
     };
     
@@ -80,10 +87,9 @@ const WartaDetail = () => {
               {artikel.judul}
             </h1>
             
-            {/* META INFO (Penulis, Tanggal, Views) */}
+            {/* META INFO (Tanggal, Views) */}
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
-              <div className="font-semibold text-emerald-600 dark:text-emerald-400">{artikel.penulis || 'Admin Cendekia'}</div>
-              <div>{formatDate(artikel.created_at)}</div>
+              <div className="font-semibold text-emerald-600 dark:text-emerald-400">{formatDate(artikel.created_at)}</div>
               <div className="flex items-center gap-1"><Printer size={14} className="ml-2" /> <Eye size={14} className="ml-2" /> {Math.floor(Math.random() * 500) + 100} Views</div>
             </div>
 
@@ -126,15 +132,12 @@ const WartaDetail = () => {
             <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Related Posts</h3>
               <ul className="space-y-3">
-                <li className="flex gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600 transition-colors cursor-pointer">
-                  <span className="text-gray-400">•</span> Pendaftaran PPDB Gelombang 2 Resmi Dibuka, Simak Syaratnya
-                </li>
-                <li className="flex gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600 transition-colors cursor-pointer">
-                  <span className="text-gray-400">•</span> Santri Cendekia Raih Juara Umum MQK Tingkat Nasional
-                </li>
-                <li className="flex gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600 transition-colors cursor-pointer">
-                  <span className="text-gray-400">•</span> Jadwal Kepulangan Santri Menjelang Libur Ramadhan 1447 H
-                </li>
+                {allWarta.filter(w => w.id !== Number(id)).slice(0, 3).map((w) => (
+                  <li key={w.id} className="flex gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600 transition-colors cursor-pointer">
+                    <span className="text-gray-400">•</span>
+                    <Link href={`/warta/${w.id}`}>{w.judul}</Link>
+                  </li>
+                ))}
               </ul>
             </div>
             
@@ -148,11 +151,17 @@ const WartaDetail = () => {
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-100 dark:border-gray-800">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Kategori</h3>
                 <div className="space-y-3 mt-4">
-                  {['Kegiatan Santri', 'Akademik & Prestasi', 'Pengumuman Resmi', 'Artikel Islami'].map((cat, i) => (
-                    <div key={i} className="flex justify-between items-center py-1 group cursor-pointer">
+                  {Object.entries(
+                    allWarta.reduce((acc, item) => {
+                      const cat = item.kategori || 'Umum';
+                      acc[cat] = (acc[cat] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>)
+                  ).map(([cat, count], i) => (
+                    <Link key={i} href={`/warta?category=${encodeURIComponent(cat)}`} className="flex justify-between items-center py-1 group cursor-pointer">
                       <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-emerald-600 transition-colors">{cat}</span>
-                      <span className="text-xs text-gray-400">({Math.floor(Math.random() * 20) + 5})</span>
-                    </div>
+                      <span className="text-xs text-gray-400">({String(count)})</span>
+                    </Link>
                   ))}
                 </div>
               </div>

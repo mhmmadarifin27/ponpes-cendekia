@@ -32,7 +32,7 @@ const Hero = () => {
 
         {/* Opacity gambar bisa diturunkan sedikit di dark mode (dark:opacity-40) agar tidak menyilaukan */}
         <img
-          src="bgfooter4.png"
+          src="bgfoto5.jpeg"
           alt="Latar Belakang Pondok Pesantren Cendekia"
           className="w-full h-full object-cover opacity-60 dark:opacity-40 transform scale-105 transition-opacity duration-500"
         />

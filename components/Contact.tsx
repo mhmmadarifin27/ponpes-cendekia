@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Phone, MessageCircle, Clock, ArrowRight, ChevronDown, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
+import Dokumentasi from './Dokumentasi';
 
 const Contact = () => {
   // --- STATE UNTUK FAQ DROPDOWN ---
@@ -59,7 +60,7 @@ const Contact = () => {
           entry.target.classList.remove('opacity-0', 'translate-y-20', 'scale-95');
         }
       });
-    }, { threshold: 0.1 }); 
+    }, { threshold: 0.1 });
 
     const animatedItems = document.querySelectorAll('.animate-on-scroll-contact');
     animatedItems.forEach((el) => observer.observe(el));
@@ -69,19 +70,19 @@ const Contact = () => {
 
   return (
     <section id="kontak" className="py-24 md:py-32 px-6 md:px-12 bg-slate-50 dark:bg-gray-950 transition-colors duration-500 overflow-hidden relative">
-      
+
       {/* Container Utama (max-w-7xl biar lega) */}
       <div className="max-w-7xl mx-auto space-y-24">
-        
+
         {/* ============================================================= */}
         {/* SECTION 1: FAQ (FREQUENTLY ASKED QUESTIONS) */}
         {/* ============================================================= */}
         {/* Tambahkan ref={faqRef} ke bungkus luar FAQ */}
         <div ref={faqRef} className="w-full flex flex-col items-center">
-          
+
           {/* Judul & Pengantar FAQ (Sekarang Rata Tengah dan Icon Ditambahkan) */}
           <div className="w-full max-w-3xl flex flex-col items-center text-center animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out mb-10">
-             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-4">
               <HelpCircle size={24} />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-emerald-950 dark:text-white tracking-tighter mb-4">
@@ -96,15 +97,14 @@ const Contact = () => {
           <div className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[2rem] shadow-xl shadow-emerald-900/5 dark:shadow-none border border-gray-100 dark:border-gray-800 p-4 sm:p-8 animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out delay-200">
             <div className="flex flex-col gap-4">
               {faqs.map((faq, index) => (
-                <div 
-                  key={index} 
-                  className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
-                    openFaq === index 
-                      ? 'border-emerald-500 dark:border-emerald-600 bg-emerald-50/50 dark:bg-emerald-900/10 shadow-md' 
+                <div
+                  key={index}
+                  className={`border rounded-2xl overflow-hidden transition-all duration-300 ${openFaq === index
+                      ? 'border-emerald-500 dark:border-emerald-600 bg-emerald-50/50 dark:bg-emerald-900/10 shadow-md'
                       : 'border-gray-200 dark:border-gray-800 hover:border-emerald-300 dark:hover:border-gray-700 bg-white dark:bg-gray-900'
-                  }`}
+                    }`}
                 >
-                  <button 
+                  <button
                     onClick={() => toggleFaq(index)}
                     className="w-full flex items-center justify-between p-5 sm:p-6 text-left outline-none active:scale-[0.99] transition-transform duration-200 group"
                   >
@@ -115,12 +115,11 @@ const Contact = () => {
                       <ChevronDown size={18} />
                     </div>
                   </button>
-                  
+
                   {/* Efek Slide Down Animasi Isi FAQ */}
-                  <div 
-                    className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                      openFaq === index ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-                    }`}
+                  <div
+                    className={`transition-all duration-500 ease-in-out overflow-hidden ${openFaq === index ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
                   >
                     <div className="p-5 sm:p-6 pt-0 text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed border-t border-emerald-100 dark:border-gray-800 mx-5 sm:mx-6 mt-1">
                       {faq.answer}
@@ -134,13 +133,18 @@ const Contact = () => {
         </div>
 
         {/* ============================================================= */}
+        {/* SECTION DOKUMENTASI (BARU) */}
+        {/* ============================================================= */}
+        <Dokumentasi />
+
+        {/* ============================================================= */}
         {/* SECTION 2: INFORMASI KONTAK & CTA DAFTAR */}
         {/* ============================================================= */}
         <div className="flex flex-col lg:flex-row items-stretch gap-12 lg:gap-16">
-          
+
           {/* SISI KIRI: INFORMASI KONTAK (Panel Berdesain Bersih & Profesional) */}
           <div className="w-full lg:w-1/2 flex flex-col gap-6 lg:gap-8 justify-center">
-            
+
             {/* Header Panel */}
             <div className="animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out mb-4">
               <p className="text-emerald-700 dark:text-yellow-500 font-bold uppercase tracking-[0.2em] text-[11px] mb-3">
@@ -156,7 +160,7 @@ const Contact = () => {
 
             {/* Kartu-Kartu Informasi */}
             <div className="space-y-6">
-              
+
               {/* Card 1: Alamat */}
               <div className="animate-on-scroll-contact opacity-0 translate-y-20 transition-all duration-1000 ease-out delay-100 bg-white dark:bg-gray-900 p-7 rounded-[1.5rem] border border-gray-100 dark:border-gray-800 flex gap-6 group hover:shadow-lg hover:border-emerald-200 transition-all">
                 <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-yellow-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
@@ -165,7 +169,7 @@ const Contact = () => {
                 <div className="flex-grow">
                   <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-1.5">Lokasi Pesantren</h3>
                   <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm leading-relaxed">
-                    Pondok Pesantren Cendekia Baznas, Kota Palembang.<br /> (Area UIN Raden Fatah / Pusat Kota)
+                    Pondok Pesantren Cendekia Baznas, Kota Palembang, Sumatera Selatan.<br />
                   </p>
                 </div>
               </div>
@@ -203,20 +207,20 @@ const Contact = () => {
 
           {/* SISI KANAN: AJAKAN DAFTAR (Kotak Hijau Tua Monolitik & Standout) */}
           <div className="w-full lg:w-1/2 bg-emerald-800 dark:bg-gray-900 rounded-[2.5rem] shadow-2xl p-10 md:p-16 flex flex-col justify-center animate-on-scroll-contact opacity-0 translate-y-20 lg:translate-y-0 lg:scale-95 transition-all duration-1000 ease-out delay-400 overflow-hidden relative group border border-emerald-700/50 dark:border-gray-800">
-            
+
             {/* EFEK BACKGROUND BARU (Pure CSS) */}
             <div className="absolute inset-0 z-0 pointer-events-none">
               <div className="absolute -top-24 -right-24 w-72 h-72 bg-yellow-500/30 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000 ease-out" />
               <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-400/20 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000 ease-out" />
-              <div 
-                className="absolute inset-0 opacity-[0.08] dark:opacity-[0.03]" 
+              <div
+                className="absolute inset-0 opacity-[0.08] dark:opacity-[0.03]"
                 style={{ backgroundImage: 'radial-gradient(#ffffff 2px, transparent 2px)', backgroundSize: '24px 24px' }}
               />
             </div>
-            
+
             {/* Konten CTA */}
             <div className="relative z-10">
-              
+
               {/* Kumpulan Gambar Logo & Teks Pendaftaran */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
                 <div className="flex items-center gap-2 shrink-0 bg-white/10 dark:bg-black/20 p-2.5 rounded-2xl backdrop-blur-sm border border-white/10">
@@ -241,11 +245,11 @@ const Contact = () => {
               </p>
 
               {/* Tombol Pendaftaran */}
-              <Link 
-                href="https://wa.me/6285267962898?text=Assalamu'alaikum,%20saya%20ingin%20mendaftar%20di%20Ponpes%20Cendekia." 
-                target="_blank" 
+              <Link
+                href="https://wa.me/6285267962898?text=Assalamu'alaikum,%20saya%20ingin%20mendaftar%20di%20Ponpes%20Cendekia."
+                target="_blank"
                 className="group inline-flex items-center justify-center gap-3 bg-yellow-500 text-emerald-950 px-9 py-5 rounded-xl font-bold hover:bg-yellow-400 hover:scale-105 transition-all duration-300 shadow-xl shadow-yellow-500/30 active:scale-95 text-lg md:text-xl w-full sm:w-auto whitespace-nowrap"
-                >
+              >
                 Daftar Sekarang
                 <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" />
               </Link>

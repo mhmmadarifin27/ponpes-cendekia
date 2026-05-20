@@ -14,7 +14,7 @@ const KurikulumPage = () => {
           entry.target.classList.remove('opacity-0', '-translate-x-24', 'translate-x-24', 'translate-y-24');
         }
       });
-    }, { threshold: 0.15 }); 
+    }, { threshold: 0.15 });
 
     const hiddenElements = document.querySelectorAll('.scroll-anim');
     hiddenElements.forEach((el) => observer.observe(el));
@@ -25,9 +25,9 @@ const KurikulumPage = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 font-sans text-gray-800 dark:text-gray-300">
       <Navbar />
-      
+
       <main className="max-w-6xl mx-auto px-6 md:px-12 pt-32 pb-20 overflow-hidden">
-        
+
         {/* ========================================= */}
         {/* 1. HEADER & INTRO (EDITORIAL STYLE)       */}
         {/* ========================================= */}
@@ -35,7 +35,7 @@ const KurikulumPage = () => {
           <h1 className="text-4xl md:text-5xl font-serif text-gray-900 dark:text-white mb-12 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
             Kurikulum Cendekia
           </h1>
-          
+
           <div className="space-y-6 text-base md:text-[15px] leading-[1.8] text-gray-700 dark:text-gray-300 max-w-5xl text-justify scroll-anim opacity-0 translate-y-24 transition-all duration-1000 delay-200 ease-out">
             <p>
               Di Pondok Pesantren Cendekia, pendidikan dipahami sebagai proses membentuk manusia yang utuh. Bukan hanya cerdas secara akademik, tetapi juga memiliki adab yang baik, disiplin dalam kehidupan sehari-hari, serta memiliki kedekatan dengan Al-Qur&apos;an sebagai pedoman hidup.
@@ -46,9 +46,9 @@ const KurikulumPage = () => {
 
             {/* FOTO LEBAR DI TENGAH TEKS */}
             <div className="w-full my-12 rounded-2xl md:rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-500 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
-              <img 
-                src="flyercendekia.jpeg" 
-                alt="Kegiatan Kurikulum Cendekia" 
+              <img
+                src="flyer tentang kami.jpeg"
+                alt="Kegiatan Kurikulum Cendekia"
                 className="w-full h-[300px] md:h-[450px] object-cover hover:scale-105 transition-transform duration-1000"
               />
             </div>
@@ -59,7 +59,7 @@ const KurikulumPage = () => {
         {/* 2. FONDASI & METODE (SIDE BY SIDE LAYOUT) */}
         {/* ========================================= */}
         <section className="mb-24 overflow-hidden">
-          
+
           {/* FONDASI KURIKULUM */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center mb-16 md:mb-24">
             <div className="order-2 md:order-1 scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
@@ -69,9 +69,9 @@ const KurikulumPage = () => {
               </p>
             </div>
             <div className="order-1 md:order-2 w-full h-[250px] md:h-[350px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 translate-x-24 transition-all duration-1000 delay-200 ease-out">
-               <img 
-                src="visi.jpg" 
-                alt="Fondasi Kurikulum" 
+              <img
+                src="logo baznas.png"
+                alt="Fondasi Kurikulum"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
             </div>
@@ -80,9 +80,9 @@ const KurikulumPage = () => {
           {/* METODE PEMBELAJARAN */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center overflow-hidden">
             <div className="w-full h-[300px] md:h-[450px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
-              <img 
-                src="misi.jpg" 
-                alt="Metode Pembelajaran" 
+              <img
+                src="kegiatan santri2.jpeg"
+                alt="Metode Pembelajaran"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
             </div>
@@ -105,7 +105,7 @@ const KurikulumPage = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
-            
+
             <div className="hover:-translate-y-1 transition-transform duration-300 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
               <h3 className="text-xl font-serif text-gray-900 dark:text-white mb-4">Program Pembelajaran Al-Quran</h3>
               <p className="text-sm md:text-[15px] text-gray-600 dark:text-gray-400 leading-relaxed text-justify">

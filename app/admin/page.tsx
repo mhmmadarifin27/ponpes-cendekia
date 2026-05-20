@@ -30,7 +30,7 @@ const AdminDashboard = () => {
   const [warta, setWarta] = useState<any[]>([]);
   const [isLoadingWarta, setIsLoadingWarta] = useState(false);
   const [isModalWartaOpen, setIsModalWartaOpen] = useState(false);
-  const [formDataWarta, setFormDataWarta] = useState({ judul: '', konten: '', penulis: '', gambar_url: '' });
+  const [formDataWarta, setFormDataWarta] = useState({ judul: '', konten: '', created_at: new Date().toISOString().split('T')[0], gambar_url: '', kategori: 'Umum' });
   const [fileWarta, setFileWarta] = useState<File | null>(null);
   
   const [editingWartaId, setEditingWartaId] = useState<number | null>(null);
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
 
   const handleOpenAddWartaModal = () => {
     setEditingWartaId(null);
-    setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
+    setFormDataWarta({ judul: '', konten: '', created_at: new Date().toISOString().split('T')[0], gambar_url: '', kategori: 'Umum' });
     setFileWarta(null);
     setIsModalWartaOpen(true);
   };
@@ -171,8 +171,9 @@ const AdminDashboard = () => {
     setFormDataWarta({
       judul: w.judul,
       konten: w.konten,
-      penulis: w.penulis || '',
-      gambar_url: w.gambar_url || ''
+      created_at: w.created_at ? w.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+      gambar_url: w.gambar_url || '',
+      kategori: w.kategori || 'Umum'
     });
     setFileWarta(null);
     setIsModalWartaOpen(true);
@@ -185,21 +186,29 @@ const AdminDashboard = () => {
       let imageUrl = formDataWarta.gambar_url;
       if (fileWarta) imageUrl = await uploadImage(fileWarta, 'warta_images');
       
+      const payload = {
+        judul: formDataWarta.judul,
+        konten: formDataWarta.konten,
+        created_at: formDataWarta.created_at,
+        gambar_url: imageUrl,
+        kategori: formDataWarta.kategori || 'Umum'
+      };
+      
       if (editingWartaId) {
         const { error } = await supabase
           .from('warta')
-          .update({ ...formDataWarta, gambar_url: imageUrl })
+          .update(payload)
           .eq('id', editingWartaId);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('warta')
-          .insert([{ ...formDataWarta, gambar_url: imageUrl }]);
+          .insert([payload]);
         if (error) throw error;
       }
 
       setIsModalWartaOpen(false);
-      setFormDataWarta({ judul: '', konten: '', penulis: '', gambar_url: '' });
+      setFormDataWarta({ judul: '', konten: '', created_at: new Date().toISOString().split('T')[0], gambar_url: '', kategori: 'Umum' });
       setFileWarta(null);
       setEditingWartaId(null); 
       fetchWarta();
@@ -635,7 +644,7 @@ const AdminDashboard = () => {
                         <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           <th className="p-4 font-semibold w-24">Gambar</th>
                           <th className="p-4 font-semibold min-w-[200px]">Judul Berita</th>
-                          <th className="p-4 font-semibold">Penulis</th>
+                          <th className="p-4 font-semibold">Tanggal</th>
                           <th className="p-4 font-semibold text-center w-32">Aksi</th>
                         </tr>
                       </thead>
@@ -644,7 +653,7 @@ const AdminDashboard = () => {
                             <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 active:bg-gray-100 dark:active:bg-gray-700 transition-colors">
                               <td className="p-4"><img src={w.gambar_url || "https://images.unsplash.com/photo-1546422904-90eab23c3d7e?q=80"} alt="img" className="w-16 h-12 object-cover rounded-md border border-gray-200 dark:border-gray-700" /></td>
                               <td className="p-4 font-semibold text-gray-900 dark:text-white border-none whitespace-normal"><p className="line-clamp-2">{w.judul}</p></td>
-                              <td className="p-4 text-gray-500 dark:text-gray-400">{w.penulis}</td>
+                              <td className="p-4 text-gray-500 dark:text-gray-400">{w.created_at ? new Date(w.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</td>
                               
                               <td className="p-4 text-center">
                                 <div className="flex justify-center items-center gap-1">
@@ -717,8 +726,7 @@ const AdminDashboard = () => {
                         <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           <th className="p-4 font-semibold w-24">Foto</th>
                           <th className="p-4 font-semibold">Nama Lengkap</th>
-                          <th className="p-4 font-semibold">Mata Pelajaran</th>
-                          <th className="p-4 font-semibold">Pendidikan</th>
+                          <th className="p-4 font-semibold">Jabatan</th>
                           <th className="p-4 font-semibold text-center w-24">Aksi</th>
                         </tr>
                       </thead>
@@ -731,7 +739,6 @@ const AdminDashboard = () => {
                                 <td className="p-4"><img src={t.gambar_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80"} alt="img" className="w-12 h-12 object-cover rounded-full border border-gray-200 dark:border-gray-700" /></td>
                                 <td className="p-4 font-bold text-gray-900 dark:text-white">{t.nama}</td>
                                 <td className="p-4 text-emerald-600 dark:text-emerald-400 font-medium">{t.mata_pelajaran}</td>
-                                <td className="p-4 text-gray-500 dark:text-gray-400">{t.pendidikan}</td>
                                 <td className="p-4 text-center">
                                   <button onClick={() => handleDeleteTeacher(t.id)} className="text-red-500 hover:text-red-700 active:scale-90 transition-all hover:scale-110 p-2"><Trash2 size={18} /></button>
                                 </td>
@@ -810,15 +817,25 @@ const AdminDashboard = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Penulis</label>
-                  <input type="text" value={formDataWarta.penulis} onChange={(e) => setFormDataWarta({...formDataWarta, penulis: e.target.value})} placeholder="Admin" className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-emerald-500 transition-colors" />
+                  <label className="block text-sm font-medium mb-1">Tanggal Publikasi</label>
+                  <input type="date" value={formDataWarta.created_at || ''} onChange={(e) => setFormDataWarta({...formDataWarta, created_at: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-emerald-500 transition-colors" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    {editingWartaId ? 'Ganti Gambar Cover (Opsional)' : 'Upload Gambar Cover'}
-                  </label>
-                  <input type="file" accept="image/*" onChange={(e) => setFileWarta(e.target.files ? e.target.files[0] : null)} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm dark:border-gray-700" />
+                  <label className="block text-sm font-medium mb-1">Kategori</label>
+                  <select value={formDataWarta.kategori || 'Umum'} onChange={(e) => setFormDataWarta({...formDataWarta, kategori: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2.5 text-sm dark:border-gray-700 outline-none focus:border-emerald-500 transition-colors">
+                    <option value="Kegiatan Santri">Kegiatan Santri</option>
+                    <option value="Akademik & Prestasi">Akademik & Prestasi</option>
+                    <option value="Pengumuman Resmi">Pengumuman Resmi</option>
+                    <option value="Artikel Islami">Artikel Islami</option>
+                    <option value="Umum">Umum</option>
+                  </select>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {editingWartaId ? 'Ganti Gambar Cover (Opsional)' : 'Upload Gambar Cover'}
+                </label>
+                <input type="file" accept="image/*" onChange={(e) => setFileWarta(e.target.files ? e.target.files[0] : null)} className="w-full bg-gray-50 dark:bg-gray-900 border rounded-lg px-4 py-2 text-sm dark:border-gray-700" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Isi Berita</label>
@@ -886,13 +903,8 @@ const AdminDashboard = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1">Mata Pelajaran yang Diampu *</label>
-                <input required type="text" placeholder="Cth: Tafsir & Hadits" value={formDataTeacher.mata_pelajaran} onChange={(e) => setFormDataTeacher({...formDataTeacher, mata_pelajaran: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm dark:bg-gray-900 dark:border-gray-700 focus:border-emerald-500 outline-none transition-colors" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Riwayat Pendidikan Terakhir *</label>
-                <input required type="text" placeholder="Cth: Universitas Al-Azhar, Kairo" value={formDataTeacher.pendidikan} onChange={(e) => setFormDataTeacher({...formDataTeacher, pendidikan: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm dark:bg-gray-900 dark:border-gray-700 focus:border-emerald-500 outline-none transition-colors" />
+                <label className="block text-sm font-medium mb-1">Jabatan *</label>
+                <input required type="text" placeholder="Cth: Pimpinan Pondok" value={formDataTeacher.mata_pelajaran} onChange={(e) => setFormDataTeacher({...formDataTeacher, mata_pelajaran: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm dark:bg-gray-900 dark:border-gray-700 focus:border-emerald-500 outline-none transition-colors" />
               </div>
 
               <div>

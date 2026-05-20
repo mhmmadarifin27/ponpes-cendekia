@@ -9,36 +9,36 @@ import { supabase } from '@/lib/supabase'; // PASTIKAN IMPORT SUPABASE INI ADA!
 // Data Dummy Guru (Sebagai Cadangan / Fallback jika database kosong)
 const dummyTeachers = [
   { 
-    id: 1, nama: "Ust. H. Abdul Somad, Lc., M.A.", mata_pelajaran: "Tafsir & Hadits", 
-    pendidikan: "Universitas Al-Azhar, Kairo", gambar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=500" 
+    id: 1, nama: "Ust. H. Abdul Somad, Lc., M.A.", mata_pelajaran: "Pimpinan Pondok", 
+    gambar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=500" 
   },
   { 
-    id: 2, nama: "Ustadzah Fatimah Zahra, S.Pd.I.", mata_pelajaran: "Tahfidz Al-Qur'an", 
-    pendidikan: "UIN Sunan Kalijaga", gambar_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=500" 
+    id: 2, nama: "Ustadzah Fatimah Zahra, S.Pd.I.", mata_pelajaran: "Mudir Keputrian", 
+    gambar_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=500" 
   },
   { 
-    id: 3, nama: "Ust. Muhammad Ali, M.Pd.", mata_pelajaran: "Bahasa Arab & Nahwu", 
-    pendidikan: "LIPIA Jakarta", gambar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500" 
+    id: 3, nama: "Ust. Muhammad Ali, M.Pd.", mata_pelajaran: "Kepala Sekolah MTs", 
+    gambar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500" 
   },
   { 
-    id: 4, nama: "Ustadzah Aisyah Aminah, M.Sc.", mata_pelajaran: "Matematika & Sains", 
-    pendidikan: "Universitas Gadjah Mada", gambar_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500" 
+    id: 4, nama: "Ustadzah Aisyah Aminah, M.Sc.", mata_pelajaran: "Bendahara Yayasan", 
+    gambar_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500" 
   },
   { 
-    id: 5, nama: "Ust. Ibrahim Hasan, B.A.", mata_pelajaran: "Fiqih & Ushul Fiqih", 
-    pendidikan: "Universitas Islam Madinah", gambar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500" 
+    id: 5, nama: "Ust. Ibrahim Hasan, B.A.", mata_pelajaran: "Kepala Pengasuhan Santri", 
+    gambar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500" 
   },
   { 
-    id: 6, nama: "Ustadzah Siti Maryam, S.S., M.A.", mata_pelajaran: "Bahasa Inggris", 
-    pendidikan: "Universitas Indonesia", gambar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500" 
+    id: 6, nama: "Ustadzah Siti Maryam, S.S., M.A.", mata_pelajaran: "Koordinator Tahfidz", 
+    gambar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500" 
   },
   { 
-    id: 7, nama: "Ust. Umar Faruq, S.Kom.", mata_pelajaran: "Teknologi Informasi", 
-    pendidikan: "Institut Teknologi Bandung", gambar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=500" 
+    id: 7, nama: "Ust. Umar Faruq, S.Kom.", mata_pelajaran: "Kepala Tata Usaha", 
+    gambar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=500" 
   },
   { 
-    id: 8, nama: "Ustadzah Khadijah, S.Ag.", mata_pelajaran: "Sejarah Kebudayaan Islam", 
-    pendidikan: "UIN Syarif Hidayatullah", gambar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=500" 
+    id: 8, nama: "Ustadzah Khadijah, S.Ag.", mata_pelajaran: "Staf Pendidikan", 
+    gambar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=500" 
   },
 ];
 
@@ -178,10 +178,10 @@ const GuruKamiPage = () => {
           </div>
 
           <h1 className="text-4xl md:text-5xl font-serif text-gray-900 dark:text-white mb-6">
-            Asatidz & Tenaga Pendidik
+            Pengurus & Tenaga Pendidik
           </h1>
           <p className="max-w-2xl mx-auto text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-12">
-            Pondok Pesantren Cendekia diasuh oleh tenaga pendidik profesional, lulusan universitas terkemuka dalam dan luar negeri yang berdedikasi tinggi dalam mendidik ilmu dan adab santri.
+            Pondok Pesantren Cendekia dikelola oleh pengurus dan tenaga pendidik profesional yang berdedikasi tinggi dalam mendidik ilmu dan adab santri.
           </p>
 
           <div className="w-full relative rounded-[2rem] overflow-hidden shadow-xl aspect-video md:aspect-[21/9]">
@@ -305,13 +305,9 @@ const GuruKamiPage = () => {
                         <div className="h-px w-8 bg-yellow-500 my-4" />
 
                         <div className="flex flex-col gap-3 mt-auto">
-                          <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400">
+                          <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400 font-medium">
                             <BookOpen size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
                             <span>{teacher.mata_pelajaran}</span>
-                          </div>
-                          <div className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-400">
-                            <GraduationCap size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
-                            <span>{teacher.pendidikan}</span>
                           </div>
                         </div>
                       </div>

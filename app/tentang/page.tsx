@@ -1,11 +1,35 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Quote } from 'lucide-react'; // Tambahan import Quote
+import { Quote, Camera, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 const TentangKamiPage = () => {
+
+  const [dokumentasi, setDokumentasi] = useState<any[]>([]);
+  const [loadingDok, setLoadingDok] = useState(true);
+
+  // Ref untuk container slider galeri di HP
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // EFEK AUTO-SCROLL KHUSUS HP (GALERI LENGKAP)
+  useEffect(() => {
+    const autoScrollInterval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          scrollRef.current.scrollBy({ left: clientWidth * 0.8, behavior: 'smooth' });
+        }
+      }
+    }, 3500);
+
+    return () => clearInterval(autoScrollInterval);
+  }, [loadingDok]);
 
   // FUNGSI ANIMASI SCROLL (INTERSECTION OBSERVER)
   useEffect(() => {
@@ -16,72 +40,87 @@ const TentangKamiPage = () => {
           entry.target.classList.remove('opacity-0', '-translate-x-24', 'translate-x-24', 'translate-y-24');
         }
       });
-    }, { threshold: 0.15 }); 
+    }, { threshold: 0.15 });
 
     const hiddenElements = document.querySelectorAll('.scroll-anim');
     hiddenElements.forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
+  }, [dokumentasi]);
+
+  // FETCH DOKUMENTASI LENGKAP
+  useEffect(() => {
+    const fetchDokumentasi = async () => {
+      setLoadingDok(true);
+      const { data, error } = await supabase
+        .from('dokumentasi')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) setDokumentasi(data);
+      setLoadingDok(false);
+    };
+    fetchDokumentasi();
   }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 font-sans text-gray-800 dark:text-gray-300">
       <Navbar />
-      
+
       <main className="max-w-6xl mx-auto px-6 md:px-12 pt-32 pb-20 overflow-hidden">
-        
+
         {/* ========================================= */}
         {/* 1. SAMBUTAN PIMPINAN (MUDIR) BARU DITAMBAHKAN */}
         {/* ========================================= */}
         <section className="mb-24">
           <div className="bg-emerald-50 dark:bg-gray-800/50 rounded-[2.5rem] p-8 md:p-12 lg:p-16 border border-emerald-100 dark:border-gray-800 relative overflow-hidden scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
-            
+
             {/* Ikon Quote Raksasa Transparan di Background */}
             <Quote className="absolute top-[-5%] right-[-5%] w-64 h-64 text-emerald-900/5 dark:text-white/5 -rotate-12 z-0 pointer-events-none" />
-            
-            <div className="flex flex-col lg:flex-row gap-10 md:gap-16 items-center lg:items-start relative z-10">
-               
-               {/* Foto Pimpinan */}
-               <div className="w-full sm:w-2/3 lg:w-1/3 shrink-0 scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 delay-200 ease-out">
-                  <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white dark:border-gray-700">
-                    <img 
-                      src="flyercendekia.jpeg" 
-                      alt="KH. Ahmad Ridwan, Lc." 
-                      className="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700" 
-                    />
-                  </div>
-                  <div className="mt-6 text-center lg:text-left">
-                     <h3 className="font-bold text-xl text-emerald-900 dark:text-white">KH. Ahmad Ridwan, Lc.</h3>
-                     <p className="text-sm text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-1">Pimpinan Pondok</p>
-                  </div>
-               </div>
 
-               {/* Teks Sambutan */}
-               <div className="w-full lg:w-2/3 space-y-5 text-gray-700 dark:text-gray-300 text-sm md:text-[15px] leading-relaxed text-justify scroll-anim opacity-0 translate-x-24 transition-all duration-1000 delay-300 ease-out">
-                  <div className="mb-8 text-center lg:text-left">
-                    <h2 className="text-3xl md:text-4xl font-serif text-emerald-900 dark:text-white mb-2">Sambutan Pimpinan</h2>
-                    <div className="w-16 h-1 bg-yellow-500 mx-auto lg:mx-0 rounded-full" />
-                  </div>
-                  
-                  <p className="font-bold text-emerald-800 dark:text-yellow-400">
-                    Assalamu'alaikum Warahmatullahi Wabarakatuh.
-                  </p>
-                  <p>
-                    Segala puji bagi Allah SWT, Tuhan semesta alam, yang senantiasa melimpahkan rahmat, taufiq, dan hidayah-Nya kepada kita semua. Shalawat serta salam semoga senantiasa tercurah kepada teladan terbaik kita, Nabi Muhammad SAW, beserta keluarga, sahabat, dan umatnya yang istiqamah di jalan kebenaran.
-                  </p>
-                  <p>
-                    Bapak/Ibu wali santri yang dirahmati Allah, mendidik anak di era modern ini adalah tantangan yang luar biasa. Derasnya arus informasi seringkali membawa dampak hilangnya adab dan merosotnya moral generasi muda. Oleh karena itu, <span className="font-bold text-emerald-900 dark:text-yellow-300">Pondok Pesantren Cendekia</span> hadir bukan sekadar sebagai tempat transfer ilmu, melainkan sebagai kawah candradimuka yang menempa akhlak, membina kedisiplinan, dan menanamkan cinta kepada Al-Qur'an.
-                  </p>
-                  <p>
-                    Kami meyakini pepatah ulama salaf, <em>"Al-Adabu fauqal 'Ilmi"</em> (Adab itu lebih tinggi daripada ilmu). Kepintaran setinggi apa pun tanpa dilandasi adab yang baik hanya akan melahirkan kehancuran. Di pesantren ini, kurikulum kami dirancang untuk menyeimbangkan antara kemapanan ilmu syar'i, kecerdasan akademik, dan pembentukan karakter (akhlaqul karimah).
-                  </p>
-                  <p>
-                    Kami mengundang Bapak/Ibu untuk menitipkan putra-putrinya berjuang bersama kami. Mari kita bersinergi dan berdoa bersama, semoga kelak dari pondok pesantren ini lahir para pemimpin umat, ulama yang intelek, dan intelektual yang ulama, yang siap menjadi cahaya penerang bagi keluarga, agama, dan bangsa.
-                  </p>
-                  <p className="font-bold text-emerald-800 dark:text-yellow-400 pt-4">
-                    Wassalamu'alaikum Warahmatullahi Wabarakatuh.
-                  </p>
-               </div>
+            <div className="flex flex-col lg:flex-row gap-10 md:gap-16 items-center lg:items-start relative z-10">
+
+              {/* Foto Pimpinan */}
+              <div className="w-full sm:w-2/3 lg:w-1/3 shrink-0 scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 delay-200 ease-out">
+                <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white dark:border-gray-700">
+                  <img
+                    src="Kgs. M. Ridwan Nawawi, S. Pd. I., MM.webp"
+                    alt="Kgs. M. Ridwan Nawawi, S. Pd. I., MM"
+                    className="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div className="mt-6 text-center lg:text-left">
+                  <h3 className="font-bold text-xl text-emerald-900 dark:text-white">Kgs. M. Ridwan Nawawi, S. Pd. I., MM</h3>
+                  <p className="text-sm text-yellow-600 dark:text-yellow-500 font-bold uppercase tracking-widest mt-1">Pimpinan Pondok</p>
+                </div>
+              </div>
+
+              {/* Teks Sambutan */}
+              <div className="w-full lg:w-2/3 space-y-5 text-gray-700 dark:text-gray-300 text-sm md:text-[15px] leading-relaxed text-justify scroll-anim opacity-0 translate-x-24 transition-all duration-1000 delay-300 ease-out">
+                <div className="mb-8 text-center lg:text-left">
+                  <h2 className="text-3xl md:text-4xl font-serif text-emerald-900 dark:text-white mb-2">Sambutan Pimpinan</h2>
+                  <div className="w-16 h-1 bg-yellow-500 mx-auto lg:mx-0 rounded-full" />
+                </div>
+
+                <p className="font-bold text-emerald-800 dark:text-yellow-400">
+                  Assalamu'alaikum Warahmatullahi Wabarakatuh.
+                </p>
+                <p>
+                  Segala puji bagi Allah SWT, Tuhan semesta alam, yang senantiasa melimpahkan rahmat, taufiq, dan hidayah-Nya kepada kita semua. Shalawat serta salam semoga senantiasa tercurah kepada teladan terbaik kita, Nabi Muhammad SAW, beserta keluarga, sahabat, dan umatnya yang istiqamah di jalan kebenaran.
+                </p>
+                <p>
+                  Bapak/Ibu wali santri yang dirahmati Allah, mendidik anak di era modern ini adalah tantangan yang luar biasa. Derasnya arus informasi seringkali membawa dampak hilangnya adab dan merosotnya moral generasi muda. Oleh karena itu, <span className="font-bold text-emerald-900 dark:text-yellow-300">Pondok Pesantren Cendekia</span> hadir bukan sekadar sebagai tempat transfer ilmu, melainkan sebagai kawah candradimuka yang menempa akhlak, membina kedisiplinan, dan menanamkan cinta kepada Al-Qur'an.
+                </p>
+                <p>
+                  Kami meyakini pepatah ulama salaf, <em>"Al-Adabu fauqal 'Ilmi"</em> (Adab itu lebih tinggi daripada ilmu). Kepintaran setinggi apa pun tanpa dilandasi adab yang baik hanya akan melahirkan kehancuran. Di pesantren ini, kurikulum kami dirancang untuk menyeimbangkan antara kemapanan ilmu syar'i, kecerdasan akademik, dan pembentukan karakter (akhlaqul karimah).
+                </p>
+                <p>
+                  Kami mengundang Bapak/Ibu untuk menitipkan putra-putrinya berjuang bersama kami. Mari kita bersinergi dan berdoa bersama, semoga kelak dari pondok pesantren ini lahir para pemimpin umat, ulama yang intelek, dan intelektual yang ulama, yang siap menjadi cahaya penerang bagi keluarga, agama, dan bangsa.
+                </p>
+                <p className="font-bold text-emerald-800 dark:text-yellow-400 pt-4">
+                  Wassalamu'alaikum Warahmatullahi Wabarakatuh.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -96,7 +135,7 @@ const TentangKamiPage = () => {
             </h1>
             <div className="w-20 h-1 bg-yellow-500 mx-auto md:mx-0 rounded-full" />
           </div>
-          
+
           <div className="space-y-6 text-base md:text-[15px] leading-[1.8] text-gray-700 dark:text-gray-300 max-w-5xl text-justify scroll-anim opacity-0 translate-y-24 transition-all duration-1000 delay-200 ease-out">
             <p>
               Sejak berdiri, Pondok Pesantren Cendekia hadir sebagai ruang belajar dan tumbuh bagi anak-anak Muslim dengan cita-cita besar: melahirkan generasi Qur'ani yang cerdas, berkarakter, dan siap menjadi cahaya bagi lingkungannya. Di setiap sudut kelas, dalam setiap tawa santri, dan pada setiap doa yang dipanjatkan, tersimpan harapan orang tua akan masa depan putra-putri mereka yang lebih baik.
@@ -107,9 +146,9 @@ const TentangKamiPage = () => {
 
             {/* FOTO LEBAR DI TENGAH TEKS */}
             <div className="w-full my-12 rounded-2xl md:rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-500 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
-              <img 
-                src="flyercendekia.jpeg" 
-                alt="Gedung Pondok Pesantren" 
+              <img
+                src="flyer tentang kami.jpeg"
+                alt="Gedung Pondok Pesantren"
                 className="w-full h-[300px] md:h-[450px] object-cover hover:scale-105 transition-transform duration-1000"
               />
             </div>
@@ -130,7 +169,7 @@ const TentangKamiPage = () => {
         {/* 3. VISI & MISI (SIDE BY SIDE LAYOUT)      */}
         {/* ========================================= */}
         <section className="mb-24 overflow-hidden">
-          
+
           {/* VISI */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center mb-16 md:mb-24">
             <div className="order-2 md:order-1 scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
@@ -140,9 +179,9 @@ const TentangKamiPage = () => {
               </p>
             </div>
             <div className="order-1 md:order-2 w-full h-[250px] md:h-[350px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 translate-x-24 transition-all duration-1000 delay-200 ease-out">
-               <img 
-                src="visi.jpg" 
-                alt="Kegiatan Santri Visi" 
+              <img
+                src="visi.jpeg"
+                alt="Kegiatan Santri Visi"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
             </div>
@@ -151,9 +190,9 @@ const TentangKamiPage = () => {
           {/* MISI */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center overflow-hidden">
             <div className="w-full h-[300px] md:h-[450px] rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm group scroll-anim opacity-0 -translate-x-24 transition-all duration-1000 ease-out">
-              <img 
-                src="misi.jpg" 
-                alt="Kegiatan Belajar Misi" 
+              <img
+                src="misi.jpeg"
+                alt="Kegiatan Belajar Misi"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
             </div>
@@ -183,7 +222,7 @@ const TentangKamiPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
-            
+
             <div className="hover:-translate-y-1 transition-transform duration-300 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
               <h3 className="text-xl font-serif text-gray-900 dark:text-white mb-4">Tahsin & Tahfidz Qur'an Terstruktur</h3>
               <p className="text-sm md:text-[15px] text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
@@ -226,7 +265,68 @@ const TentangKamiPage = () => {
               </p>
             </div>
 
-          </div>        
+          </div>
+        </section>
+
+        {/* ========================================= */}
+        {/* 5. GALERI DOKUMENTASI LENGKAP             */}
+        {/* ========================================= */}
+        <section id="dokumentasi" className="pt-16 pb-10 border-t border-gray-200 dark:border-gray-800">
+          <div className="text-center md:text-left mb-12 scroll-anim opacity-0 translate-y-24 transition-all duration-1000 ease-out">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
+              <div className="p-2.5 bg-yellow-50 dark:bg-yellow-900/30 rounded-xl border border-yellow-100 dark:border-yellow-800">
+                <Camera className="text-yellow-600 dark:text-yellow-500" size={20} />
+              </div>
+              <p className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-[0.3em] text-[10px] md:text-xs">
+                Galeri Kami
+              </p>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-900 dark:text-white mb-4">
+              Dokumentasi Lengkap
+            </h2>
+            <div className="w-20 h-1 bg-yellow-500 mx-auto md:mx-0 rounded-full" />
+            <p className="mt-4 text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto md:mx-0">
+              Berikut adalah seluruh dokumentasi kegiatan, fasilitas, dan momen berharga di Pondok Pesantren Cendekia.
+            </p>
+          </div>
+
+          {loadingDok ? (
+            <div className="py-20 flex justify-center items-center gap-3 text-gray-400">
+              <Loader2 className="animate-spin" /> Menyiapkan Dokumentasi Lengkap...
+            </div>
+          ) : dokumentasi.length > 0 ? (
+            <div className="relative group/slider">
+              <div
+                ref={scrollRef}
+                className="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto overflow-y-hidden md:overflow-visible items-stretch snap-x snap-mandatory hide-scrollbar pb-8 md:pb-0"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {dokumentasi.map((d, index) => (
+                  <div
+                    key={d.id}
+                    className="relative group rounded-[2rem] md:rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 h-[300px] md:h-auto md:aspect-square shadow-sm hover:shadow-xl transition-all duration-500 scroll-anim opacity-0 translate-y-24 ease-out flex-shrink-0 w-[85vw] md:w-auto snap-center"
+                    style={{ transitionDelay: `${(index % 8) * 100}ms` }}
+                  >
+                    <img
+                      src={d.gambar_url || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80"}
+                      alt={d.judul}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                      <h4 className="text-white font-bold text-lg leading-tight mb-1">{d.judul}</h4>
+                      {d.deskripsi && (
+                        <p className="text-gray-200 text-xs line-clamp-2">{d.deskripsi}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-16 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center text-gray-400 scroll-anim opacity-0 translate-y-24 ease-out">
+              Belum ada data dokumentasi.
+            </div>
+          )}
         </section>
 
       </main>
