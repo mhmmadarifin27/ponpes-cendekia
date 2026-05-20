@@ -27,7 +27,7 @@ const Footer = () => {
               Pondok Pesantren Cendekia Baznas, Kota Palembang, Sumatera Selatan
             </p>
             <a 
-              href="https://www.google.com/maps/dir/?api=1&destination=-3.033265996942581,104.81373707497069" 
+              href="https://www.google.com/maps/search/?api=1&query=-3.0332778,104.8163056" 
               target="_blank" 
               rel="noopener noreferrer"
               className="bg-emerald-900 dark:bg-yellow-500 text-white dark:text-emerald-950 flex items-center justify-center gap-3 w-full py-4 md:py-5 rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl active:scale-95"
